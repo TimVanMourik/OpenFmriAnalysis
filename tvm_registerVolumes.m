@@ -1,44 +1,57 @@
-function output = tvm_registerVolumes(configuration)
+function tvm_registerVolumes(configuration)
+% TVM_REGISTERVOLUMES 
+%   TVM_REGISTERVOLUMES(configuration)
+%   
+%
+%   Copyright (C) Tim van Mourik, 2014, DCCN
+%
+%   configuration.SubjectDirectory
+%   configuration.FunctionalDirectory
+%   configuration.SmoothingDirectory
+%   configuration.SmoothingKernel
 
-memtic
-%Load the volume data
-subjectDirectory = configuration.SubjectDirectory;
-freesurferFolder = [subjectDirectory 'FreeSurfer/'];
-
-cd([freesurferFolder 'surf']);
-initialiseFreeSurfer = 'source ~/SetUpFreeSurfer.sh;';
+%% Parse configuration
+subjectDirectory =      tvm_getOption(configuration, 'SubjectDirectory');
+    %no default
+coregistrationFile =    fullfile(subjectDirectory, tvm_getOption(configuration, 'CoregistrationMatrix'));
+    %no default
+referenceFile =         fullfile(subjectDirectory, tvm_getOption(configuration, 'ReferenceVolume'));
+    %no default
+freeSurferFolder =      fullfile(subjectDirectory, tvm_getOption(configuration, 'FreeSurferFolder', 'FreeSurfer'));
+    %[subjectDirectory, 'FreeSurfer']
+boundariesFile =        fullfile(subjectDirectory, tvm_getOption(configuration, 'Boundaries'));
+    %no default
+    
+%%
+cd(fullfile(freeSurferFolder, 'surf'));
 u1 = 'mris_convert rh.white rh.white.asc;';
 u2 = 'mris_convert rh.pial rh.pial.asc;';
 u3 = 'mris_convert lh.white lh.white.asc;';
 u4 = 'mris_convert lh.pial lh.pial.asc;';
 u5 = 'mris_convert -v rh.white rh.neighbours.asc;';
 u6 = 'mris_convert -v lh.white lh.neighbours.asc;';
-unix([initialiseFreeSurfer u1, u2, u3, u4, u5, u6]);
-cd([freesurferFolder 'mri']);
-unix([initialiseFreeSurfer 'mri_convert orig.mgz orig.nii;']);
-clear initialiseFreeSurfer u1 u2 u3 u4
+unix([u1, u2, u3, u4, u5, u6]);
+cd(fullfile(freeSurferFolder, 'mri'));
+unix('mri_convert orig.mgz orig.nii;');
+clear u1 u2 u3 u4 u5 u6
 
-functionalScan          = spm_vol([subjectDirectory 'Scans/Functional/MeanFunctional.nii']);
-structuralScan          = spm_vol([freesurferFolder 'mri/orig.nii']);
+%Load the volume data
+functionalScan          = spm_vol(referenceFile);
+structuralScan          = spm_vol(fullfile(freeSurferFolder, 'mri/orig.nii'));
 functionalScan.volume   = spm_read_vols(functionalScan);
+structuralScan.volume   = spm_read_vols(structuralScan);
 
 coregistrationTransformation = spm_coreg(functionalScan, structuralScan);
 coregistrationMatrix = spm_matrix(coregistrationTransformation);
-save([subjectDirectory configuration.CoregistrationMatrix], 'coregistrationMatrix', 'coregistrationTransformation')
+save(coregistrationFile, 'coregistrationMatrix', 'coregistrationTransformation')
 clear coregistrationTransformation
-%load([subjectDirectory configuration.CoregistrationMatrix], 'coregistrationMatrix')
 
 % load boundaries
 loadedBoundaryInformation = [];
-loadedBoundaryInformation.SurfaceWhite = [freesurferFolder 'surf/?h.white.asc'];
-loadedBoundaryInformation.SurfacePial  = [freesurferFolder 'surf/?h.pial.asc'];
+loadedBoundaryInformation.SurfaceWhite = fullfile(freeSurferFolder, 'surf/?h.white.asc');
+loadedBoundaryInformation.SurfacePial  = fullfile(freeSurferFolder, 'surf/?h.pial.asc');
 
-[wSurface, pSurface] = loadFreeSurferAsciiFile(loadedBoundaryInformation);
-
-structural = structuralScan;
-structural.volume = spm_read_vols(structural);
-meanFunctional = spm_vol([subjectDirectory 'Scans/Functional/MeanFunctional.nii']);
-meanFunctional.volume = spm_read_vols(meanFunctional);
+[wSurface, pSurface] = tvm_loadFreeSurferAsciiFile(loadedBoundaryInformation);
 
 freeSurferMatrix =     [-1,    0,  0,  128;
                         0,     0,  1,  -128;
@@ -51,7 +64,7 @@ freeSurferMatrix =     [-1,    0,  0,  128;
 %And bring to functional voxel space
 %    t = inv(freeSurferMatrix)' * Structural.mat' * inv(coregistrationMatrix)' * inv(meanFunctional.mat)';
 %which is equivalent to:
-t = coregistrationMatrix * meanFunctional.mat \ structuralScan.mat / freeSurferMatrix;
+t = coregistrationMatrix * functionalScan.mat \ structuralScan.mat / freeSurferMatrix;
 t = t';
 for hemisphere = 1:2
     wSurface{hemisphere} = [wSurface{hemisphere}, ones(size(wSurface{hemisphere}, 1), 1)];
@@ -59,8 +72,14 @@ for hemisphere = 1:2
     wSurface{hemisphere} = wSurface{hemisphere} * t;
     pSurface{hemisphere} = pSurface{hemisphere} * t;
 end
-save([subjectDirectory configuration.Boundaries], 'wSurface', 'pSurface')
-
-output = memtoc;
+save(boundariesFile, 'wSurface', 'pSurface')
 
 end %end function
+
+
+
+
+
+
+
+

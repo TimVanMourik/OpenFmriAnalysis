@@ -1,22 +1,41 @@
-function output = tvm_roiToDesignMatrix(configuration)
+function tvm_roiToDesignMatrix(configuration)
+% TVM_ROITODESIGNMATRIX 
+%   TVM_ROITODESIGNMATRIX(configuration)
+%   
+%
+%   Copyright (C) Tim van Mourik, 2014, DCCN
+%
+%   configuration.SubjectDirectory
+%   configuration.ROI
+%   configuration.DesignMatrix
+%   configuration.Layers
 
-memtic
+%% Parse configuration
+subjectDirectory 	= tvm_getOption(configuration, 'SubjectDirectory');
+    %no default
+regionsOfInterest   = tvm_getOption(configuration, 'ROI');
+    %no default
+designMatrices      = tvm_getOption(configuration, 'DesignMatrix');
+    %no default
+layerFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'Layers', 'LevelSets/brain.layers.nii'));
+    %'LevelSets/brain.layers.nii'
 
+%%
 %load in layers
-subjectDirectory = configuration.SubjectDirectory;
-layers = spm_vol([subjectDirectory configuration.Layers]);
+layers = spm_vol(layerFile);
 
-for i = 1:length(configuration.ROI)
+numberOfLayers = length(layers);
+for i = 1:length(regionsOfInterest)
     %load in ROI
-    roi = spm_vol([subjectDirectory configuration.ROI{i}]);
+    roi = spm_vol(fullfile(subjectDirectory, regionsOfInterest{i}));
     roi.volume = spm_read_vols(roi);
 
     %match ROI with layers
     %make design matrix [Vox X Layers]
     indices = find(roi.volume ~= 0);
-    designMatrix = zeros(length(indices), length(layers));
+    designMatrix = zeros(length(indices), numberOfLayers);
 
-    for j = 1:length(layers)
+    for j = 1:numberOfLayers
         layerI = spm_read_vols(layers(j));
         designMatrix(:, j) = layerI(indices);
     end
@@ -27,12 +46,16 @@ for i = 1:length(configuration.ROI)
     design = [];
     design.Indices = indices;
     design.DesignMatrix = designMatrix;
+    nonZeroColumns = ~all(designMatrix == 0);
+    design.NonZerosColumns = find(nonZeroColumns);
+    %The covariance matrix is undefined when there is a column of zeros
+    %involved, so these are taken out of the equation
+    design.CovarianceMatrix = zeros(numberOfLayers);
+    design.CovarianceMatrix(nonZeroColumns, nonZeroColumns) = inv(designMatrix(:, nonZeroColumns)' * designMatrix(:, nonZeroColumns));
 
     %save design matrix
-    save([subjectDirectory configuration.DesignMatrix{i}], 'design');
+    save(fullfile(subjectDirectory, designMatrices{i}), 'design');
 end
-
-output = memtoc;
 
 end %end function
 

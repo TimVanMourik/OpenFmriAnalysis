@@ -1,36 +1,51 @@
-function output = tvm_moveNiftis(configuration)
+function tvm_moveNiftis(configuration)
+% TVM_MOVENIFTIS Moves niftis to destination folder
+%   TVM_MOVENIFTIS(configuration)
+%
+%   Copyright (C) Tim van Mourik, 2014, DCCN
+%
+%   configuration.SubjectDirectory
+%   configuration.SourceFolder
+%   configuration.DestinationAnatomicals
+%   configuration.DestinationFunctionals
 
-memtic;
-
-subjectDirectory = configuration.SubjectDirectory;
-dicoms = [subjectDirectory configuration.SourceDicoms];
-
+%% Parse configuration
+subjectDirectory    = tvm_getOption(configuration, 'SubjectDirectory');
+    %no default
+sourceFolder      = [subjectDirectory, tvm_getOption(configuration, 'SourceFolder')];
+    %no default
+destinationAnatomicals = fullfile(subjectDirectory, tvm_getOption(configuration, 'DestinationAnatomicals'));
+    %no default
+destinationFunctionals = fullfile(subjectDirectory, tvm_getOption(configuration, 'DestinationFunctionals'));
+    %no default
+    
 definitions = tvm_definitions;
 
-anatomicalData = definitions.anatomicalData;
+%%
+anatomicalData = definitions.AnatomicalData;
 anatomicals = [];
 for i = 1:length(anatomicalData)
-   folders = dir([dicoms anatomicalData{i}]);
+   folders = dir(fullfile(sourceFolder, ['*' anatomicalData{i} '*']));
    folders = folders([folders.isdir]);
-   anatomicals = [anatomicals; {folders.name}];
-end
-destinationAnatomicals = [subjectDirectory configuration.DestinationAnatomicals];
-for i = 1:length(anatomicals)
-    movefile([dicoms anatomicals{i}], destinationAnatomicals);
+   anatomicals = [anatomicals; {folders.name}]; %#ok<AGROW>
 end
 
-functionalData = definitions.functionalData;
+for i = 1:length(anatomicals)
+    movefile(fullfile(sourceFolder, anatomicals{i}), destinationAnatomicals);
+end
+
+functionalData = definitions.FunctionalData;
 functionals=[];
 for i = 1:length(functionalData)
-    folders = dir([dicoms functionalData{i}]);
+    folders = dir(fullfile(sourceFolder, ['*' functionalData{i} '*']));
     folders = folders([folders.isdir]);
-    functionals = [functionals; {folders.name}];
-end
-destinationFunctionals = [subjectDirectory configuration.DestinationFunctionals];
-for i = 1:length(functionals)
-    movefile([dicoms functionals{i} '/' '*.nii'], destinationFunctionals);  %to move functional folders remome '/' '*.nii'
+    functionals = [functionals; {folders.name}]; %#ok<AGROW>
 end
 
-output=memtoc;
+for i = 1:length(functionals)
+    if ~isempty(dir(fullfile(sourceFolder, functionals{i}, '*.nii')))
+        movefile(fullfile(sourceFolder, functionals{i}, '*.nii'), destinationFunctionals);  %to move functional folders remome '/' '*.nii'
+    end
+end
 
 end %end function

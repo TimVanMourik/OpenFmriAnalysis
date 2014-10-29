@@ -1,42 +1,100 @@
-function output = tvm_designMatrixToTimeCourse(configuration)
+function tvm_designMatrixToTimeCourse(configuration)
+% TVM_DESIGNMATRIXTOTIMECOURSE 
+%   TVM_DESIGNMATRIXTOTIMECOURSE(configuration)
+%   
+%
+%   Copyright (C) Tim van Mourik, 2014, DCCN
+%
+%   configuration.SubjectDirectory
+%   configuration.TimeCourse
+%   configuration.DesignMatrix
+%   configuration.FunctionalFolders
 
-memtic
+%% Parse configuration
+subjectDirectory        = tvm_getOption(configuration, 'SubjectDirectory');
+    %no default
+timeCourseFiles         = tvm_getOption(configuration, 'TimeCourse');
+    %no default
+designMatricesFiles     = tvm_getOption(configuration, 'DesignMatrix');
+    %no default
+functionalFolders       = tvm_getOption(configuration, 'FunctionalFolder');
+    %no default
+regressionApproach      = tvm_getOption(configuration, 'RegrassionApproach', 'OLS');
+    %no default
 
-subjectDirectory = configuration.SubjectDirectory;
+definitions = tvm_definitions;
+%%
+
 %save design matrix
-load([subjectDirectory configuration.DesignMatrix], 'design');
+for region = 1:length(designMatricesFiles)
+    load(fullfile(subjectDirectory, designMatricesFiles{region}), 'design');
+    if ~isfield(design, 'CovarianceMatrix')
+        design.CovarianceMatrix = inv(design.DesignMatrix' * design.DesignMatrix);
+    end
 
-allVolumes = dir([subjectDirectory configuration.FunctionalFolder '*.nii']);
-allVolumes = char({allVolumes.name});
-allVolumes = [repmat([subjectDirectory configuration.FunctionalFolder], [length(allVolumes), 1]), char(allVolumes)];
+    if iscell(functionalFolders) %list of 3D files
+        timeCourses = cell(size(functionalFolders));
+        covariance = cell(size(functionalFolders));
+        for session = 1:length(functionalFolders)
+            directory = fullfile(subjectDirectory, functionalFolders{session});
+            %@todo change into definitions functions
+            allVolumes = [];
+            for file = 1:length(definitions.VolumeFileTypes)
+                allVolumes = [allVolumes; dir(fullfile(directory, ['*', definitions.VolumeFileTypes{file}]))];
+            end
+            allVolumes = char({allVolumes.name});
+            allVolumes = [repmat([directory filesep], [length(allVolumes), 1]), char(allVolumes)];
 
-timeCourses = zeros(size(design.DesignMatrix, 2), size(allVolumes, 1));
-for layer = 1:size(allVolumes, 1)
-    volume = spm_read_vols(spm_vol(allVolumes(layer, :)));
-    voxelValues = volume(design.Indices);
-    timeCourses(: ,layer) = design.DesignMatrix \ voxelValues;
+            timeCourses{session} = zeros(size(design.DesignMatrix, 2), size(allVolumes, 1));
+            covariance{session} = zeros([size(design.CovarianceMatrix), size(allVolumes, 1)]);
+            for timePoint = 1:size(allVolumes, 1)
+                volume = spm_read_vols(spm_vol(allVolumes(timePoint, :)));                
+                voxelValues = volume(design.Indices);
+                
+                [timeCourses{session}(: ,timePoint), covariance{session}(:, :, timePoint)] = regressLayers(voxelValues, design.DesignMatrix, design.CovarianceMatrix, regressionApproach);
+            end        
+        end
+    else %list of 4D files
+        directory = fullfile(subjectDirectory, functionalFolders);
+        allVolumes = [];
+        for file = 1:length(definitions.VolumeFileTypes)
+            allVolumes = [allVolumes; dir(fullfile(directory, ['*', definitions.VolumeFileTypes{file}]))];
+        end
+        timeCourses = cell(size(allVolumes));
+        covariance = cell(size(allVolumes));
+
+        for session = 1:length(allVolumes)
+            sessionVolumes = spm_vol(fullfile(directory, allVolumes(session).name));
+            timeCourses{session} = zeros(size(design.DesignMatrix, 2), size(sessionVolumes, 1));
+            covariance{session} = zeros([size(design.CovarianceMatrix), size(sessionVolumes, 1)]);
+            for timePoint = 1:size(sessionVolumes, 1)
+                volume = spm_read_vols(sessionVolumes(timePoint));
+                voxelValues = volume(design.Indices);
+                
+                [timeCourses{session}(design.NonZerosColumns, timePoint), covariance{session}(:, :, timePoint)] = regressLayers(voxelValues, design.DesignMatrix(:, design.NonZerosColumns), design.CovarianceMatrix, regressionApproach);
+            end        
+        end
+    end
+    save(fullfile(subjectDirectory, timeCourseFiles{region}), 'timeCourses', 'covariance');
 end
-
-output = memtoc;
-
+    
 end %end function
 
-%%
-% 
-% v = zeros(size(volume));
-% v(design.Indices) = design.DesignMatrix * timeCourses(:, layer);
-% a = spm_vol(allVolumes(layer, :))
-% a.fname = 'Test12.nii';
-% spm_write_vol(a, v);
-% 
 
+function [timePoints, covariance] = regressLayers(voxelValues, designMatrix, covariance, regressionApproach)
 
+switch regressionApproach
+    case 'OLS'
+        timePoints = designMatrix \ voxelValues;
+        sumOfSquares = sum((voxelValues - designMatrix * timePoints) .^ 2);
+%         vcov = X'X * SSres / (n - p)
+        covariance = covariance * (sumOfSquares / (length(voxelValues) - length(covariance)));
+ 
+    case 'GLS'
+        
+end
 
-
-
-
-
-
+end
 
 
 

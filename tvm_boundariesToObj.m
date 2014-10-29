@@ -1,23 +1,42 @@
-function output = tvm_boundariesToObj(configuration)
+function tvm_boundariesToObj(configuration)
+% TVM_BOUNDARIESTOOBJ 
+%   TVM_BOUNDARIESTOOBJ(configuration)
+%   
 %
+%   Copyright (C) Tim van Mourik, 2014, DCCN
 %
-% make sure the boundary information is stored as 'wSurface' and 'pSurface'
+%   configuration.SubjectDirectory
+%   configuration.Boundaries
+%   configuration.SurfaceWhite
+%   configuration.SurfacePial
+%   configuration.ObjWhite
+%   configuration.ObjPial
 
-
-memtic
-%Load the volume data
-subjectDirectory = configuration.SubjectDirectory;
-
-load([subjectDirectory configuration.Boundaries]);
+%% Parse configuration
+subjectDirectory =      tvm_getOption(configuration, 'SubjectDirectory');
+    %no default
+boundariesFile =        fullfile(subjectDirectory, tvm_getOption(configuration, 'Boundaries'));
+    %no default
+surfaceWhite =        fullfile(subjectDirectory, tvm_getOption(configuration, 'SurfaceWhite'));
+    %no default
+surfacePial =        fullfile(subjectDirectory, tvm_getOption(configuration, 'SurfacePial'));
+    %no default
+objWhite =        fullfile(subjectDirectory, tvm_getOption(configuration, 'ObjWhite'));
+    %no default
+objPial =        fullfile(subjectDirectory, tvm_getOption(configuration, 'ObjPial'));
+    %no default
+  
+%%
+load(boundariesFile);
 
 for hemisphere = 1:2
 %1 = right
     if hemisphere == 1
-        inputFileName = strrep([subjectDirectory configuration.SurfaceWhite], '?', 'r');
-        outputFileName = strrep([subjectDirectory configuration.ObjWhite], '?', 'r');
+        inputFileName = strrep(surfaceWhite, '?', 'r');
+        outputFileName = strrep(objWhite, '?', 'r');
     elseif hemisphere == 2
-        inputFileName = strrep([subjectDirectory configuration.SurfaceWhite], '?', 'l');
-        outputFileName = strrep([subjectDirectory configuration.ObjWhite], '?', 'l');
+        inputFileName = strrep(surfaceWhite, '?', 'l');
+        outputFileName = strrep(objWhite, '?', 'l');
     else
         %crash
     end
@@ -51,11 +70,11 @@ for hemisphere = 1:2
     fclose(outputFile);
 
     if hemisphere == 1
-        inputFileName = strrep([subjectDirectory configuration.SurfacePial], '?', 'r');
-        outputFileName = strrep([subjectDirectory configuration.ObjPial], '?', 'r');
+        inputFileName = strrep(surfacePial, '?', 'r');
+        outputFileName = strrep(objPial, '?', 'r');
     elseif hemisphere == 2
-        inputFileName = strrep([subjectDirectory configuration.SurfacePial], '?', 'l');
-        outputFileName = strrep([subjectDirectory configuration.ObjPial], '?', 'l');
+        inputFileName = strrep(surfacePial, '?', 'l');
+        outputFileName = strrep(objPial, '?', 'l');
     else
         %crash
     end
@@ -87,7 +106,5 @@ for hemisphere = 1:2
     %close the file
     fclose(outputFile);
 end  
-
-output = memtoc;
 
 end %end function

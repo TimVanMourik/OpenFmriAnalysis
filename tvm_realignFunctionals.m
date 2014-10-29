@@ -28,11 +28,14 @@ definitions = tvm_definitions;
 
 %%
 functionalCharacteristic = definitions.FunctionalData;
+volumeFileTypes = definitions.VolumeFileTypes;
 
 niftis = [];
 for i = 1:length(functionalCharacteristic)
-    folder = dir(fullfile(niftiFolder, ['*' functionalCharacteristic{i} '*']));
-    niftis = [niftis; {folder.name}];
+    for j = 1:length(volumeFileTypes)
+        folder = dir(fullfile(niftiFolder, ['*' functionalCharacteristic{i} '*' volumeFileTypes{j}]));
+        niftis = [niftis; {folder.name}];
+    end
 end
 
 for i = 1:length(niftis)

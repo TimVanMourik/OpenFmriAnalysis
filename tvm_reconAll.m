@@ -1,24 +1,33 @@
-function [memoryUsage, computationTime] = tvm_reconAll(configuration)
+function tvm_reconAll(configuration)
+% TVM_RECONALL 
+%   TVM_RECONALL(configuration)
+%   From a structural scan, this matlab routine runs FreeSurfer
+%
+%   Copyright (C) Tim van Mourik, 2014, DCCN
+%
+%   configuration.SubjectDirectory
+%   configuration.Structural
 
-tic
-memtic
-
-if exist([configuration.SubjectDirectory 'FreeSurfer'], 'dir')
-    if ~exist([configuration.SubjectDirectory 'FreeSurferOld'], 'dir')
-        mkdir([configuration.SubjectDirectory 'FreeSurferOld']);
+%% Parse configuration
+subjectDirectory =  tvm_getOption(configuration, 'SubjectDirectory');
+    %no default
+structuralScan = tvm_getOption(configuration, 'Structural');
+    %no default
+subjectName = tvm_getOption(configuration, 'SubjectName', 'FreeSurfer');
+    %'FreeSurfer'
+    
+%%
+%if a copy exists, the old copy is backed-up
+if exist(fullfile(subjectDirectory, subjectName), 'dir')
+    if ~exist(fullfile(subjectDirectory, [subjectName 'Old']), 'dir')
+        mkdir(fullfile(subjectDirectory, [subjectName 'Old']));
     end
-    movefile([configuration.SubjectDirectory 'FreeSurfer/*'], [configuration.SubjectDirectory 'FreeSurferOld/*']);
-    rmdir([configuration.SubjectDirectory 'FreeSurfer'], 's');
+    movefile(fullfile(subjectDirectory, subjectName, '*'), fullfile(subjectDirectory, [subjectName 'Old'], '*'));
+    rmdir([subjectDirectory subjectName], 's');
 end
 
-subjectDirectory = configuration.SubjectDirectory;
-u1 = ['SUBJECTS_DIR=', subjectDirectory ';'];
-u2 = ['recon-all -subjid FreeSurfer -i ' subjectDirectory configuration.Structural ' -all;'];
-unix([u1, u2]);
-
-memoryUsage = memtoc;
-computationTime = toc;
-
-cd(subjectDirectory);
+unixCommand = ['SUBJECTS_DIR=', subjectDirectory ';'];
+unixCommand = [unixCommand 'recon-all -subjid ' subjectName ' -i ' subjectDirectory structuralScan ' -all;'];
+unix(unixCommand);
 
 end %end function
