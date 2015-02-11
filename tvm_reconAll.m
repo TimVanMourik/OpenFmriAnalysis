@@ -9,25 +9,25 @@ function tvm_reconAll(configuration)
 %   configuration.Structural
 
 %% Parse configuration
-subjectDirectory =  tvm_getOption(configuration, 'SubjectDirectory');
+subjectDirectory =  tvm_getOption(configuration, 'i_SubjectDirectory');
     %no default
-structuralScan = tvm_getOption(configuration, 'Structural');
+structuralScan = tvm_getOption(configuration, 'i_Structural');
     %no default
-subjectName = tvm_getOption(configuration, 'SubjectName', 'FreeSurfer');
+freeSurferFolder = tvm_getOption(configuration, 'i_FreeSurferFolder', 'FreeSurfer');
     %'FreeSurfer'
     
 %%
 %if a copy exists, the old copy is backed-up
-if exist(fullfile(subjectDirectory, subjectName), 'dir')
-    if ~exist(fullfile(subjectDirectory, [subjectName 'Old']), 'dir')
-        mkdir(fullfile(subjectDirectory, [subjectName 'Old']));
+if exist(fullfile(subjectDirectory, freeSurferFolder), 'dir')
+    if ~exist(fullfile(subjectDirectory, [freeSurferFolder 'Old']), 'dir')
+        mkdir(fullfile(subjectDirectory, [freeSurferFolder 'Old']));
     end
-    movefile(fullfile(subjectDirectory, subjectName, '*'), fullfile(subjectDirectory, [subjectName 'Old'], '*'));
-    rmdir([subjectDirectory subjectName], 's');
+    movefile(fullfile(subjectDirectory, freeSurferFolder, '*'), fullfile(subjectDirectory, [freeSurferFolder 'Old'], '*'));
+    rmdir([subjectDirectory freeSurferFolder], 's');
 end
 
 unixCommand = ['SUBJECTS_DIR=', subjectDirectory ';'];
-unixCommand = [unixCommand 'recon-all -subjid ' subjectName ' -i ' subjectDirectory structuralScan ' -all;'];
+unixCommand = [unixCommand 'recon-all -subjid ' freeSurferFolder ' -i ' fullfile(subjectDirectory, structuralScan) ' -all;'];
 unix(unixCommand);
 
 end %end function

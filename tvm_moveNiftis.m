@@ -39,7 +39,7 @@ functionals=[];
 for i = 1:length(functionalData)
     folders = dir(fullfile(sourceFolder, ['*' functionalData{i} '*']));
     folders = folders([folders.isdir]);
-    functionals = [functionals; {folders.name}]; %#ok<AGROW>
+    functionals = [functionals; {folders.name}']; %#ok<AGROW>
 end
 
 for i = 1:length(functionals)
@@ -49,3 +49,14 @@ for i = 1:length(functionals)
 end
 
 end %end function
+
+
+
+
+
+
+
+
+
+
+

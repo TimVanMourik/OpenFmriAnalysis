@@ -15,24 +15,22 @@ function tvm_glm(configuration)
 
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'SubjectDirectory');
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory');
     %no default
-designFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'Design'));
+designFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
-referenceVolumeFile =   fullfile(subjectDirectory, tvm_getOption(configuration, 'ReferenceVolume'));
+referenceVolumeFile =   fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
-functionalFolder =      fullfile(subjectDirectory, tvm_getOption(configuration, 'FunctionalFolder'));
+functionalFolder =      fullfile(subjectDirectory, tvm_getOption(configuration, 'i_FunctionalFolder'));
     %no default
-glmFile =               fullfile(subjectDirectory, tvm_getOption(configuration, 'GlmOutput'));
+roiMask =               tvm_getOption(configuration, 'i_Mask', []);
+    %default: empty
+glmFile =               fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Betas'));
     %no default
-resVarFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'ResidualSumOfSquares'));
+resVarFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'o_ResidualSumOfSquares'));
     %no default
-highPass =              tvm_getOption(configuration, 'HighPass', 0);
+functionalIndices  =    tvm_getOption(configuration, 'p_FunctionalSelection', []);
     %no default
-tr =                    tvm_getOption(configuration, 'TR', 1);
-    %no default
-roiMask =               tvm_getOption(configuration, 'Mask', []);
-    %empty by default
 if ~isempty(roiMask)
     roiMask = fullfile(subjectDirectory, roiMask);
 end
@@ -50,6 +48,11 @@ voxelsPerSlice = numberOfVoxels / referenceVolume.dim(3);
 allVolumes = dir([functionalFolder '*.nii']);
 allVolumes = [repmat(functionalFolder, [length(allVolumes), 1]), char({allVolumes.name})];
 
+if isempty(functionalIndices)
+	functionalIndices = 1:size(allVolumes, 1);
+end
+allVolumes = allVolumes(functionalIndices, :);
+
 if isempty(roiMask)
     mask = true(referenceVolume.dim);
 else
@@ -58,6 +61,8 @@ else
 end
 % This is done per slice, otherwise you're loading in ALL functional data 
 % at once. Computers don't like.
+
+pseudoInverse = pinv(design.DesignMatrix);
 for slice = 1:referenceVolume.dim(3)
     indexRange = voxelsPerSlice * (slice - 1) + (1:voxelsPerSlice);
     indexRange = indexRange(mask(indexRange) == true);
@@ -68,7 +73,7 @@ for slice = 1:referenceVolume.dim(3)
 %         sliceTimeValues = tvm_highPassFilter(sliceTimeValues, tr, highPass);
 %     end
     for i = 1:size(sliceTimeValues, 2)
-        gmlOutput(x(i), y(i), z(i), :) = design.DesignMatrix \ sliceTimeValues(:, i);
+        gmlOutput(x(i), y(i), z(i), :) = pseudoInverse * sliceTimeValues(:, i);
         residualSumOfSquares(x(i), y(i), z(i)) = sum((sliceTimeValues(:, i) - design.DesignMatrix * squeeze(gmlOutput(x(i), y(i), z(i), :))) .^ 2);
     end
 end

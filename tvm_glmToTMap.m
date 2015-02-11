@@ -13,17 +13,17 @@ function tvm_glmToTMap(configuration)
 %   configuration.Contrast
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'SubjectDirectory');
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory');
     %no default
-designFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'Design'));
+designFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
-glmFile =               fullfile(subjectDirectory, tvm_getOption(configuration, 'GlmOutput'));
+glmFile =               fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Betas'));
     %no default
-resDevFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'ResidualSumOfSquares'));
+resDevFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ResidualSumOfSquares'));
     %no default
-tMapFiles =              fullfile(subjectDirectory, tvm_getOption(configuration, 'TMap'));
+tMapFiles =              fullfile(subjectDirectory, tvm_getOption(configuration, 'o_TMap'));
     %no default
-contrasts =              tvm_getOption(configuration, 'Contrast');
+contrasts =              tvm_getOption(configuration, 'p_Contrast');
     %no default
     
 %%
@@ -37,6 +37,11 @@ if ~iscell(tMapFiles)
     contrasts = {contrasts};
 end
 
+betaValues = spm_vol(glmFile);
+betaValues = spm_read_vols(betaValues);
+residualSumOfSquares = spm_vol(resDevFile);
+residualSumOfSquares.volume = spm_read_vols(residualSumOfSquares);
+
 numberOfContrasts = length(contrasts);
 for i = 1:numberOfContrasts
     if length(contrasts{i}) < size(designMatrix, 2)
@@ -44,11 +49,6 @@ for i = 1:numberOfContrasts
     end
 
     numberOfRegressors = length(contrasts{i});
-
-    betaValues = spm_vol(glmFile);
-    betaValues = spm_read_vols(betaValues);
-    residualSumOfSquares = spm_vol(resDevFile);
-    residualSumOfSquares.volume = spm_read_vols(residualSumOfSquares);
 
     squaredError = contrasts{i} / covarianceMatrix * contrasts{i}' * residualSumOfSquares.volume / degreesOfFreedom;
     tMap = zeros(residualSumOfSquares.dim);

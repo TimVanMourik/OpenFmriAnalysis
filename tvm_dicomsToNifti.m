@@ -13,11 +13,16 @@ subjectDirectory    = tvm_getOption(configuration, 'SubjectDirectory');
     %no default
 dicomDirectory      = fullfile(subjectDirectory, tvm_getOption(configuration, 'DicomDirectory'));
     %no default
+characteristic      = tvm_getOption(configuration, 'Characteristic', []);
+    %no default
 
 definitions = tvm_definitions;
 %%
-
-folders = dir([dicomDirectory '*']);
+if isempty(characteristic)
+    folders = dir(fullfile(dicomDirectory, '*'));
+else
+    folders = dir(fullfile(dicomDirectory, [characteristic '*']));
+end
 folders = folders([folders.isdir]);
 for folder = {folders.name}
     if ~strcmp(folder{1}(1), '.')

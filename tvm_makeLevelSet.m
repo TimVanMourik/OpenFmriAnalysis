@@ -20,7 +20,9 @@ function tvm_makeLevelSet(configuration)
 %   configuration.SdfPial
 %   configuration.White
 %   configuration.Pial
-
+%
+% NOTE: AN INDEXING PROBLEM (BY 1) WAS FOUND IN A THE PREPARATION FOR AN
+% ISMRM ABSTRACT. FIND OUT WHERE THIS COMES FROM!
 %% Parse configuration
 subjectDirectory    = tvm_getOption(configuration, 'SubjectDirectory');
     %no default
@@ -44,6 +46,8 @@ white               = fullfile(subjectDirectory, tvm_getOption(configuration, 'W
     %no default
 pial                = fullfile(subjectDirectory, tvm_getOption(configuration, 'Pial'));
     %no default
+indexingDifference  = tvm_getOption(configuration, 'IndexingDifference', 1);
+    %no default
     
 %%
 % load(boundariesFile, 'pSurface', 'wSurface');
@@ -56,15 +60,12 @@ cd(functionDirectory);
 referenceVolume = spm_vol(referenceFile);
 
 %shift the transofrmation matrix by one to compensate for the indexing
-shiftByOne = eye(4);
-shiftByOne(1, 4) = 1;
-shiftByOne(2, 4) = 1;
-shiftByOne(3, 4) = 1;
+indexShift          = eye(4);
+indexShift(1:3, 4)  = indexingDifference;
 
 if isempty(strfind(objWhite, '?'))
-
-    makeSignedDistanceField(objWhite, white, referenceVolume.dim, referenceVolume.mat * shiftByOne, objectTransformationMatrix);
-    makeSignedDistanceField(objPial,  pial,  referenceVolume.dim, referenceVolume.mat * shiftByOne, objectTransformationMatrix);
+    makeSignedDistanceField(objWhite, white, referenceVolume.dim, referenceVolume.mat * indexShift, objectTransformationMatrix);
+    makeSignedDistanceField(objPial,  pial,  referenceVolume.dim, referenceVolume.mat * indexShift, objectTransformationMatrix);
     
 else
     for hemisphere = 1:2
@@ -79,7 +80,7 @@ else
                 %crash
         end
 
-        makeSignedDistanceField(objFile, sdfFile, referenceVolume.dim, referenceVolume.mat * shiftByOne, objectTransformationMatrix);
+        makeSignedDistanceField(objFile, sdfFile, referenceVolume.dim, referenceVolume.mat * indexShift, objectTransformationMatrix);
 
         if hemisphere == 1
             objFile = strrep(objPial, '?', 'r');
@@ -90,7 +91,7 @@ else
         else
         end
 
-        makeSignedDistanceField(objFile, sdfFile, referenceVolume.dim, referenceVolume.mat * shiftByOne, objectTransformationMatrix);
+        makeSignedDistanceField(objFile, sdfFile, referenceVolume.dim, referenceVolume.mat * indexShift, objectTransformationMatrix);
 
     end
 

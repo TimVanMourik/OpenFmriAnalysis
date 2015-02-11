@@ -11,15 +11,15 @@ function tvm_roiToDesignMatrix(configuration)
 %   configuration.Layers
 
 %% Parse configuration
-subjectDirectory 	= tvm_getOption(configuration, 'SubjectDirectory');
+subjectDirectory 	= tvm_getOption(configuration, 'i_SubjectDirectory');
     %no default
-regionsOfInterest   = tvm_getOption(configuration, 'ROI');
+regionsOfInterest   = tvm_getOption(configuration, 'i_ROI');
     %no default
-designMatrices      = tvm_getOption(configuration, 'DesignMatrix');
-    %no default
-layerFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'Layers', 'LevelSets/brain.layers.nii'));
+layerFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Layers', 'LevelSets/brain.layers.nii'));
     %'LevelSets/brain.layers.nii'
-
+designMatrices      = tvm_getOption(configuration, 'o_DesignMatrix');
+    %no default
+    
 %%
 %load in layers
 layers = spm_vol(layerFile);

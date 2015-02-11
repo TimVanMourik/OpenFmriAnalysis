@@ -1,5 +1,5 @@
-%  spmWrite4D(img, VStart, fname)
-function spmWrite4D(VStart, matrix4D, fname)
+function tvm_write4D(VStart, matrix4D, fname)
+%  TVM_WRITE4D(img, VStart, fname)
 
 numberOfVolumes = size(matrix4D, 4);
 VStart.fname = fname;

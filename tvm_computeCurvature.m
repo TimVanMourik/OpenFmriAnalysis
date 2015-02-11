@@ -30,8 +30,8 @@ pialK2              = fullfile(subjectDirectory, tvm_getOption(configuration, 'P
     %no default
     
 %%
-tvm_computeCurvature(white, whiteK1, whiteK2);
-tvm_computeCurvature(pial, pialK1, pialK2);
+tvm_computeCurvatureFromSdf(white, whiteK1, whiteK2);
+tvm_computeCurvatureFromSdf(pial, pialK1, pialK2);
 
 end %end function
 

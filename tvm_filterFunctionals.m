@@ -43,9 +43,9 @@ numberOfVolumes = size(allVolumes, 1);
 newVolumes = allVolumes;
 allVolumes = [repmat(functionalDirectory, [size(allVolumes, 1), 1]), char(allVolumes)];
 newVolumes = [repmat(fullfile(smoothingDirectory, 'f'), [size(newVolumes, 1), 1]), char(newVolumes)];
+zipVolumes = [newVolumes, repmat('.gz', [size(newVolumes, 1), 1])];
 for i = 1:numberOfVolumes
-    unix(sprintf('fslmaths %s -bptf %f %f %s', allVolumes(i, :), higherCutOff, lowerCutOff, newVolumes(i, :)));
-    unix(sprintf('gunzip %s', newVolumes(i, :)));
+    unix(sprintf('fslmaths %s -bptf %f %f %s; gunzip -f %s', allVolumes(i, :), higherCutOff, lowerCutOff, newVolumes(i, :), zipVolumes(i, :)));
 end
 
 end %end function

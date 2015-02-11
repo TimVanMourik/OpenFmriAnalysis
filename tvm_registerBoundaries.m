@@ -6,12 +6,6 @@ volume              = spm_read_vols(spm_vol([subjectDirectory configuration.Func
 
 if isfield(configuration, 'Boundaries')
     load([subjectDirectory configuration.Boundaries], 'wSurface', 'pSurface');
-elseif isfield(configuration, 'BoundariesW') && isfield(configuration, 'BoundariesP')
-    fileNames.SurfaceWhite	= [subjectDirectory configuration.BoundariesW];
-    fileNames.SurfacePial 	= [subjectDirectory configuration.BoundariesP];
-    [wSurface, pSurface] = loadFreeSurferAsciiFile(fileNames);
-    wSurface = changeDimensions(wSurface, [256, 256, 256], size(volume));
-    pSurface = changeDimensions(pSurface, [256, 256, 256], size(volume));
 else
     error('TVM:tvm_createFigures:NoSurface', 'No surface specified');
 end

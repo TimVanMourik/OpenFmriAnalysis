@@ -1,4 +1,4 @@
-function tvm_registerVolumes(configuration)
+function tvm_registerVolumes(configuration, registrationConfiguration)
 % TVM_REGISTERVOLUMES 
 %   TVM_REGISTERVOLUMES(configuration)
 %   
@@ -11,39 +11,60 @@ function tvm_registerVolumes(configuration)
 %   configuration.SmoothingKernel
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'SubjectDirectory');
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory');
     %no default
-coregistrationFile =    fullfile(subjectDirectory, tvm_getOption(configuration, 'CoregistrationMatrix'));
+coregistrationFile =    fullfile(subjectDirectory, tvm_getOption(configuration, 'io_CoregistrationMatrix'));
     %no default
-referenceFile =         fullfile(subjectDirectory, tvm_getOption(configuration, 'ReferenceVolume'));
+referenceFile =         fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
-freeSurferFolder =      fullfile(subjectDirectory, tvm_getOption(configuration, 'FreeSurferFolder', 'FreeSurfer'));
+freeSurferFolder =      fullfile(subjectDirectory, tvm_getOption(configuration, 'i_FreeSurferFolder', 'FreeSurfer'));
     %[subjectDirectory, 'FreeSurfer']
-boundariesFile =        fullfile(subjectDirectory, tvm_getOption(configuration, 'Boundaries'));
+boundariesFile =        fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
     %no default
     
 %%
-cd(fullfile(freeSurferFolder, 'surf'));
-u1 = 'mris_convert rh.white rh.white.asc;';
-u2 = 'mris_convert rh.pial rh.pial.asc;';
-u3 = 'mris_convert lh.white lh.white.asc;';
-u4 = 'mris_convert lh.pial lh.pial.asc;';
-u5 = 'mris_convert -v rh.white rh.neighbours.asc;';
-u6 = 'mris_convert -v lh.white lh.neighbours.asc;';
-unix([u1, u2, u3, u4, u5, u6]);
-cd(fullfile(freeSurferFolder, 'mri'));
-unix('mri_convert orig.mgz orig.nii;');
-clear u1 u2 u3 u4 u5 u6
+surfaceFolder = fullfile(freeSurferFolder, 'surf');
+u = [];
+if ~exist(fullfile(surfaceFolder, 'rh.white.asc'), 'file')
+    u = [u, 'mris_convert ' fullfile(surfaceFolder, 'rh.white') ' ' fullfile(surfaceFolder, 'rh.white.asc') ';'];
+end
+if ~exist(fullfile(surfaceFolder, 'rh.pial.asc'), 'file')
+    u = [u, 'mris_convert ' fullfile(surfaceFolder, 'rh.pial') ' ' fullfile(surfaceFolder, 'rh.pial.asc') ';'];
+end
+
+if ~exist(fullfile(surfaceFolder, 'lh.white.asc'), 'file')
+    u = [u, 'mris_convert ' fullfile(surfaceFolder, 'lh.white') ' ' fullfile(surfaceFolder, 'lh.white.asc') ';'];
+end
+if ~exist(fullfile(surfaceFolder, 'lh.pial.asc'), 'file')
+    u = [u, 'mris_convert ' fullfile(surfaceFolder, 'lh.pial') ' ' fullfile(surfaceFolder, 'lh.pial.asc') ';'];
+end
+
+
+if ~isempty(u)
+    unix(u);
+end
+
+if ~exist(fullfile(freeSurferFolder, 'mri', 'brain.nii'), 'file')
+    unix(['mri_convert ' fullfile(freeSurferFolder, 'mri', 'brain.mgz') ' ' fullfile(freeSurferFolder, 'mri', 'brain.nii') ' ;']);
+end
 
 %Load the volume data
 functionalScan          = spm_vol(referenceFile);
-structuralScan          = spm_vol(fullfile(freeSurferFolder, 'mri/orig.nii'));
+structuralScan          = spm_vol(fullfile(freeSurferFolder, 'mri/brain.nii'));
 functionalScan.volume   = spm_read_vols(functionalScan);
 structuralScan.volume   = spm_read_vols(structuralScan);
 
-coregistrationTransformation = spm_coreg(functionalScan, structuralScan);
-coregistrationMatrix = spm_matrix(coregistrationTransformation);
-save(coregistrationFile, 'coregistrationMatrix', 'coregistrationTransformation')
+if exist(coregistrationFile, 'file')
+    load(coregistrationFile, 'coregistrationMatrix', 'registrationParameters');
+    if exist('registrationParameters', 'var')
+        registrationConfiguration.params = registrationParameters(1:6); %#ok<NODEF>
+    end
+end
+
+registrationParameters = spm_coreg(functionalScan, structuralScan, registrationConfiguration);
+coregistrationMatrix = spm_matrix(registrationParameters);
+registrationParameters = [registrationParameters, 0, 0, 0]; %#ok<NASGU>
+save(coregistrationFile, 'coregistrationMatrix', 'registrationParameters');
 clear coregistrationTransformation
 
 % load boundaries
@@ -51,18 +72,19 @@ loadedBoundaryInformation = [];
 loadedBoundaryInformation.SurfaceWhite = fullfile(freeSurferFolder, 'surf/?h.white.asc');
 loadedBoundaryInformation.SurfacePial  = fullfile(freeSurferFolder, 'surf/?h.pial.asc');
 
-[wSurface, pSurface] = tvm_loadFreeSurferAsciiFile(loadedBoundaryInformation);
+surfaceData = tvm_loadFreeSurferAsciiFile(loadedBoundaryInformation);
+wSurface = surfaceData.SurfaceWhite;
+pSurface = surfaceData.SurfacePial;
+faceData = surfaceData.Faces; %#ok<NASGU>
 
-freeSurferMatrix =     [-1,    0,  0,  128;
-                        0,     0,  1,  -128;
-                        0,     -1, 0,  128;
-                        0,     0,  0,  1];
+voxelDimensionsStructural = sqrt(sum(structuralScan.mat(:, 1:3) .^ 2));
+freeSurferMatrix = tvm_dimensionsToFreesurferMatrix(voxelDimensionsStructural, structuralScan.dim);
 
 %FreeSurfer conversion matrix to go to voxel space
 %Convert to anatomical world space
 %Coregister with the functional scan
 %And bring to functional voxel space
-%    t = inv(freeSurferMatrix)' * Structural.mat' * inv(coregistrationMatrix)' * inv(meanFunctional.mat)';
+%    t = inv(freeSurferMatrix)' * structuralScan.mat' * inv(coregistrationMatrix)' * inv(functionalScan.mat)';
 %which is equivalent to:
 t = coregistrationMatrix * functionalScan.mat \ structuralScan.mat / freeSurferMatrix;
 t = t';
@@ -72,7 +94,7 @@ for hemisphere = 1:2
     wSurface{hemisphere} = wSurface{hemisphere} * t;
     pSurface{hemisphere} = pSurface{hemisphere} * t;
 end
-save(boundariesFile, 'wSurface', 'pSurface')
+save(boundariesFile, 'wSurface', 'pSurface', 'faceData')
 
 end %end function
 

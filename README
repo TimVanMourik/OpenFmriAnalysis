@@ -1,6 +1,0 @@
-This is the ReadMe file of the Laminar Analysis toolbox
-(C) Tim van Mourik 2013-2014
-
-Known issues:
--dcm2nii needs to be in the .profile
--FreeSurfer needs to be installed and the setup needs to be in the .profile

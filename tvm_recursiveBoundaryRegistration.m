@@ -11,46 +11,51 @@ function tvm_recursiveBoundaryRegistration(configuration, registrationConfigurat
 %   configuration.SmoothingKernel
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'SubjectDirectory');
+subjectDirectory =      	tvm_getOption(configuration, 'i_SubjectDirectory');
     %no default
-registeredBoundaries =   fullfile(subjectDirectory, tvm_getOption(configuration, 'Registered'));
+referenceFile =             fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
-referenceFile =    fullfile(subjectDirectory, tvm_getOption(configuration, 'ReferenceVolume'));
+boundariesFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Boundaries'));
     %no default
-    
-if isfield(configuration, 'Boundaries')
-    boundaryMode = 'matFile';
-    boundariesFile = fullfile(subjectDirectory, tvm_getOption(configuration, 'Boundaries'));
-elseif isfield(configuration, 'BoundariesW') && isfield(configuration, 'BoundariesP')
-    boundaryMode = 'FreeSurfer';
-    boundaryWFile = fullfile(subjectDirectory, tvm_getOption(configuration, 'BoundariesW'));
-    boundaryPFile = fullfile(subjectDirectory, tvm_getOption(configuration, 'BoundariesP'));
-else
-    error('TVM:tvm_createFigures:NoSurface', 'No surface specified');
-end   
-    
+registeredBoundaries =   	fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Registered'));
+    %no default
+maskFile =                  tvm_getOption(configuration, 'p_Mask', '');
+    %no default
+ 
 %%
 referenceVolume = spm_read_vols(spm_vol(referenceFile));
-switch boundaryMode
-    case 'matFile';
-       load(boundariesFile, 'wSurface', 'pSurface');
-    case 'FreeSurfer'
-        fileNames.SurfaceWhite	= boundaryWFile;
-        fileNames.SurfacePial 	= boundaryPFile;
-        [wSurface, pSurface] = tvm_loadFreeSurferAsciiFile(fileNames);
-        wSurface = changeDimensions(wSurface, [256, 256, 256], size(referenceVolume));
-        pSurface = changeDimensions(pSurface, [256, 256, 256], size(referenceVolume));
-    otherwise
-        error('TVM:tvm_createFigures:NoSurface', 'No surface specified');
+load(boundariesFile, 'wSurface', 'pSurface', 'faceData');
+
+
+if isempty(maskFile)
+    mask = true(size(referenceVolume));
+else
+    maskFile = fullfile(subjectDirectory, maskFile);
+    mask = ~~spm_read_vols(spm_vol(maskFile));
 end
-
-
 
 for hemisphere = 1:2
-    [wSurface{hemisphere}, pSurface{hemisphere}] = boundaryRegistration(wSurface{hemisphere}, pSurface{hemisphere}, referenceVolume, registrationConfiguration); 
+    [~, selectedVerticesW] = selectVertices(wSurface{hemisphere}, mask);
+    [~, selectedVerticesP] = selectVertices(pSurface{hemisphere}, mask);
+    selectedVertices = selectedVerticesW | selectedVerticesP;
+
+    [wSurface{hemisphere}(selectedVertices, :), pSurface{hemisphere}(selectedVertices, :)] = boundaryRegistration(wSurface{hemisphere}(selectedVertices, :), pSurface{hemisphere}(selectedVertices, :), referenceVolume, registrationConfiguration);  %#ok<AGROW>
 end
 
-save(registeredBoundaries, 'wSurface', 'pSurface');
+save(registeredBoundaries, 'wSurface', 'pSurface', 'faceData');
 
 
 end %end function
+
+
+
+
+
+
+
+
+
+
+
+
+

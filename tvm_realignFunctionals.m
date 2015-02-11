@@ -38,9 +38,10 @@ for i = 1:length(functionalCharacteristic)
     end
 end
 
-for i = 1:length(niftis)
-    niftis{i} = [niftiFolder niftis{i}];
-end
+niftis = fullfile(niftiFolder, niftis(:));
+% for i = 1:length(niftis)
+%     niftis{i} = fullfile(niftiFolder, niftis);
+% end
 
 %The only thing spm_realign does is creating the rp*.txt (only when no
 %output argument are given

@@ -38,4 +38,4 @@ fi
 #export NO_FSFAST=1
 
 # Call configuration script:
-source ~/FreeSurferEnv.sh
+source ./FreeSurferEnv.sh

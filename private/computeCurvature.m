@@ -32,6 +32,10 @@ curv1.volume = zeros(sdf.dim);
 curv2.volume = zeros(sdf.dim);
 kernel = zeros(26, 1);
 dimensions = sdf.dim;
+
+% N. J. Wildberger, Differential Geometry Lecture 28: Curvature for the general paraboloid
+% http://www.youtube.com/watch?v=PTh_wI6xjIQ,
+% See 44:36 for the formulas
 for x = 2:dimensions(1) - 1
     for y = 2:dimensions(2) - 1
         for z = 2:dimensions(3) - 1
