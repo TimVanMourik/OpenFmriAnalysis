@@ -34,7 +34,7 @@ for folder = {folders.name}
         currentFolder = char(folder);
         %For the MP2RAGE we've got a special treatment, as the file type
         %need to appear in the file name.
-        mp2rage = definitions.AnatomicalData;
+        mp2rage = definitions.MP2RAGE;
         allFiles = [];
         for i = 1:length(mp2rage)
             if ~isempty(strfind(currentFolder, mp2rage{i}))

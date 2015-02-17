@@ -21,28 +21,19 @@ freeSurferFolder =      fullfile(subjectDirectory, tvm_getOption(configuration, 
     %[subjectDirectory, 'FreeSurfer']
 boundariesFile =        fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
     %no default
-    
+
+if nargin < 2
+    %register with default parameters
+    registrationConfiguration = [];
+end
+
 %%
 surfaceFolder = fullfile(freeSurferFolder, 'surf');
-u = [];
-if ~exist(fullfile(surfaceFolder, 'rh.white.asc'), 'file')
-    u = [u, 'mris_convert ' fullfile(surfaceFolder, 'rh.white') ' ' fullfile(surfaceFolder, 'rh.white.asc') ';'];
-end
-if ~exist(fullfile(surfaceFolder, 'rh.pial.asc'), 'file')
-    u = [u, 'mris_convert ' fullfile(surfaceFolder, 'rh.pial') ' ' fullfile(surfaceFolder, 'rh.pial.asc') ';'];
-end
 
-if ~exist(fullfile(surfaceFolder, 'lh.white.asc'), 'file')
-    u = [u, 'mris_convert ' fullfile(surfaceFolder, 'lh.white') ' ' fullfile(surfaceFolder, 'lh.white.asc') ';'];
-end
-if ~exist(fullfile(surfaceFolder, 'lh.pial.asc'), 'file')
-    u = [u, 'mris_convert ' fullfile(surfaceFolder, 'lh.pial') ' ' fullfile(surfaceFolder, 'lh.pial.asc') ';'];
-end
-
-
-if ~isempty(u)
-    unix(u);
-end
+convertToAscii(fullfile(surfaceFolder, 'rh.white'));
+convertToAscii(fullfile(surfaceFolder, 'rh.pial'));
+convertToAscii(fullfile(surfaceFolder, 'lh.white'));
+convertToAscii(fullfile(surfaceFolder, 'lh.pial'));
 
 if ~exist(fullfile(freeSurferFolder, 'mri', 'brain.nii'), 'file')
     unix(['mri_convert ' fullfile(freeSurferFolder, 'mri', 'brain.mgz') ' ' fullfile(freeSurferFolder, 'mri', 'brain.nii') ' ;']);
@@ -89,8 +80,6 @@ freeSurferMatrix = tvm_dimensionsToFreesurferMatrix(voxelDimensionsStructural, s
 t = coregistrationMatrix * functionalScan.mat \ structuralScan.mat / freeSurferMatrix;
 t = t';
 for hemisphere = 1:2
-    wSurface{hemisphere} = [wSurface{hemisphere}, ones(size(wSurface{hemisphere}, 1), 1)];
-    pSurface{hemisphere} = [pSurface{hemisphere}, ones(size(pSurface{hemisphere}, 1), 1)];
     wSurface{hemisphere} = wSurface{hemisphere} * t;
     pSurface{hemisphere} = pSurface{hemisphere} * t;
 end
@@ -99,7 +88,14 @@ save(boundariesFile, 'wSurface', 'pSurface', 'faceData')
 end %end function
 
 
+function convertToAscii(fileName)
+asciiFile = [fileName '.asc'];
 
+if ~exist(asciiFile, 'file')
+    unix(['mris_convert ' fileName ' ' asciiFile ';']);
+end
+
+end %end function
 
 
 

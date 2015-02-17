@@ -6,6 +6,7 @@ definitions = [];
 definitions.DicomFileTypes =    {'.ima';    '.IMA';     '.dcm'; '.DCM'};	%types of dicom files
 definitions.VolumeFileTypes =   {'.nii';    '.hdr';};                  %types of volume (nifti) files
 definitions.AnatomicalData =    {'mprage'; 'MPRAGE'; 'mp2rage'; 'MP2RAGE'};                 %anatomical data *mp2rage*
+definitions.MP2RAGE =           {'mp2rage'; 'MP2RAGE'};                 %anatomical data *mp2rage*
 definitions.FunctionalData =    {'ep3d';    'EP3D';     'ep2d'; 'EP2D'};                    %3D-EPI functional data *example*
 
 end %end function

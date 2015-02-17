@@ -2,7 +2,6 @@ function tvm_recursiveBoundaryRegistration(configuration, registrationConfigurat
 % TVM_RECURSIVEBOUNDARYREGISTRATION 
 %   TVM_RECURSIVEBOUNDARYREGISTRATION(configuration)
 %   
-%
 %   Copyright (C) Tim van Mourik, 2014, DCCN
 %
 %   configuration.SubjectDirectory
@@ -23,6 +22,7 @@ maskFile =                  tvm_getOption(configuration, 'p_Mask', '');
     %no default
  
 %%
+tvm_workInProgress;
 referenceVolume = spm_read_vols(spm_vol(referenceFile));
 load(boundariesFile, 'wSurface', 'pSurface', 'faceData');
 
@@ -39,11 +39,10 @@ for hemisphere = 1:2
     [~, selectedVerticesP] = selectVertices(pSurface{hemisphere}, mask);
     selectedVertices = selectedVerticesW | selectedVerticesP;
 
-    [wSurface{hemisphere}(selectedVertices, :), pSurface{hemisphere}(selectedVertices, :)] = boundaryRegistration(wSurface{hemisphere}(selectedVertices, :), pSurface{hemisphere}(selectedVertices, :), referenceVolume, registrationConfiguration);  %#ok<AGROW>
+    [wSurface{hemisphere}(selectedVertices, :), pSurface{hemisphere}(selectedVertices, :)] = tvm_RecursiveBoundaryRegistration(wSurface{hemisphere}(selectedVertices, :), pSurface{hemisphere}(selectedVertices, :), referenceVolume, registrationConfiguration);  %#ok<AGROW>
 end
 
 save(registeredBoundaries, 'wSurface', 'pSurface', 'faceData');
-
 
 end %end function
 
