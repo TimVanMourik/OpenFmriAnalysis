@@ -1,0 +1,2 @@
+mris_convert $1 $1.asc
+srf2obj	$1.asc > $1.obj
