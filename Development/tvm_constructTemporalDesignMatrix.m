@@ -62,6 +62,7 @@ startOfRun = [0, cumsum(numberOfVolumes)] + 1;
 
 numberOfStimuli = size(stimulusFiles, 2);
 allStimuli = cell(numberOfStimuli, 1);
+allDurations = cell(numberOfStimuli, 1);
 for i = 1:numberOfStimuli
     load(fullfile(subjectDirectory, stimulusFiles{i}), definitions.Stimulus, definitions.Duration);
     allStimuli{i} = stimulus;

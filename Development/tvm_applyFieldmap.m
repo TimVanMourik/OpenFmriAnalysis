@@ -15,9 +15,10 @@ boundariesFileOut =         fullfile(subjectDirectory, tvm_getOption(configurati
     
 definitions = tvm_definitions();
 %%
-load(boundariesFileIn, definitions.WhiteMatterSurface, definitions.PialSurface);
-wSurface        = eval(definitions.WhiteMatterSurface);
-pSurface        = eval(definitions.PialSurface);
+load(boundariesFileIn, definitions.WhiteMatterSurface, definitions.PialSurface, definitions.FaceData);
+wSurface = eval(definitions.WhiteMatterSurface);
+pSurface = eval(definitions.PialSurface);
+faceData = eval(definitions.FaceData);
 
 fieldMap = spm_read_vols(spm_vol(fieldMapFile));
 
@@ -35,7 +36,10 @@ end
 wSurface = wTemp;
 pSurface = pTemp;
 
-save(boundariesFileOut, definitions.WhiteMatterSurface, definitions.PialSurface);
+eval(tvm_changeVariableNames(definitions.WhiteMatterSurface, wSurface));
+eval(tvm_changeVariableNames(definitions.PialSurface, pSurface));
+eval(tvm_changeVariableNames(definitions.FaceData, faceData));
+save(boundariesFileOut, definitions.WhiteMatterSurface, definitions.PialSurface, definitions.FaceData);
 
 end %end function
 
