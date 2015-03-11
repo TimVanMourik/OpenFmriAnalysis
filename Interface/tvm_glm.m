@@ -48,7 +48,7 @@ residualSumOfSquares = zeros(referenceVolume.dim);
 numberOfVoxels = prod(referenceVolume.dim);
 voxelsPerSlice = numberOfVoxels / referenceVolume.dim(3);
 
-allVolumes = dir(fillfile(functionalFolder, '*.nii'));
+allVolumes = dir(fullfile(functionalFolder, '*.nii'));
 allVolumes = [repmat(functionalFolder, [length(allVolumes), 1]), char({allVolumes.name})];
 
 if isempty(functionalIndices)
