@@ -64,7 +64,7 @@ hold on;
 %draws the vertices close to the slice
 for i = 1:length(vertices)
     for j = 1:length(vertices{i})
-        drawCrossSection(vertices{i}{j}, faceData{j}, slice, dimension, xDimension, yDimension, contourColours{i});
+        drawCrossSection(vertices{i}{j}, faceData{i}{j}, slice, dimension, xDimension, yDimension, contourColours{i});
     end
 end
 
