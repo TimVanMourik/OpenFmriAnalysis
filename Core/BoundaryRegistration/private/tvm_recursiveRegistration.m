@@ -26,17 +26,16 @@ numberOfVertices            = size(arrayW, 1);
 %function are altered by the subfunctions in order to get a cumulative
 %recursive registration
 transformStack =[];
-transformStack = recursiveTransformation(true(numberOfVertices, 1), 0, 1, transformStack);
+transformStack = recursiveTransformation(true(numberOfVertices, 1), 1, numberOfIterations, transformStack);
 
 function transformStack = recursiveTransformation(indices, dimension, iteration, transformStack)
-    if iteration > numberOfIterations
+    if iteration <= 0
         return;
     end
-    dimension = mod(dimension, 3) + 1;
     selectedIndices = find(indices);
     %compute best accuracy if requested
     if dynamicAccuracy
-        currentAccuracy = round(min(max(100 * iteration / numberOfIterations / 2 ^ (numberOfIterations - iteration), accuracy), 100));
+        currentAccuracy = round(min(max(100 * (numberOfIterations - iteration + 1) / numberOfIterations / 2 ^ (iteration - 1), accuracy), 100));
         selectedIndices = selectedIndices(mod(find(selectedIndices), round(100 / currentAccuracy)) == 0);
     else
         selectedIndices = selectedIndices(mod(find(selectedIndices), round(100 / accuracy)) == 0);
@@ -59,25 +58,10 @@ function transformStack = recursiveTransformation(indices, dimension, iteration,
     transformStack.smaller = [];
     transformStack.bigger = [];
     
-    transformStack.smaller = recursiveTransformation(newIndices,              dimensionOrder(dimension), iteration + 1, transformStack.smaller);
-    transformStack.bigger = recursiveTransformation(indices & ~newIndices,   dimensionOrder(dimension), iteration + 1, transformStack.bigger);
+    dimension = mod(dimension, 3) + 1;
+    transformStack.smaller = recursiveTransformation(newIndices,              dimensionOrder(dimension), iteration - 1, transformStack.smaller);
+    transformStack.bigger = recursiveTransformation(indices & ~newIndices,   dimensionOrder(dimension), iteration - 1, transformStack.bigger);
 end %end function
 
 end %end function
-
-
-
-function coordinates = readTransformStack(coordinates, transformStack)
-    if isempty(transformStack)
-        return;
-    end
-    coordinates = coordinates * transformStack.mat;
-    cut = transformStack.cut;
-    dimension = transformStack.dimension;
-    cutIndices = coordinates(:, dimension) < cut;
-       
-    coordinates( cutIndices, :) = readTransformStack(coordinates( cutIndices, :), transformStack.smaller);
-    coordinates(~cutIndices, :) = readTransformStack(coordinates(~cutIndices, :), transformStack.bigger);
-end %end function
-
 

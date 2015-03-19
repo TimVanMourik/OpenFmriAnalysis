@@ -17,21 +17,21 @@ if nargin == 0
 end
 display =       tvm_getOption(configuration, 'Display',     true);
     % true
-interface =     tvm_getOption(configuration, 'Interface',   true);
-    % true
 core =          tvm_getOption(configuration, 'Core',        true);
+    % true
+interface =     tvm_getOption(configuration, 'Interface',   true);
     % true
 development =   tvm_getOption(configuration, 'Development', false);
     % true
 
 %%
 addpath(rootDirectory);
-if interface
-    addpath(fullfile(rootDirectory, 'Interface'));
-end
 if core
     addpath(fullfile(rootDirectory, 'Core'));
     addpath(fullfile(rootDirectory, 'Core/BoundaryRegistration'));
+end
+if interface
+    addpath(fullfile(rootDirectory, 'Interface'));
 end
 if development
     addpath(fullfile(rootDirectory, 'Development'));

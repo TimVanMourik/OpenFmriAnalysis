@@ -65,8 +65,10 @@ allStimuli = cell(numberOfStimuli, 1);
 allDurations = cell(numberOfStimuli, 1);
 for i = 1:numberOfStimuli
     load(fullfile(subjectDirectory, stimulusFiles{i}), definitions.Stimulus, definitions.Duration);
-    allStimuli{i} = stimulus;
-    allDurations{i} = duration;
+    stimulusOnset = eval(definitions.Stimulus);
+    stimulusDuration = eval(definitions.Duration);
+    allStimuli{i} = stimulusOnset;
+    allDurations{i} = stimulusDuration;
 end
 
 if ischar(hrfParameters)
@@ -90,9 +92,9 @@ if taskRegressors
             %minus a half because the volume is said to be acquired at half a TR.
             timePoints = TR * ((1:numberOfVolumes(counter)) - 1/2);
             if exist(definitions.Duration, 'var')
-                designPerRun{stimulus, counter} = tvm_hrf(timePoints, allStimuli{stimulus}{run}, allDurations{stimulus}{run}, hrfParameters);
+                designPerRun{stimulus, counter} = tvm_hrf(timePoints, allStimuli{stimulus}{run}, allDurations{stimulus}{run}, hrfParameters)';
             else
-                designPerRun{stimulus, counter} = tvm_hrf(timePoints, allStimuli{stimulus}{run}, zeros(size(allStimuli{stimulus}{run})), hrfParameters);
+                designPerRun{stimulus, counter} = tvm_hrf(timePoints, allStimuli{stimulus}{run}, zeros(size(allStimuli{stimulus}{run})), hrfParameters)';
             end
             counter = counter + 1;
         end

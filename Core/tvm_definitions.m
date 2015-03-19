@@ -18,8 +18,8 @@ definitions.CoregistrationMatrix =      'coregistrationMatrix';
 definitions.RegistrationParameters =	'registrationParameters';
 definitions.TimeCourses =               'timeCourses';
 definitions.Covariance =                'covariance';
-definitions.Stimulus =                	'stimulus';
-definitions.Duration =                  'duration';
+definitions.Stimulus =                	'stimulusOnset';
+definitions.Duration =                  'stimulusDuration';
 definitions.HrfParameters =             'hrfParameters';
 
 definitions.GlmDesign =              	'design';

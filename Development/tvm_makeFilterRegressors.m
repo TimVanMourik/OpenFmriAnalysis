@@ -25,12 +25,12 @@ for session = 1:length(numberOfVolumes)
             sines = sin(time * f * 2 * pi);
             regressor(timePoints) = sines;
             designMatrix = [designMatrix, regressor];
+            
+            regressor = zeros(designLength, 1);
+            cosines = cos(time * f * 2 * pi);
+            regressor(timePoints) = cosines;
+            designMatrix = [designMatrix, regressor];
         end
-        
-        regressor = zeros(designLength, 1);
-        cosines = cos(time * f * 2 * pi);
-        regressor(timePoints) = cosines;
-        designMatrix = [designMatrix, regressor];
     end
 
 end

@@ -6,7 +6,7 @@ function tvm_applyFieldmap(configuration)
 %% Parse configuration
 subjectDirectory =      	tvm_getOption(configuration, 'i_SubjectDirectory');
     %no default
-fieldMapFile =            	fullfile(subjectDirectory, tvm_getOption(configuration, 'i_FieldMap'));
+fieldMapFile =            	fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DisplacementMap'));
     %no default
 boundariesFileIn =          fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Boundaries'));
     %no default
