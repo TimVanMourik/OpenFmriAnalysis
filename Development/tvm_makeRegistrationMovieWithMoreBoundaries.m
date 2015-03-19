@@ -23,6 +23,8 @@ fps =                   tvm_getOption(configuration, 'p_FramesPerSecond', 5);
     % 5 frames per second
 quality =               tvm_getOption(configuration, 'p_MovieQuality', 80);
     % 80% 
+contourColours =        tvm_getOption(configuration, 'p_ContourColors', {'y', 'r', 'g', 'b'});
+    %no default
 frameSize =             tvm_getOption(configuration, 'p_MovieSize', [1042, 968]);
     % 
     
@@ -57,6 +59,7 @@ configuration.i_Faces = faceData;
 configuration.p_Axis = iterationAxis;
 configuration.p_Visibility = 'off';
 configuration.p_ColorLimits = [min(reference.volume(:)), max(reference.volume(:))];
+configuration.p_ContourColors = contourColours;
 
 load(boundariesFileExtra, 'wSurface', 'pSurface')
 configuration.i_Vertices{3} = wSurface;
