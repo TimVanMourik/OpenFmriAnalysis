@@ -19,9 +19,11 @@ registerDatFile =      	fullfile(subjectDirectory, tvm_getOption(configuration, 
     %no default
 coregistrationFile =    fullfile(subjectDirectory, tvm_getOption(configuration, 'o_CoregistrationMatrix'));
     %no default
-fslInitialisation =     tvm_getOption(configuration, 'p_FslInitialisation', true);
+fslInitialisation =     tvm_getOption(configuration, 'i_FslInitialisation', true);
     %no default
-contrast =              tvm_getOption(configuration, 'p_Contrast', 'T2');
+contrast =              tvm_getOption(configuration, 'i_Contrast', 'T2');
+    %no default
+degreesOfFreedom =      tvm_getOption(configuration, 'i_DegreesOfFreedom', 6);
     %no default
     
 definitions = tvm_definitions();    
@@ -38,9 +40,17 @@ switch contrast
     case {'T2', 'T2*'}
         contrastArgument = ' --t2';
 end
+switch degreesOfFreedom
+    case 6
+        dof = ' --6';
+    case 9
+        dof = ' --9';
+    case 12
+        dof = ' --12';
+end
 
 unixCommand = ['SUBJECTS_DIR=', subjectDirectory ';'];
-unixCommand = [unixCommand 'bbregister --s ' freeSurferName ' --mov ' referenceFile ' --reg ' registerDatFile fsl contrastArgument ';'];
+unixCommand = [unixCommand 'bbregister --s ' freeSurferName ' --mov ' referenceFile ' --reg ' registerDatFile fsl contrastArgument dof ';'];
 unix(unixCommand);
 
 if ~exist(fullfile(freeSurferFolder, 'mri', 'brain.nii'), 'file')

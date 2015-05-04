@@ -13,7 +13,7 @@ subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory');
     %no default
 dicomDirectory      = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DicomDirectory'));
     %no default
-characteristic      = tvm_getOption(configuration, 'p_Characteristic', []);
+characteristic      = tvm_getOption(configuration, 'i_Characteristic', []);
     %no default
 
 definitions = tvm_definitions;
@@ -28,8 +28,11 @@ for folder = {folders.name}
     if ~strcmp(folder{1}(1), '.')
 % @todo check if folder contains .nii
 % @todo make display of output optional
-        
-        unix(['dcm2nii -g n -r n -x n ' fullfile(dicomDirectory, folder{1}) ';']);
+        % g, gzip images: no
+        % r, reorient images: no
+        % x, reorient and crop images: no
+        % c, look in subdirectories: no
+        unix(['dcm2nii -g n -r n -x n -c n ' fullfile(dicomDirectory, folder{1}) '/*.IMA;']);
 
         currentFolder = char(folder);
         %For the MP2RAGE we've got a special treatment, as the file type

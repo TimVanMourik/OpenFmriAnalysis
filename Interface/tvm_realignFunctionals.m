@@ -19,7 +19,7 @@ subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory');
     %no default
 niftiFolder =           fullfile(subjectDirectory, tvm_getOption(configuration, 'i_NiftiDirectory'));
     %no default
-realignmentFolder =   	fullfile(subjectDirectory, tvm_getOption(configuration, 'i_RealignmentDirectory'));
+realignmentFolder =   	fullfile(subjectDirectory, tvm_getOption(configuration, 'o_RealignmentDirectory'));
     %no default
 meanName =              fullfile(subjectDirectory, tvm_getOption(configuration, 'o_MeanFunctional', 'MeanFunctional.nii'));
     %'MeanFunctional.nii'
@@ -38,9 +38,6 @@ for i = 1:length(functionalCharacteristic)
 end
 
 niftis = fullfile(niftiFolder, niftis(:));
-% for i = 1:length(niftis)
-%     niftis{i} = fullfile(niftiFolder, niftis);
-% end
 
 %The only thing spm_realign does is creating the rp*.txt (only when no
 %output argument are given
@@ -50,8 +47,8 @@ spm_reslice(niftis, realignmentConfiguration);
 oldMeanNifti = dir(fullfile(niftiFolder, 'mean*.nii'));
 movefile(fullfile(niftiFolder, oldMeanNifti.name), meanName);
 movefile(fullfile(niftiFolder, 'r*.nii'), realignmentFolder);
-movefile(fullfile(niftiFolder, 'r*.mat'), realignmentFolder);
 movefile(fullfile(niftiFolder, 'rp*.txt'), realignmentFolder);
+movefile(fullfile(niftiFolder, '*.mat'), realignmentFolder);
 
 
 

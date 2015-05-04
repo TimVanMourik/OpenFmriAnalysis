@@ -25,7 +25,7 @@ numberOfVertices            = size(arrayW, 1);
 %therefore works with shared memory, i.e. the arrays in the main
 %function are altered by the subfunctions in order to get a cumulative
 %recursive registration
-transformStack =[];
+transformStack = [];
 transformStack = recursiveTransformation(true(numberOfVertices, 1), 1, numberOfIterations, transformStack);
 
 function transformStack = recursiveTransformation(indices, dimension, iteration, transformStack)
@@ -41,7 +41,9 @@ function transformStack = recursiveTransformation(indices, dimension, iteration,
         selectedIndices = selectedIndices(mod(find(selectedIndices), round(100 / accuracy)) == 0);
     end
     %find the best transformation...
+    tic;
     t = optimalTransformation(arrayW(selectedIndices, :), arrayP(selectedIndices, :), voxelGrid, contrastConfiguration);
+    computationTime = toc;
     %...and apply it to the selected indices
     arrayW(indices, :) = arrayW(indices, :) * t;
     arrayP(indices, :) = arrayP(indices, :) * t;
@@ -53,14 +55,16 @@ function transformStack = recursiveTransformation(indices, dimension, iteration,
     %execute the same function to both parts
     
     transformStack.mat = t;
+    transformStack.computationTime = computationTime;
+    transformStack.accuracy = currentAccuracy;
     transformStack.dimension = dimension;
     transformStack.cut = middleValue;
     transformStack.smaller = [];
     transformStack.bigger = [];
     
     dimension = mod(dimension, 3) + 1;
-    transformStack.smaller = recursiveTransformation(newIndices,              dimensionOrder(dimension), iteration - 1, transformStack.smaller);
-    transformStack.bigger = recursiveTransformation(indices & ~newIndices,   dimensionOrder(dimension), iteration - 1, transformStack.bigger);
+    transformStack.smaller = recursiveTransformation(newIndices,           	dimensionOrder(dimension), iteration - 1, transformStack.smaller);
+    transformStack.bigger = recursiveTransformation(indices & ~newIndices,	dimensionOrder(dimension), iteration - 1, transformStack.bigger);
 end %end function
 
 end %end function

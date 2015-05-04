@@ -13,32 +13,32 @@ functionalFolder =      fullfile(subjectDirectory, tvm_getOption(configuration, 
     %default: false
 motionFiles =           fullfile(subjectDirectory, tvm_getOption(configuration, 'i_MotionFiles'));
     %no default
+fir =                   tvm_getOption(configuration, 'i_Fir', false);
+    %default: false
+segmentSpacing =        tvm_getOption(configuration, 'ip_SegmentSpacing', 1);
+    %default: 1
+numberOfSegments =      tvm_getOption(configuration, 'i_NumberOfSegments', 16);
+    %default: 16
+functionalIndices  =    tvm_getOption(configuration, 'i_FunctionalSelection', []);
+    %no default
+linearTrend =           tvm_getOption(configuration, 'i_LinearTrend', false);
+    %default: false
+sessionRegression =     tvm_getOption(configuration, 'i_SessionRegression', false);
+    %default: false
+motionRegression =      tvm_getOption(configuration, 'i_MotionRegression', false);
+    %no default
+highPassFilter =        tvm_getOption(configuration, 'i_HighPassFilter', false);
+    %default: false
+cutOffFrequency =       tvm_getOption(configuration, 'i_CutOffFrequency', 1 / 64);
+    %default: false
+TR =                    tvm_getOption(configuration, 'i_TR', 1);
+    %default: 1
+hrfParameters =         tvm_getOption(configuration, 'i_HrfParameters', [6, 16, 1, 1, 6, 0, 32]);
+    %default:[6, 16, 1, 1, 6, 0, 32]
 designFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DesignMatrix'));
     %no default
 designImageFile =       fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DesignImage'));
     %no default
-fir =                   tvm_getOption(configuration, 'p_Fir', false);
-    %default: false
-segmentSpacing =        tvm_getOption(configuration, 'p_SegmentSpacing', 1);
-    %default: 1
-numberOfSegments =      tvm_getOption(configuration, 'p_NumberOfSegments', 16);
-    %default: 16
-functionalIndices  =    tvm_getOption(configuration, 'p_FunctionalSelection', []);
-    %no default
-linearTrend =           tvm_getOption(configuration, 'p_LinearTrend', false);
-    %default: false
-sessionRegression =     tvm_getOption(configuration, 'p_SessionRegression', false);
-    %default: false
-motionRegression =      tvm_getOption(configuration, 'p_MotionRegression', false);
-    %no default
-highPassFilter =        tvm_getOption(configuration, 'p_HighPassFilter', false);
-    %default: false
-cutOffFrequency =       tvm_getOption(configuration, 'p_CutOffFrequency', 1 / 64);
-    %default: false
-TR =                    tvm_getOption(configuration, 'p_TR', 1);
-    %default: 1
-hrfParameters =         tvm_getOption(configuration, 'p_HrfParameters', [6, 16, 1, 1, 6, 0, 32]);
-    %default:[6, 16, 1, 1, 6, 0, 32]
     
 definitions = tvm_definitions();
     

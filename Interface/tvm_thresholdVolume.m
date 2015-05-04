@@ -17,10 +17,10 @@ subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory');
     %no default
 volumeFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Volume'));
     %no default
+threshold =             tvm_getOption(configuration, 'i_Threshold', 1.96);
+    % 1.96, two-tailed significance threshold
 thresholdFile =         fullfile(subjectDirectory, tvm_getOption(configuration, 'o_ThresholdedVolume'));
     %no default
-threshold =             tvm_getOption(configuration, 'p_Threshold', 1.96);
-    % 1.96, two-tailed significance threshold
     
 %%
 v = spm_vol(volumeFile);

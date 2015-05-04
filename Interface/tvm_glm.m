@@ -25,11 +25,11 @@ functionalFolder =      fullfile(subjectDirectory, tvm_getOption(configuration, 
     %no default
 roiMask =               tvm_getOption(configuration, 'i_Mask', []);
     %default: empty
+functionalIndices  =    tvm_getOption(configuration, 'i_FunctionalSelection', []);
+    %no default
 glmFile =               fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Betas'));
     %no default
 resVarFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'o_ResidualSumOfSquares'));
-    %no default
-functionalIndices  =    tvm_getOption(configuration, 'p_FunctionalSelection', []);
     %no default
 if ~isempty(roiMask)
     roiMask = fullfile(subjectDirectory, roiMask);

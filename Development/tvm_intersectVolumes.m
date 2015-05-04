@@ -11,13 +11,13 @@ function tvm_intersectVolumes(configuration)
 %   configuration.Output
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'SubjectDirectory');
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory');
     %no default
-volumeFiles =          	fullfile(subjectDirectory, tvm_getOption(configuration, 'Input'));
+volumeFiles =          	fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Input'));
     %no default
-intersectionFiles =    	fullfile(subjectDirectory, tvm_getOption(configuration, 'IntersectionVolumes'));
+intersectionFiles =    	fullfile(subjectDirectory, tvm_getOption(configuration, 'i_IntersectionVolumes'));
     %no default
-outputFiles =           fullfile(subjectDirectory, tvm_getOption(configuration, 'Output'));
+outputFiles =           fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Output'));
     %no default
     
 %%

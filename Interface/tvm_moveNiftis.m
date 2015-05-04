@@ -14,7 +14,7 @@ subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory');
     %no default
 sourceFolder      = [subjectDirectory, tvm_getOption(configuration, 'i_SourceFolder')];
     %no default
-destinationAnatomicals = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DestinationAnatomicals'));
+destinationAnatomicals = tvm_getOption(configuration, 'i_DestinationAnatomicals', []);
     %no default
 destinationFunctionals = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DestinationFunctionals'));
     %no default
@@ -29,8 +29,10 @@ for i = 1:length(anatomicalData)
    anatomicals = [anatomicals; {folders.name}]; %#ok<AGROW>
 end
 
-for i = 1:length(anatomicals)
-    movefile(fullfile(sourceFolder, anatomicals{i}), destinationAnatomicals);
+if ~isempty(destinationAnatomicals)
+    for i = 1:length(anatomicals)
+        movefile(fullfile(sourceFolder, anatomicals{i}), fullfile(subjectDirectory, destinationAnatomicals));
+    end
 end
 
 functionalData = definitions.FunctionalData;

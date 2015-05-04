@@ -44,6 +44,7 @@ end
 volumeData = volumeData / numberOfVolumes;
 
 meanNifti = volumes(1);
+meanNifti.dt = [16,0];
 meanNifti.fname = meanName;
 
 spm_write_vol(meanNifti, volumeData);

@@ -1,4 +1,4 @@
-function tvm_makeRegistrationMovieWithMoreBoundaries(configuration)
+function tvm_makeRegistrationMovie(configuration)
 % TVM_
 %   TVM_(configuration)
 %   
@@ -13,22 +13,28 @@ referenceFile =         fullfile(subjectDirectory, tvm_getOption(configuration, 
     %no default
 boundariesFiles =       fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Boundaries'));
     %no default
+iterationAxis =         tvm_getOption(configuration, 'i_Axis', 'transversal');
+    % a horizontal slice
+fps =                   tvm_getOption(configuration, 'i_FramesPerSecond', 5);
+    % 5 frames per second
+quality =               tvm_getOption(configuration, 'i_MovieQuality', 80);
+    % 80% 
+frameSize =             tvm_getOption(configuration, 'i_MovieSize', [1042, 968]);
+    % 
+contourColours =        tvm_getOption(configuration, 'i_ContourColors', {'y', 'r', 'g', 'b'});
+    %no default
+colorLimits =           tvm_getOption(configuration, 'i_ColorLimits', []);
+    % 
+contrastSetting =       tvm_getOption(configuration, 'i_Contrast', 1);
+    % 1
 movieFile =             fullfile(subjectDirectory, tvm_getOption(configuration, 'o_RegistrationMovie'));
     %no default
-iterationAxis =         tvm_getOption(configuration, 'p_Axis', 'transversal');
-    % a horizontal slice
-fps =                   tvm_getOption(configuration, 'p_FramesPerSecond', 5);
-    % 5 frames per second
-quality =               tvm_getOption(configuration, 'p_MovieQuality', 80);
-    % 80% 
-frameSize =             tvm_getOption(configuration, 'p_MovieSize', [1042, 968]);
-    % 
-contourColours =        tvm_getOption(configuration, 'p_ContourColors', {'y', 'r', 'g', 'b'});
-    %no default
-colorLimits =           tvm_getOption(configuration, 'p_ColorLimits', []);
-    % 
     
 %%
+if ~iscell(boundariesFiles)
+    boundariesFiles = {boundariesFiles};
+end
+
 switch iterationAxis
     case {'x', 'coronal'}
         dimension = 1;
@@ -53,6 +59,13 @@ if isempty(colorLimits)
     colorLimits = [min(reference.volume(:)), max(reference.volume(:))];
 end
 
+n = 64;
+colorMap = -contrastSetting:2 * contrastSetting / (n - 1):contrastSetting;
+colorMap = 1 ./ (1 + exp(-colorMap));
+colorMap = (colorMap - colorMap(1)) ./ (colorMap(end) - colorMap(1));
+colorMap = repmat(colorMap, 3, 1)';
+colormap(colorMap);
+
 configuration = [];
 configuration.i_Volume = reference.volume;
 
@@ -72,6 +85,7 @@ configuration.p_Axis = iterationAxis;
 configuration.p_Visibility = 'off';
 configuration.p_ColorLimits = colorLimits;
 configuration.p_ContourColors = contourColours;
+configuration.p_ColorMap = colorMap;
 
 for i = 1:numberOfFrames
     configuration.i_Slice = i;

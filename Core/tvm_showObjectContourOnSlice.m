@@ -21,6 +21,8 @@ colorRange =      	tvm_getOption(configuration, 'p_ColorLimits', []);
     %no default
 contourColours =   	tvm_getOption(configuration, 'p_ContourColors', {'y', 'r', 'g', 'b'});
     %no default
+colorMap =          tvm_getOption(configuration, 'p_ColorMap', []);
+    %no default
     
 %%
 
@@ -72,6 +74,10 @@ axis equal tight off
 set(gcf, ...
     'units', 'normalized', ...
     'outerposition', [0, 0, screenSize(4) / screenSize(3), 1]);
+
+if ~isempty(colorMap)
+    colormap(colorMap);
+end
 
 end %end function
 

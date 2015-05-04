@@ -6,7 +6,7 @@ function tvm_applyFieldmap(configuration)
 %% Parse configuration
 subjectDirectory =      	tvm_getOption(configuration, 'i_SubjectDirectory');
     %no default
-fieldMapFile =            	fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DisplacementMap'));
+displacementMapFile =       fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DisplacementMap'));
     %no default
 boundariesFileIn =          fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Boundaries'));
     %no default
@@ -20,7 +20,7 @@ wSurface = eval(definitions.WhiteMatterSurface);
 pSurface = eval(definitions.PialSurface);
 faceData = eval(definitions.FaceData);
 
-fieldMap = spm_read_vols(spm_vol(fieldMapFile));
+fieldMap = spm_read_vols(spm_vol(displacementMapFile));
 
 %%
 configuration.InterpolationMethod = 'Trilinear';
