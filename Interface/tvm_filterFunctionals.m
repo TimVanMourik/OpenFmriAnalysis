@@ -39,17 +39,16 @@ else
     higherCutOff = 1 / higherCutOff / tr; %Upper cut-off measured in volumes
 end
 
-allVolumes = dir(fullfile(functionalDirectory, '*.nii'));
-allVolumes = char({allVolumes.name});
-numberOfSessions = size(allVolumes, 1);
-newVolumes = allVolumes;
-allVolumes = [repmat(functionalDirectory, [size(allVolumes, 1), 1]), char(allVolumes)];
-newVolumes = [repmat(fullfile(smoothingDirectory, 'f'), [size(newVolumes, 1), 1]), char(newVolumes)];
-zipVolumes = [newVolumes, repmat('.gz', [size(newVolumes, 1), 1])];
+volumeNames = dir(fullfile(functionalDirectory, '*.nii'));
+volumeNames = {volumeNames.name};
+allVolumes = fullfile(functionalDirectory, volumeNames);
+newVolumes = fullfile(smoothingDirectory, strcat('f', volumeNames));
+zipVolumes = fullfile(smoothingDirectory, strcat('f', volumeNames, '.gz'));
+numberOfSessions = length(volumeNames);
 
-
+%@todo rewrite to (qsub)cellfun
 for i = 1:numberOfSessions
-    filterCommand = sprintf('source ~/.bashrc; fslmaths %s -bptf %f %f %s; gunzip -f %s', allVolumes(i, :), higherCutOff, lowerCutOff, newVolumes(i, :), zipVolumes(i, :));
+    filterCommand = sprintf('source ~/.bashrc; fslmaths %s -bptf %f %f %s; gunzip -f %s', allVolumes{i}, higherCutOff, lowerCutOff, newVolumes{i}, zipVolumes{i});
     bandPassSession(filterCommand, useQsub);
 end
 

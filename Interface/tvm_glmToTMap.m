@@ -21,9 +21,9 @@ glmFile =               fullfile(subjectDirectory, tvm_getOption(configuration, 
     %no default
 resDevFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ResidualSumOfSquares'));
     %no default
-tMapFiles =              fullfile(subjectDirectory, tvm_getOption(configuration, 'o_TMap'));
+contrasts =              tvm_getOption(configuration, 'i_Contrast');
     %no default
-contrasts =              tvm_getOption(configuration, 'p_Contrast');
+tMapFiles =              fullfile(subjectDirectory, tvm_getOption(configuration, 'o_TMap'));
     %no default
     
 definitions = tvm_definitions();

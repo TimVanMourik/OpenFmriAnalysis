@@ -26,7 +26,7 @@ referenceVolumeFile = tvm_getOption(configuration, 'i_ReferenceVolume');
     %no default
 volumeFiles         = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_VolumeFile'));
     %no default
-freeSurferSubject   = fullfile(subjectDirectory, tvm_getOption(configuration, 'p_FreeSurfer', 'FreeSurfer'));
+freeSurferSubject   = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_FreeSurfer', 'FreeSurfer'));
     %'FreeSurfer'
     
 %%

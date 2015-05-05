@@ -15,20 +15,26 @@ subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory');
     %no default
 functionalDirectory =   fullfile(subjectDirectory, tvm_getOption(configuration, 'i_FunctionalDirectory'));
     %no default
-smoothingDirectory =    fullfile(subjectDirectory, tvm_getOption(configuration, 'i_SmoothingDirectory'));
+smoothingKernel =       tvm_getOption(configuration, 'i_SmoothingKernel', [4, 4, 4]);
+    %'[4, 4, 4]
+useQsub =               tvm_getOption(configuration, 'i_QSub', true);
+    %'[4, 4, 4]
+smoothingDirectory =    fullfile(subjectDirectory, tvm_getOption(configuration, 'o_SmoothingDirectory'));
     %no default
-smoothingKernel =       tvm_getOption(configuration, 'p_SmoothingKernel', [6, 6, 6]);
-    %'[6, 6, 6]
     
 %%
-allVolumes = dir(fullfile(functionalDirectory, '*.nii'));
-allVolumes = char({allVolumes.name});
-numberOfVolumes = size(allVolumes, 1);
-newVolumes = allVolumes;
-allVolumes = [repmat(functionalDirectory, [size(allVolumes, 1), 1]), char(allVolumes)];
-newVolumes = [repmat(fullfile(smoothingDirectory, 's'), [size(newVolumes, 1), 1]), char(newVolumes)];
-for i = 1:numberOfVolumes
-    spm_smooth(allVolumes(i, :), newVolumes(i, :), smoothingKernel);
+volumeNames = dir(fullfile(functionalDirectory, '*.nii'));
+volumeNames = {volumeNames.name};
+allVolumes = fullfile(functionalDirectory, volumeNames);
+newVolumes = fullfile(smoothingDirectory, strcat('s', volumeNames));
+
+if useQsub
+    compilation = 'no';
+    memoryRequirement = 2 * 1024 ^ 3;
+    timeRequirement = 10 * 60;
+    qsubcellfun(@spm_smooth, allVolumes, newVolumes, repmat({smoothingKernel}, 1, length(allVolumes)), 'memreq', memoryRequirement, 'timreq', timeRequirement, 'compile', compilation);
+else
+    cellfun(@spm_smooth, allVolumes, newVolumes, repmat({smoothingKernel}, 1, length(allVolumes)));
 end
 
 end %end function

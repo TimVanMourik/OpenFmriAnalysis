@@ -15,7 +15,7 @@ motionFiles =           fullfile(subjectDirectory, tvm_getOption(configuration, 
     %no default
 fir =                   tvm_getOption(configuration, 'i_Fir', false);
     %default: false
-segmentSpacing =        tvm_getOption(configuration, 'ip_SegmentSpacing', 1);
+segmentSpacing =        tvm_getOption(configuration, 'i_SegmentSpacing', 1);
     %default: 1
 numberOfSegments =      tvm_getOption(configuration, 'i_NumberOfSegments', 16);
     %default: 16

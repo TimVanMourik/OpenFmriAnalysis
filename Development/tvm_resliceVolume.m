@@ -22,9 +22,9 @@ coregistrationFile  = tvm_getOption(configuration, 'i_CoregistrationMatrix', [])
     %no default
 moveFiles           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_MoveVolumes'));
     %no default
-volumeFiles         = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_OutputVolumes'));
+inverseRegistration = tvm_getOption(configuration, 'i_InverseRegistration', false);
     %no default
-inverseRegistration = tvm_getOption(configuration, 'p_InverseRegistration', false);
+volumeFiles         = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_OutputVolumes'));
     %no default
     
 %%

@@ -38,12 +38,12 @@ pialK1              = fullfile(subjectDirectory, tvm_getOption(configuration, 'i
 pialK2              = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_PialCurvature2', ''));
     %default: ''
     %when there is no curvature input, equidistant sampling will be used.
+levels              = tvm_getOption(configuration, 'i_Levels', 0:1/3:1);
+    %0:1/3:1
 levelSetFile        = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_LevelSet', 'LevelSets/brain.levels.nii'));
     %no default
 layerFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Layers', 'LevelSets/brain.layers.nii'));
     %no default
-levels              = tvm_getOption(configuration, 'p_Levels', 0:1/3:1);
-    %0:1/3:1
 
 %%
 curvature = false;
