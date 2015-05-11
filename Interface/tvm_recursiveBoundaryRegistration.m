@@ -42,7 +42,7 @@ for hemisphere = 1:2
     [~, selectedVerticesP] = selectVertices(pSurface{hemisphere}, mask);
     selectedVertices = selectedVerticesW | selectedVerticesP;
 
-    [wSurface{hemisphere}(selectedVertices, :), pSurface{hemisphere}(selectedVertices, :), transformStack{hemisphere}] = tvm_RecursiveBoundaryRegistration(wSurface{hemisphere}(selectedVertices, :), pSurface{hemisphere}(selectedVertices, :), referenceVolume, registrationConfiguration);  
+    [wSurface{hemisphere}(selectedVertices, :), pSurface{hemisphere}(selectedVertices, :), transformStack{hemisphere}] = tvm_recursiveRegistration(wSurface{hemisphere}(selectedVertices, :), pSurface{hemisphere}(selectedVertices, :), referenceVolume, registrationConfiguration);  
 end
 
 eval(tvm_changeVariableNames(definitions.WhiteMatterSurface, wSurface));

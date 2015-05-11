@@ -1,4 +1,4 @@
-function tvm_labelsToVolume(configuration)
+function tvm_labelToVolume(configuration)
 % TVM_LABELSTOVOLUME
 %   TVM_LABELSTOVOLUME(configuration)
 %   
