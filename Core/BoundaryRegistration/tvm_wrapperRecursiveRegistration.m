@@ -1,4 +1,4 @@
-function [newArrayW, newArrayP, transformStack] = tvm_RecursiveBoundaryRegistration(arrayW, arrayP, voxelGrid, configuration)
+function [newArrayW, newArrayP, transformStack] = tvm_wrapperRecursiveRegistration(arrayW, arrayP, voxelGrid, configuration)
 %TVM_RECURSIVEBOUNDARYREGISTRATION fits the input mesh to the volume. It is to
 %be used for fitting grey matter boundaries (constructed on an anatomical
 %scan) to a (locally inhomogeneously distorted) functional scan
