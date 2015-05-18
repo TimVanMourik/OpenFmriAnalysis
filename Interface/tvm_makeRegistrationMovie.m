@@ -81,11 +81,11 @@ for i = 1:length(boundariesFiles)
     configuration.i_Vertices{i * 2} = pSurface;
 end
 
-configuration.p_Axis = iterationAxis;
-configuration.p_Visibility = 'off';
-configuration.p_ColorLimits = colorLimits;
-configuration.p_ContourColors = contourColours;
-configuration.p_ColorMap = colorMap;
+configuration.i_Axis = iterationAxis;
+configuration.i_Visibility = 'off';
+configuration.i_ColorLimits = colorLimits;
+configuration.i_ContourColors = contourColours;
+configuration.i_ColorMap = colorMap;
 
 for i = 1:numberOfFrames
     configuration.i_Slice = i;
