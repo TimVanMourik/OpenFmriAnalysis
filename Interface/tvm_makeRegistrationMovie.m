@@ -91,6 +91,7 @@ for i = 1:numberOfFrames
     configuration.i_Slice = i;
     overlayImage = tvm_showObjectContourOnSlice(configuration);
     drawnow();
+    pause(0.1);
     writeVideo(videoObject, getframe(overlayImage));
     close(overlayImage);
 end
