@@ -90,6 +90,7 @@ configuration.i_ColorMap = colorMap;
 for i = 1:numberOfFrames
     configuration.i_Slice = i;
     overlayImage = tvm_showObjectContourOnSlice(configuration);
+    drawnow();
     writeVideo(videoObject, getframe(overlayImage));
     close(overlayImage);
 end
