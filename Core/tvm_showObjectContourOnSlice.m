@@ -58,7 +58,7 @@ end
 if isempty(colorRange)
     colorRange = [min(imageData(:)), max(imageData(:))];
 end
-colormap gray;
+colormap('gray');
 imagesc(imageData, colorRange);
 set(gca, 'YDir', 'normal')
 hold on;

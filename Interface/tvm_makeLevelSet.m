@@ -49,7 +49,7 @@ pial                = fullfile(subjectDirectory, tvm_getOption(configuration, 'o
 %%
 % load(boundariesFile, 'pSurface', 'wSurface');
 
-%Ugly, but I haven't found a way to load liblapack.so
+% @todo This is ugly, but I haven't found a way to load liblapack.so
 functionDirectory = mfilename('fullpath');
 functionDirectory = functionDirectory(1:end - length(mfilename()));
 cd(functionDirectory);

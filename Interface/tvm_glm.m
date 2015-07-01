@@ -75,6 +75,7 @@ for slice = 1:referenceVolume.dim(3)
 %     if highPass ~= 0
 %         sliceTimeValues = tvm_highPassFilter(sliceTimeValues, tr, highPass);
 %     end
+    % @todo rewrite the for loop to one big matrix multiplication
     for i = 1:size(sliceTimeValues, 2)
         gmlOutput(x(i), y(i), z(i), :) = pseudoInverse * sliceTimeValues(:, i);
         residualSumOfSquares(x(i), y(i), z(i)) = sum((sliceTimeValues(:, i) - design.DesignMatrix * squeeze(gmlOutput(x(i), y(i), z(i), :))) .^ 2);

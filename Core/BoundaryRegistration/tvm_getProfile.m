@@ -1,4 +1,4 @@
-function profiles = getProfile(arrayW, arrayP, volume, configuration)
+function profiles = tvm_getProfile(arrayW, arrayP, volume, configuration)
 %GETPROFILE gets an intensity profile around and in between two vertices
 %   P = GETPROFILE(A1, A2, VOLUME, CFG)
 %   The profile P is produces from the input arrays of vertices A1 and A2.
@@ -12,9 +12,9 @@ if nargin < 4
     configuration =[];
 end
 
-numberOfSteps = getOption(configuration, 'Steps', 301);
-bok = getOption(configuration, 'Bok', false);
-extraSampling = getOption(configuration, 'OutsideGreyMatter', 0);
+numberOfSteps = tvm_getOption(configuration, 'Steps', 301);
+bok = tvm_getOption(configuration, 'Bok', false);
+extraSampling = tvm_getOption(configuration, 'OutsideGreyMatter', 0);
 
 thickness = findThickness(arrayW, arrayP);
 normals = findNormals(arrayW, arrayP);

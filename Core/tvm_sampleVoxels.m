@@ -7,6 +7,7 @@ function voxelValues = sampleVoxels(voxelgrid, x, y, z, configuration)
 %   this file is the limiting factor for the  whole program
 %
 %   Copyright (C) 2012-2013, Tim van Mourik, DCCN
+% @todo, implement other sampling methods, e.g. http://paulbourke.net/miscellaneous/interpolation
 
 %% Parse configuration
 if nargin < 5

@@ -13,17 +13,17 @@ referenceFile =         fullfile(subjectDirectory, tvm_getOption(configuration, 
     %no default
 freeSurferName =        tvm_getOption(configuration, 'i_FreeSurferFolder', 'FreeSurfer');
     %[subjectDirectory, 'FreeSurfer']
-boundariesFile =        fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
-    %no default
-registerDatFile =      	fullfile(subjectDirectory, tvm_getOption(configuration, 'o_RegisterDat'));
-    %no default
-coregistrationFile =    fullfile(subjectDirectory, tvm_getOption(configuration, 'o_CoregistrationMatrix'));
-    %no default
 fslInitialisation =     tvm_getOption(configuration, 'i_FslInitialisation', true);
     %no default
 contrast =              tvm_getOption(configuration, 'i_Contrast', 'T2');
     %no default
 degreesOfFreedom =      tvm_getOption(configuration, 'i_DegreesOfFreedom', 6);
+    %no default
+boundariesFile =        fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
+    %no default
+registerDatFile =      	fullfile(subjectDirectory, tvm_getOption(configuration, 'o_RegisterDat'));
+    %no default
+coregistrationFile =    fullfile(subjectDirectory, tvm_getOption(configuration, 'o_CoregistrationMatrix'));
     %no default
     
 definitions = tvm_definitions();    

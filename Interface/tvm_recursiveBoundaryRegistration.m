@@ -23,6 +23,7 @@ maskFile =                  tvm_getOption(configuration, 'p_Mask', '');
     
 definitions = tvm_definitions();
 %%
+tic();
 referenceVolume = spm_read_vols(spm_vol(referenceFile));
 load(boundariesFile, definitions.WhiteMatterSurface, definitions.PialSurface, definitions.FaceData);
 wSurface = eval(definitions.WhiteMatterSurface);
@@ -50,7 +51,9 @@ eval(tvm_changeVariableNames(definitions.PialSurface, pSurface));
 eval(tvm_changeVariableNames(definitions.FaceData, faceData));
 eval(tvm_changeVariableNames(definitions.TransformStack, transformStack));
 
-save(registeredBoundaries, definitions.WhiteMatterSurface, definitions.PialSurface, definitions.FaceData, definitions.TransformStack);
+computationTime = [];
+computationTime.RecursiveRegistration = toc();
+save(registeredBoundaries, definitions.WhiteMatterSurface, definitions.PialSurface, definitions.FaceData, definitions.TransformStack, 'computationTime');
 
 end %end function
 

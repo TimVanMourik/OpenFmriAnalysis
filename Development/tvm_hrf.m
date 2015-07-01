@@ -1,4 +1,22 @@
 function regressor = tvm_hrf(timePoints, stimulusOnsets, stimulusDurations, hrfParameters)
+%
+% For duration = 0 an impuls response is taken and a regular HRF is used.
+%
+% Example:
+% timePoints = 0:0.2:20; 
+% onsetTimes = [2, 8];
+% durations  = [0, 0];
+% convolution = tvm_hrf(timePoints, onsetTimes, durations);
+% plot(timePoints, convolution);
+%
+% Note that the area under the HRF curve is computed for a given time step.
+% This will be small for small duration. Only when duration = 0, an impuls
+% response is used. This may result in unexpected behaviour when using zero
+% and non-zero durations for a single regressor.
+
+if nargin < 4
+    hrfParameters = [6, 16, 1, 1, 6, 0, 32];
+end
 
 regressor = zeros(size(timePoints));
 for i = 1:length(stimulusOnsets)
@@ -10,7 +28,7 @@ end %end function
 
 function hrfValues = tvm_sampleHrf(timePoints, t0, duration, hrfParameters)
 %  
-% t0 is a signle stimulus
+% t0 is a single stimulus
 %
 
 k1 = hrfParameters(1) / hrfParameters(3);

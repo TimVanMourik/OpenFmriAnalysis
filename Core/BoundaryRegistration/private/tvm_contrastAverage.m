@@ -46,7 +46,6 @@ switch optimisationMethod
                                           transformMesh(arrayW, [rx, ry, rz], [sx, sy, sz], [tx, ty, tz], pivot), ...
                                           voxelGrid, contrastConfiguration);
         c = c -Mv * sum(contrastValuesPial);
-        
     otherwise
         Q0 = 0;
         c = -sum(tanh(Mv * (contrastValues - Q0)));
