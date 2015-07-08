@@ -40,7 +40,9 @@ hrfValues = zeros(size(timePoints));
 
 if duration == 0
     indices = timePoints > t0;
-    hrfValues(indices) = tvm_gammaPdf(timePoints(indices) - t0, k1, theta1) - tvm_gammaPdf(timePoints(indices) - t0, k2, theta2) / hrfParameters(5);
+    %centre time around onset time
+    timePoints = timePoints - t0;
+    hrfValues(indices) = tvm_gammaPdf(timePoints(indices), k1, theta1) - tvm_gammaPdf(timePoints(indices), k2, theta2) / hrfParameters(5);
     
     %normalisation:
     hrfValues = hrfValues / (1 - 1 / hrfParameters(5));
