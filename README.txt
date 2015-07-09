@@ -16,7 +16,6 @@ Before you start:
 @BUGS
 -MAJOR:
 -makeSignedDistancefield, the matrix file is written to the output file but not incorporated in the reading of the obj-file, while making the Signed Distance Field.
--tvm_makeLevelSet: NOTE: AN INDEXING PROBLEM (BY 1) WAS FOUND IN A THE PREPARATION FOR AN ISMRM ABSTRACT. FIND OUT WHERE THIS COMES FROM!
 
 -MINOR:
 -tvm_dicomsToNifti, make sure copies are  when function is rerun.
