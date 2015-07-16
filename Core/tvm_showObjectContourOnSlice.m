@@ -28,9 +28,14 @@ colorMap =          tvm_getOption(configuration, 'i_ColorMap', []);
 
 %create a figure, possibly invisble, if it's only used for saving, not
 %showing
-screenSize = get(0, 'ScreenSize');
-overlayImage = figure('Visible', visibility, 'units', 'normalized', 'outerposition', [0, 0, 1, 1]);
-subplot('position', [0, 0, 1, 1]);
+
+% @todo the figure() lines have been removed such that it behaves more like
+% a regular matlab image function and you can choose to call a figure
+% first.
+
+% screenSize = get(0, 'ScreenSize');
+% overlayImage = figure('Visible', visibility, 'units', 'normalized', 'outerposition', [0, 0, 1, 1]);
+% subplot('position', [0, 0, 1, 1]);
 
 switch sliceAxis
     case {'x', 'coronal'}
@@ -69,11 +74,11 @@ for i = 1:length(vertices)
         drawCrossSection(vertices{i}{j}, faceData{i}{j}, slice, dimension, xDimension, yDimension, contourColours{i});
     end
 end
-
-axis equal tight off
-set(gcf, ...
-    'units', 'normalized', ...
-    'outerposition', [0, 0, screenSize(4) / screenSize(3), 1]);
+ 
+% axis equal tight off
+% set(gcf, ...
+%     'units', 'normalized', ...
+%     'outerposition', [0, 0, screenSize(4) / screenSize(3), 1]);
 
 if ~isempty(colorMap)
     colormap(colorMap);

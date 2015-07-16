@@ -120,6 +120,7 @@ function [timePoints, covariance] = regressLayers(voxelValues, designMatrix, cov
 
 switch regressionApproach
     case 'OLS'
+        % @todo instead, compute pinv and multiply that every time point!
         timePoints = designMatrix \ voxelValues;
         sumOfSquares = sum((voxelValues - designMatrix * timePoints) .^ 2);
 %         vcov = X'X * SSres / (n - p)

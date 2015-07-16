@@ -23,6 +23,8 @@ frameSize =             tvm_getOption(configuration, 'i_MovieSize', [1042, 968])
     % 
 contourColours =        tvm_getOption(configuration, 'i_ContourColors', {'y', 'r', 'g', 'b'});
     %no default
+roiFile =                   tvm_getOption(configuration, 'i_RegionOfInterest', []);
+    % 
 colorLimits =           tvm_getOption(configuration, 'i_ColorLimits', []);
     % 
 contrastSetting =       tvm_getOption(configuration, 'i_Contrast', 1);
@@ -48,6 +50,13 @@ end
 
 reference = spm_vol(referenceFile);
 reference.volume = spm_read_vols(reference);
+
+if ~isempty(roiFile)
+    roi = spm_vol(fullfile(subjectDirectory, roiFile));
+    roi.volume = spm_read_vols(roi);
+    %roi is 60 percent brighter
+    reference.volume(roi.volume > 0) = reference.volume(roi.volume > 0) * 1.6;
+end
 
 numberOfFrames  = reference.dim(dimension);
 videoObject = VideoWriter(movieFile);
@@ -83,15 +92,33 @@ end
 
 configuration.i_Axis = iterationAxis;
 configuration.i_Visibility = 'off';
+visibility = 'off';
 configuration.i_ColorLimits = colorLimits;
 configuration.i_ContourColors = contourColours;
 configuration.i_ColorMap = colorMap;
 
+% @todo fix Error 'Frame must be 1046 by 965'
+% either:
+% 'imresize' http://www.widecodes.com/0xieWPgeXe/matlabmaking-video-from-images.html
+% or:
+% 'hold on' http://www.mathworks.com/matlabcentral/answers/229630-why-do-i-get-error-in-videowriter-as-error-using-videowriter-writevideo-frame-must-be-436-by-344-e
+
+screenSize = get(0, 'ScreenSize');
+
 for i = 1:numberOfFrames
     configuration.i_Slice = i;
-    overlayImage = tvm_showObjectContourOnSlice(configuration);
-    drawnow();
-    pause(0.1);
+    
+    overlayImage = figure('Visible', visibility, 'units', 'normalized', 'outerposition', [0, 0, 1, 1]);
+    subplot('position', [0, 0, 1, 1]);
+    axis('equal', 'tight', 'off');
+    set(gcf, ...
+        'units', 'normalized', ...
+        'outerposition', [0, 0, screenSize(4) / screenSize(3), 1]);
+
+%     overlayImage = 
+    tvm_showObjectContourOnSlice(configuration);
+%     imresize(, [1046, 965])'
+    
     writeVideo(videoObject, getframe(overlayImage));
     close(overlayImage);
 end
