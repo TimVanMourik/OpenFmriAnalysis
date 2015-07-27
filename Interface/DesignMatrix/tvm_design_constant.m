@@ -21,7 +21,7 @@ designMatrix = zeros(design.Length, length(design.Partitions));
 regressorLabels = cell(1, length(design.Partitions));
 for column = 1:length(design.Partitions)
     designMatrix(design.Partitions{column}, column) = 1;
-    design.RegressorLabel{column} = 'Constant';
+    regressorLabels{column} = 'Constant';
 end
 design.DesignMatrix = [design.DesignMatrix, designMatrix];
 design.RegressorLabel = [design.RegressorLabel, regressorLabels];
