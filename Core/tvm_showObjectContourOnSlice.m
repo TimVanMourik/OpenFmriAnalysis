@@ -15,14 +15,12 @@ faceData =          tvm_getOption(configuration, 'i_Faces');
     %no default
 sliceAxis =         tvm_getOption(configuration, 'i_Axis', 'z');
     %no default
-visibility =      	tvm_getOption(configuration, 'i_Visibility', 'on');
-    %no default
 colorRange =      	tvm_getOption(configuration, 'i_ColorLimits', []);
-    %no default
+    %
 contourColours =   	tvm_getOption(configuration, 'i_ContourColors', {'y', 'r', 'g', 'b'});
     %no default
 colorMap =          tvm_getOption(configuration, 'i_ColorMap', []);
-    %no default
+    %
     
 %%
 

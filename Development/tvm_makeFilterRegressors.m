@@ -5,7 +5,7 @@ function designMatrix = tvm_makeFilterRegressors(numberOfVolumes, TR, cutOff)
 %   Copyright (C) 2013, Tim van Mourik, DCCN
 
 designLength = sum(numberOfVolumes);
-startOfRun = [0, cumsum(numberOfVolumes)] + 1;
+startOfRun = [0, cumsum(numberOfVolumes)'] + 1;
 designMatrix = [];
 for session = 1:length(numberOfVolumes)
     timePoints = startOfRun(session):startOfRun(session + 1) - 1;

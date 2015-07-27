@@ -97,12 +97,6 @@ configuration.i_ColorLimits = colorLimits;
 configuration.i_ContourColors = contourColours;
 configuration.i_ColorMap = colorMap;
 
-% @todo fix Error 'Frame must be 1046 by 965'
-% either:
-% 'imresize' http://www.widecodes.com/0xieWPgeXe/matlabmaking-video-from-images.html
-% or:
-% 'hold on' http://www.mathworks.com/matlabcentral/answers/229630-why-do-i-get-error-in-videowriter-as-error-using-videowriter-writevideo-frame-must-be-436-by-344-e
-
 screenSize = get(0, 'ScreenSize');
 
 for i = 1:numberOfFrames
@@ -114,10 +108,8 @@ for i = 1:numberOfFrames
     set(gcf, ...
         'units', 'normalized', ...
         'outerposition', [0, 0, screenSize(4) / screenSize(3), 1]);
-
-%     overlayImage = 
+ 
     tvm_showObjectContourOnSlice(configuration);
-%     imresize(, [1046, 965])'
     
     writeVideo(videoObject, getframe(overlayImage));
     close(overlayImage);

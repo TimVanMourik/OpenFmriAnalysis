@@ -10,7 +10,7 @@ subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory');
 stimulusFiles =         tvm_getOption(configuration, 'i_Stimulus');
     %no default
 functionalFolder =      fullfile(subjectDirectory, tvm_getOption(configuration, 'i_FunctionalFolder'));
-    %default: false
+    %no default
 motionFiles =           fullfile(subjectDirectory, tvm_getOption(configuration, 'i_MotionFiles'));
     %no default
 fir =                   tvm_getOption(configuration, 'i_Fir', false);

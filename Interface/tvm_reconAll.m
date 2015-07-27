@@ -15,6 +15,10 @@ structuralScan      = tvm_getOption(configuration, 'i_Structural');
     %no default
 highRes             = tvm_getOption(configuration, 'i_HighRes', false);
     %no default
+timeRequirement     = tvm_getOption(configuration, 'i_ComputationTime', '22:00:00');
+    %no default
+memoryRequirement   = tvm_getOption(configuration, 'i_Memory', '8gb');
+    %no default
 freeSurferFolder    = tvm_getOption(configuration, 'i_FreeSurferFolder', 'FreeSurfer');
     %'FreeSurfer'
     
@@ -35,13 +39,21 @@ else
 end
 
 qScript = fullfile(subjectDirectory, 'FreeSurferScript.sh');
-qsubCommand = ['qsub -l walltime=22:00:00,mem=6gb ' qScript];
+qsubCommand = ['qsub -l walltime=' timeRequirement ',mem=' memoryRequirement ' ' qScript];
 
-unixCommand = ['SUBJECTS_DIR=', subjectDirectory '; '];
-unixCommand = [unixCommand 'recon-all -subjid ' freeSurferFolder ' -i ' fullfile(subjectDirectory, structuralScan) highResCommand ' -all; rm ' qScript '; exit;'];
+
 
 f = fopen(qScript, 'w');
+fprintf(f, '#!/bin/bash\n');
+unixCommand = ['SUBJECTS_DIR=', subjectDirectory ';'];
+fprintf(f, '%s\n', unixCommand);
+unixCommand = ['recon-all -subjid ' freeSurferFolder ' -i ' fullfile(subjectDirectory, structuralScan) highResCommand ' -all;'];
+fprintf(f, '%s\n', unixCommand);
+unixCommand = ['rm ' qScript ';'];
+fprintf(f, '%s\n', unixCommand);
+unixCommand = 'exit;';
 fprintf(f, '%s', unixCommand);
+
 fclose(f);
 fileattrib(qScript, '+x');
 

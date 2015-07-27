@@ -32,6 +32,7 @@ if core
 end
 if interface
     addpath(fullfile(rootDirectory, 'Interface'));
+    addpath(fullfile(rootDirectory, 'Interface/DesignMatrix'));
 end
 if development
     addpath(fullfile(rootDirectory, 'Development'));
