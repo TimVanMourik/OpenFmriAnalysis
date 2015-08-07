@@ -1,4 +1,4 @@
-function voxelValues = sampleVoxels(voxelgrid, x, y, z, configuration)
+function voxelValues = tvm_sampleVoxels(voxelgrid, x, y, z, configuration)
 %SAMPLEVOXELS Gives the voxel values for an input array of coordinates
 %   V = SAMPLEVOXELS(VOXELGRID, X, Y, Z)
 %   The method uses linear interpolation to come to the right voxel values
