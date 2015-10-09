@@ -100,6 +100,9 @@ transformation = bbrCoregistrationMatrix' * inv(freeSurferMatrixFunctional)' * s
 %world space to world space coregistration matrix
 coregistrationMatrix = inv(functionalScan.mat)' * inv(shiftByOne)' * freeSurferMatrixFunctional' * inv(bbrCoregistrationMatrix)' * inv(freeSurferMatrixStructural') * shiftByOne' * structuralScan.mat'; %#ok<NASGU>
 coregistrationMatrix = coregistrationMatrix';
+% @todo shuoldn't this be equal to directly:
+% coregistrationMatrix =  structuralScan.mat * shiftByOne * inv(freeSurferMatrixStructural) * inv(bbrCoregistrationMatrix) * freeSurferMatrixFunctional * inv(shiftByOne) * inv(functionalScan.mat);
+
 
 %%
 for hemisphere = 1:2

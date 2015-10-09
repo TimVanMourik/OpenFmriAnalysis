@@ -7,7 +7,7 @@ function tvm_design_empty(configuration)
 %% Parse configuration
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', '.');
     %no default
-designFileOut           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Design'));
+designFileOut           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DesignMatrix'));
     %no default
 functionalFolder =      fullfile(subjectDirectory, tvm_getOption(configuration, 'i_FunctionalFolder'));
     %no default

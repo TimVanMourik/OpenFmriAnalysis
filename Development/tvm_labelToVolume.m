@@ -39,9 +39,14 @@ for i = 1:length(labelFiles)
     filterThreshold = 0.3;
     projectionParameters = 'frac 0 1 .1';
     origFile = fullfile(freeSurferPath, freeSurferSubject, 'mri/orig.nii');
-    % @todo give an error message if the label files or the orig file
-    % cannot be found
-    unixCommand = [unixCommand, sprintf('mri_label2vol --fill-ribbon --label %s --temp %s --fillthresh %f --proj %s --subject %s --hemi %s --o %s --identity;', labelFiles{i}, origFile, filterThreshold, projectionParameters, freeSurferSubject,hemispheres{i}, volumeFiles{i})]; 
+    if ~exist(origFile, 'file')
+        unix(sprintf('mri_convert %s %s', [origFile(1:end-4), '.mgz'], origFile));
+    end
+    if ~exist(labelFiles{i}, 'file')
+        error('Label cannot be found.');
+    end
+%     unixCommand = [unixCommand, sprintf('mri_label2vol --fill-ribbon --label %s --temp %s --fillthresh %f --proj %s --subject %s --hemi %s --o %s --identity;', labelFiles{i}, origFile, filterThreshold, projectionParameters, freeSurferSubject,hemispheres{i}, volumeFiles{i})]; 
+    unixCommand = [unixCommand, sprintf('mri_label2vol --label %s --temp %s --fillthresh %f --proj %s --subject %s --hemi %s --o %s --identity;', labelFiles{i}, origFile, filterThreshold, projectionParameters, freeSurferSubject,hemispheres{i}, volumeFiles{i})]; 
     unix(unixCommand);
 end
 

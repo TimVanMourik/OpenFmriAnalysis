@@ -11,7 +11,7 @@ function tvm_intersectVolumes(configuration)
 %   configuration.Output
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory');
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', '.');
     %no default
 volumeFiles =          	fullfile(subjectDirectory, tvm_getOption(configuration, 'i_InputVolumes'));
     %no default
@@ -27,7 +27,7 @@ for i = 1:length(volumeFiles)
     inputVolume = spm_vol(volumeFiles{i});
     inputVolume.volume = spm_read_vols(inputVolume);
     for j = 1:length(intersectionFiles);
-        intersectVolume = spm_vol(intersectionFiles{i});
+        intersectVolume = spm_vol(intersectionFiles{j});
         intersectVolume.volume = spm_read_vols(intersectVolume);
         inputVolume.volume = inputVolume.volume & intersectVolume.volume;
     end

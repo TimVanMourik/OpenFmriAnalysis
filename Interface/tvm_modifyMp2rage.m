@@ -13,17 +13,20 @@ function tvm_modifyMp2rage(configuration)
 %   configuration.MP2RAGE
 
 %% Parse configuration
-subjectDirectory =  tvm_getOption(configuration, 'i_SubjectDirectory');
-    %no default
+subjectDirectory =  tvm_getOption(configuration, 'i_SubjectDirectory', '.');
+    %default: current directory
 mp2rageFolder =     [subjectDirectory, tvm_getOption(configuration, 'i_MP2RAGEFolder')];
     %no default   
 uniFolder =         tvm_getOption(configuration, 'i_UniFolder', '*UNI*');
+    %default: '*UNI*'
 inv2Folder =        tvm_getOption(configuration, 'i_Inv2Folder', '*INV2*');
-anatomicalFileName =tvm_getOption(configuration, 'o_MP2RAGE', 'MP2RAGE.nii');
-threshold =         tvm_getOption(configuration, 'p_Threshold', 1.2);
+    %default: '*INV2*'
+threshold =         tvm_getOption(configuration, 'i_Threshold', 1.2);
     %default = 1.2
     %this is the background threshold: everything under mean * threshold of
     %the inv2-image gets nulled in the uni-image
+anatomicalFileName =tvm_getOption(configuration, 'o_MP2RAGE', 'MP2RAGE.nii');
+    %default: 'MP2RAGE.nii'   
 
 %%
 folder = dir(fullfile(mp2rageFolder, uniFolder));

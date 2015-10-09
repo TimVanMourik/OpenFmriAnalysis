@@ -7,9 +7,9 @@ function tvm_design_constant(configuration)
 %% Parse configuration
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', '.');
     %no default
-designFileIn            = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Design'));
+designFileIn            = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
-designFileOut           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Design'));
+designFileOut           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DesignMatrix'));
     %no default
     
 definitions = tvm_definitions();

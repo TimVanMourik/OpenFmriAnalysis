@@ -48,6 +48,10 @@ residualSumOfSquares = zeros(referenceVolume.dim);
 numberOfVoxels = prod(referenceVolume.dim);
 voxelsPerSlice = numberOfVoxels / referenceVolume.dim(3);
 
+if functionalFolder(end) ~= filesep()
+    functionalFolder = [functionalFolder, filesep()];
+end
+
 allVolumes = dir(fullfile(functionalFolder, '*.nii'));
 allVolumes = [repmat(functionalFolder, [length(allVolumes), 1]), char({allVolumes.name})];
 
@@ -72,9 +76,7 @@ for slice = 1:referenceVolume.dim(3)
     [x, y, z] = ind2sub(referenceVolume.dim, indexRange);
     
     sliceTimeValues = spm_get_data(allVolumes, [x; y; z]);
-%     if highPass ~= 0
-%         sliceTimeValues = tvm_highPassFilter(sliceTimeValues, tr, highPass);
-%     end
+
     % @todo rewrite the for loop to one big matrix multiplication
     for i = 1:size(sliceTimeValues, 2)
         gmlOutput(x(i), y(i), z(i), :) = pseudoInverse * sliceTimeValues(:, i);

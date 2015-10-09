@@ -16,22 +16,33 @@ function tvm_computeCurvature(configuration)
 %% Parse configuration
 subjectDirectory 	= tvm_getOption(configuration, 'i_SubjectDirectory');
     %no default
-white               = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_White'));
+white               = tvm_getOption(configuration, 'i_White');
     %no default
-pial                = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Pial'));
+pial                = tvm_getOption(configuration, 'i_Pial');
     %no default
-whiteK1             = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_WhiteCurvature1'));
+whiteK1             = tvm_getOption(configuration, 'o_WhiteCurvature1');
     %no default
-whiteK2             = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_WhiteCurvature2'));
+whiteK2             = tvm_getOption(configuration, 'o_WhiteCurvature2');
     %no default
-pialK1              = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_PialCurvature1'));
+pialK1              = tvm_getOption(configuration, 'o_PialCurvature1');
     %no default
-pialK2              = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_PialCurvature2'));
+pialK2              = tvm_getOption(configuration, 'o_PialCurvature2');
     %no default
-    
+
 %%
-tvm_computeCurvatureFromSdf(white, whiteK1, whiteK2);
-tvm_computeCurvatureFromSdf(pial, pialK1, pialK2);
+cfg = [];
+cfg.i_SubjectDirectory = subjectDirectory;
+cfg.i_SDF = white;
+cfg.o_PrimaryCurvature1 = whiteK1;
+cfg.o_SecondaryCurvature2 = whiteK2;
+tvm_computeCurvatureFromSdf(cfg);
+
+cfg = [];
+cfg.i_SubjectDirectory = subjectDirectory;
+cfg.i_SDF = pial;
+cfg.o_PrimaryCurvature1 = pialK1;
+cfg.o_SecondaryCurvature2 = pialK2;
+tvm_computeCurvatureFromSdf(cfg);
 
 end %end function
 

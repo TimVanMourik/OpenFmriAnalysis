@@ -33,6 +33,8 @@ load(designFile, definitions.GlmDesign);
 design = eval(definitions.GlmDesign);
 
 designMatrix = design.DesignMatrix;
+% note that the actual covariance matrix is the inverse of this. But this allows us to use
+% a matrix division later on, which is faster if you don't have to many contrasts 
 covarianceMatrix = designMatrix' * designMatrix;
 degreesOfFreedom = size(designMatrix, 1) - size(designMatrix, 2);
 

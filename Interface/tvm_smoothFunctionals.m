@@ -17,7 +17,7 @@ functionalDirectory =   fullfile(subjectDirectory, tvm_getOption(configuration, 
     %no default
 smoothingKernel =       tvm_getOption(configuration, 'i_SmoothingKernel', [4, 4, 4]);
     %'[4, 4, 4]
-useQsub =               tvm_getOption(configuration, 'i_QSub', true);
+useQsub =               tvm_getOption(configuration, 'i_Qsub', true);
     %'[4, 4, 4]
 smoothingDirectory =    fullfile(subjectDirectory, tvm_getOption(configuration, 'o_SmoothingDirectory'));
     %no default

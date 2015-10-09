@@ -1,4 +1,4 @@
-function coordinates = getBokCoordinates(arrayW, arrayP, curvature, volumeFraction, normals, thickness)
+function coordinates = tvm_getBokCoordinates(arrayW, arrayP, curvature, volumeFraction, normals, thickness)
 %GETBOKCOORDINATES finds interpolated coordinates between two surfaces,
 %given a certain curvature (Bok, 1929)
 %   COORDINATES = GETBOKCOORDINATES(ARRAYW, ARRAYP, CURV, VOLUMEDRACTION, NORMALS, THICKNESS)
