@@ -5,7 +5,7 @@ Before you start:
 -Run the MATLAB function tvm_installLaminarAnalysisToolbox.m
  
 -SPM needs to be in your MATLAB path
--FieldTrip needs to be in your MATLAB path
+-FieldTrip needs to be in your MATLAB path (only if ou want to the use qsub functions, cluster distribution)
 -dcm2nii needs to be in the .profile
 -FreeSurfer needs to be installed and the setup needs to be in the .profile
 -to your .bashrc, add:
