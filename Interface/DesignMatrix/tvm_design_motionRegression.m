@@ -7,11 +7,11 @@ function tvm_design_motionRegression(configuration)
 %% Parse configuration
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', '.');
     %no default
-designFileIn            = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Design'));
+designFileIn            = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
 motionFiles             = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_MotionFiles'));
     %no default
-designFileOut           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Design'));
+designFileOut           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DesignMatrix'));
     %no default
     
 definitions = tvm_definitions();

@@ -53,8 +53,8 @@ unixCommand = ['SUBJECTS_DIR=', subjectDirectory ';'];
 unixCommand = [unixCommand 'bbregister --s ' freeSurferName ' --mov ' referenceFile ' --reg ' registerDatFile fsl contrastArgument dof ';'];
 unix(unixCommand);
 
-if ~exist(fullfile(freeSurferFolder, 'mri', 'brain.nii'), 'file')
-    unix(['mri_convert ' fullfile(freeSurferFolder, 'mri', 'brain.mgz') ' ' fullfile(freeSurferFolder, 'mri', 'brain.nii') ' ;']);
+if ~exist(fullfile(freeSurferFolder, 'mri/brain.nii'), 'file')
+    unix(['mri_convert ' fullfile(freeSurferFolder, 'mri/brain.mgz') ' ' fullfile(freeSurferFolder, 'mri/brain.nii') ' ;']);
 end
 
 surfaceFolder = fullfile(freeSurferFolder, 'surf');

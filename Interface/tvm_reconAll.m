@@ -41,8 +41,6 @@ end
 qScript = fullfile(subjectDirectory, 'FreeSurferScript.sh');
 qsubCommand = ['qsub -l walltime=' timeRequirement ',mem=' memoryRequirement ' ' qScript];
 
-
-
 f = fopen(qScript, 'w');
 fprintf(f, '#!/bin/bash\n');
 unixCommand = ['SUBJECTS_DIR=', subjectDirectory ';'];

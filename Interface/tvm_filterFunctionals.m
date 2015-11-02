@@ -48,7 +48,7 @@ numberOfSessions = length(volumeNames);
 
 %@todo rewrite to (qsub)cellfun
 for i = 1:numberOfSessions
-    filterCommand = sprintf('source ~/.bashrc; fslmaths -odt float %s -bptf %f %f %s; gunzip -f %s', allVolumes{i}, higherCutOff, lowerCutOff, newVolumes{i}, zipVolumes{i});
+    filterCommand = sprintf('source ~/.bashrc; fslmaths %s -bptf %f %f %s -odt float; gunzip -f %s', allVolumes{i}, higherCutOff, lowerCutOff, newVolumes{i}, zipVolumes{i});
     bandPassSession(filterCommand, useQsub);
 end
 

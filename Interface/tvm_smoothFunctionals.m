@@ -17,7 +17,7 @@ functionalDirectory =   fullfile(subjectDirectory, tvm_getOption(configuration, 
     %no default
 smoothingKernel =       tvm_getOption(configuration, 'i_SmoothingKernel', [4, 4, 4]);
     %'[4, 4, 4]
-useQsub =               tvm_getOption(configuration, 'i_Qsub', true);
+useQsub =               tvm_getOption(configuration, 'i_Qsub', false);
     %'[4, 4, 4]
 smoothingDirectory =    fullfile(subjectDirectory, tvm_getOption(configuration, 'o_SmoothingDirectory'));
     %no default
@@ -32,7 +32,9 @@ if useQsub
     compilation = 'no';
     memoryRequirement = 2 * 1024 ^ 3;
     timeRequirement = 10 * 60;
-    qsubcellfun(@spm_smooth, allVolumes, newVolumes, repmat({smoothingKernel}, 1, length(allVolumes)), 'memreq', memoryRequirement, 'timreq', timeRequirement, 'compile', compilation);
+    for i = 1:length(allVolumes)
+        qsubfeval(@spm_smooth, allVolumes{i}, newVolumes{i}, smoothingKernel, 'memreq', memoryRequirement, 'timreq', timeRequirement, 'compile', compilation);
+    end
 else
     cellfun(@spm_smooth, allVolumes, newVolumes, repmat({smoothingKernel}, 1, length(allVolumes)));
 end

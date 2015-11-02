@@ -26,16 +26,16 @@ white               = fullfile(subjectDirectory, tvm_getOption(configuration, 'i
     %no default
 pial                = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Pial'));
     %no default
-whiteK1             = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_WhiteCurvature1', ''));
+whiteK1             = tvm_getOption(configuration, 'i_WhiteCurvature1', '');
     %default: ''
     %when there is no curvature input, equidistant sampling will be used.
-whiteK2             = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_WhiteCurvature2', ''));
+whiteK2             = tvm_getOption(configuration, 'i_WhiteCurvature2', '');
     %default: ''
     %when there is no curvature input, equidistant sampling will be used.
-pialK1              = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_PialCurvature1', ''));
+pialK1              = tvm_getOption(configuration, 'i_PialCurvature1', '');
     %default: ''
     %when there is no curvature input, equidistant sampling will be used.
-pialK2              = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_PialCurvature2', ''));
+pialK2              = tvm_getOption(configuration, 'i_PialCurvature2', '');
     %default: ''
     %when there is no curvature input, equidistant sampling will be used.
 levels              = tvm_getOption(configuration, 'i_Levels', 0:1/3:1);
@@ -49,6 +49,11 @@ layerFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o
 curvature = false;
 % if all of them are not empty
 if all(~[isempty(whiteK1), isempty(whiteK2), isempty(pialK1), isempty(pialK1)])
+    whiteK1             = fullfile(subjectDirectory, whiteK1);
+    whiteK2             = fullfile(subjectDirectory, whiteK2);
+    pialK1              = fullfile(subjectDirectory, pialK1);
+    pialK2              = fullfile(subjectDirectory, pialK2);
+
     curvature = true;
 end
 

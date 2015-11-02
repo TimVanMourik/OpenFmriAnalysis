@@ -43,7 +43,8 @@ referenceVolume.dt = [16, 0];
 load(designFile, definitions.GlmDesign);
 design = eval(definitions.GlmDesign);
 
-gmlOutput = zeros([referenceVolume.dim, size(design.DesignMatrix, 2)]);
+numberOfRegressors = size(design.DesignMatrix, 2);
+gmlOutput = zeros([referenceVolume.dim, numberOfRegressors]);
 residualSumOfSquares = zeros(referenceVolume.dim);
 numberOfVoxels = prod(referenceVolume.dim);
 voxelsPerSlice = numberOfVoxels / referenceVolume.dim(3);
@@ -77,11 +78,11 @@ for slice = 1:referenceVolume.dim(3)
     
     sliceTimeValues = spm_get_data(allVolumes, [x; y; z]);
 
-    % @todo rewrite the for loop to one big matrix multiplication
-    for i = 1:size(sliceTimeValues, 2)
-        gmlOutput(x(i), y(i), z(i), :) = pseudoInverse * sliceTimeValues(:, i);
-        residualSumOfSquares(x(i), y(i), z(i)) = sum((sliceTimeValues(:, i) - design.DesignMatrix * squeeze(gmlOutput(x(i), y(i), z(i), :))) .^ 2);
-    end
+    betas = pseudoInverse * sliceTimeValues;
+    indices = repmat(indexRange, [numberOfRegressors, 1]);
+    indices = bsxfun(@plus, indices, ((1:numberOfRegressors) - 1)' * prod(referenceVolume.dim));
+    gmlOutput(indices) = betas(:);
+    residualSumOfSquares(indexRange) = sum((sliceTimeValues - design.DesignMatrix * betas) .^ 2);
 end
 
 tvm_write4D(referenceVolume, gmlOutput, glmFile);
