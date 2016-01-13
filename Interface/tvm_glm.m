@@ -54,12 +54,13 @@ if functionalFolder(end) ~= filesep()
 end
 
 allVolumes = dir(fullfile(functionalFolder, '*.nii'));
-allVolumes = [repmat(functionalFolder, [length(allVolumes), 1]), char({allVolumes.name})];
+allVolumes = fullfile(functionalFolder, {allVolumes.name});
 
 if isempty(functionalIndices)
-	functionalIndices = 1:size(allVolumes, 1);
+	functionalIndices = 1:size(allVolumes, 2);
 end
-allVolumes = allVolumes(functionalIndices, :);
+allVolumes = spm_vol(allVolumes(functionalIndices));
+allVolumes = vertcat(allVolumes{:});
 
 if isempty(roiMask)
     mask = true(referenceVolume.dim);

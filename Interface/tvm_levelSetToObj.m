@@ -3,7 +3,7 @@ function tvm_levelSetToObj(configuration)
 %   TVM_LEVELSETTOOBJ(configuration)
 %   
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+%   Copyright (C) Tim van Mourik, 2015, DCCN
 %
 %   configuration.SubjectDirectory
 %

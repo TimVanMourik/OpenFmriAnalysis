@@ -16,6 +16,8 @@ Before you start:
 @BUGS
 -MAJOR:
 -makeSignedDistancefield, the matrix file is written to the output file but not incorporated in the reading of the obj-file, while making the Signed Distance Field.
+-tvm_makeLevelSet, crashes badly when an OBJ is read in that contains vertex normals or texture coordinates with the faces
+-tvm_makeLevelSet, crashes badly when OBJ file is not a proper OBJ file in general
 
 -MINOR:
 -tvm_dicomsToNifti, make sure copies are  when function is rerun.

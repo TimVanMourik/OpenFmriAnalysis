@@ -7,7 +7,7 @@ function tvm_useBbregister(configuration)
 %
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory');
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', '.');
     %no default
 referenceFile =         fullfile(subjectDirectory, tvm_getOption(configuration, 'i_RegistrationVolume'));
     %no default

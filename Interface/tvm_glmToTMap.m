@@ -47,26 +47,51 @@ betaValues = spm_vol(glmFile);
 betaValues = spm_read_vols(betaValues);
 residualSumOfSquares = spm_vol(resDevFile);
 residualSumOfSquares.volume = spm_read_vols(residualSumOfSquares);
-
+    
 numberOfContrasts = length(contrasts);
-for i = 1:numberOfContrasts
-    if length(contrasts{i}) < size(designMatrix, 2)
-        contrasts{i} =[contrasts{i}, zeros(1, size(designMatrix, 2) - length(contrasts{i}))];
+if isnumeric(contrasts{1}) %1s and 0s
+    for i = 1:numberOfContrasts
+        if length(contrasts{i}) < size(designMatrix, 2)
+            contrasts{i} =[contrasts{i}, zeros(1, size(designMatrix, 2) - length(contrasts{i}))];
+        end
+
+        numberOfRegressors = length(contrasts{i});
+
+        squaredError = contrasts{i} / covarianceMatrix * contrasts{i}' * residualSumOfSquares.volume / degreesOfFreedom;
+        tMap = zeros(residualSumOfSquares.dim);
+        for j = 1:numberOfRegressors
+            tMap = tMap + contrasts{i}(j) * betaValues(:, :, :, j);
+        end
+        standardError = sqrt(squaredError);
+        tMap = tMap ./ standardError;
+        tMap(standardError == 0) = 0;
+
+        residualSumOfSquares.fname = tMapFiles{i};
+        spm_write_vol(residualSumOfSquares, tMap);
     end
+else %cell array with strings
+    for i = 1:numberOfContrasts
+        contrast = zeros(1, size(designMatrix, 2));
+        tMap = zeros(residualSumOfSquares.dim);
+        for j = 1:length(contrasts{i})
+            regressorsOfInterest = find(~cellfun(@isempty, strfind(design.RegressorLabel, contrasts{i}{j})));
+            contrast(regressorsOfInterest) = 1;
+            if isempty(regressorsOfInterest)
+                warning('Regressors ''%s'' does not exist\n', contrasts{i}{j});
+                continue;
+            end
+            %if there are more regressors for a stimulus, this is how the
+            %variance is shared in the tmap
+            tMap = tMap + sign(betaValues(:, :, :, regressorsOfInterest(1))) .* sqrt(sum(betaValues(:, :, :, regressorsOfInterest) .^ 2, 4));
+        end
+        squaredError = contrast / covarianceMatrix * contrast' * residualSumOfSquares.volume / degreesOfFreedom;
+        standardError = sqrt(squaredError);
+        tMap = tMap ./ standardError;
+        tMap(standardError == 0) = 0;
 
-    numberOfRegressors = length(contrasts{i});
-
-    squaredError = contrasts{i} / covarianceMatrix * contrasts{i}' * residualSumOfSquares.volume / degreesOfFreedom;
-    tMap = zeros(residualSumOfSquares.dim);
-    for j = 1:numberOfRegressors
-        tMap = tMap + contrasts{i}(j) * betaValues(:, :, :, j);
+        residualSumOfSquares.fname = tMapFiles{i};
+        spm_write_vol(residualSumOfSquares, tMap);  
     end
-    standardError = sqrt(squaredError);
-    tMap = tMap ./ standardError;
-    tMap(standardError == 0) = 0;
-
-    residualSumOfSquares.fname = tMapFiles{i};
-    spm_write_vol(residualSumOfSquares, tMap);
 end
 
 end %end function

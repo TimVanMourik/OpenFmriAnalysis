@@ -23,27 +23,28 @@ function tvm_makeLevelSet(configuration)
 %
 
 %% Parse configuration
-subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory');
+subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory');
     %no default
-referenceFile       = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
+referenceFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
-objWhite            = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ObjWhite'));
+objWhite                = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ObjWhite'));
     %no default
-objPial             = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ObjPial'));
+objPial                 = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ObjPial'));
     %no default
-objTransformationMatrix                     = tvm_getOption(configuration, 'i_Matrix', eye(4));
-    %default: eye(4)
+objTransformationMatrix = tvm_getOption(configuration, 'i_Matrix', [1, 0, 0, -1; 0, 1, 0, -1; 0, 0, 1, -1; 0, 0, 0, 1]);
+    %default: shift by -1
     %The obj.file is multiplied with this matrix. The matrix written to the
     %file is still the matrix from the reference volume
-sdfWhite            = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_SdfWhite', ''));
+    %@todo, see if this is a logical default. It seems so, as the input is
+    %delivered in Matlab space and the level set is computed in 1-indexing
+    %space
+sdfWhite                = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_SdfWhite', ''));
     %no default
-sdfPial             = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_SdfPial', ''));
+sdfPial                 = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_SdfPial', ''));
     %no default
-white               = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_White'));
+white                   = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_White'));
     %no default
-pial                = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Pial'));
-    %no default
-% indexingDifference  = tvm_getOption(configuration, 'IndexingDifference', 0);
+pial                    = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Pial'));
     %no default
     
 %%
@@ -56,13 +57,7 @@ cd(functionDirectory);
 
 referenceVolume = spm_vol(referenceFile);
 
-%shift the transofrmation matrix by one to compensate for the indexing
-% indexShift          = eye(4);
-% indexShift(1:3, 4)  = indexingDifference;
-
 if isempty(strfind(objWhite, '?'))
-%     makeSignedDistanceField(objWhite, white, referenceVolume.dim, referenceVolume.mat * indexShift, objectTransformationMatrix);
-%     makeSignedDistanceField(objPial,  pial,  referenceVolume.dim, referenceVolume.mat * indexShift, objectTransformationMatrix);
     makeSignedDistanceField(objWhite, white, referenceVolume.dim, referenceVolume.mat, objTransformationMatrix);
     makeSignedDistanceField(objPial,  pial,  referenceVolume.dim, referenceVolume.mat, objTransformationMatrix);
     
@@ -76,10 +71,8 @@ else
             objFile = strrep(objWhite, '?', 'l');
             sdfFile = strrep(sdfWhite, '?', 'l');
         else
-                %crash
+                %@todo crash properly
         end
-
-%         makeSignedDistanceField(objFile, sdfFile, referenceVolume.dim, referenceVolume.mat * indexShift, objectTransformationMatrix);
         makeSignedDistanceField(objFile, sdfFile, referenceVolume.dim, referenceVolume.mat, objTransformationMatrix);
 
         if hemisphere == 1
@@ -89,9 +82,8 @@ else
             objFile = strrep(objPial, '?', 'l');
             sdfFile = strrep(sdfPial, '?', 'l');
         else
+                %@todo crash properly
         end
-
-%         makeSignedDistanceField(objFile, sdfFile, referenceVolume.dim, referenceVolume.mat * indexShift, objectTransformationMatrix);
         makeSignedDistanceField(objFile, sdfFile, referenceVolume.dim, referenceVolume.mat, objTransformationMatrix);
 
     end

@@ -5,7 +5,9 @@ function distance = tvm_partialVolumeArea(distance)
 % The integral of a partial volume kernel from negative infinity to [input]
 % Starting at zero, going to 1
 %
-method = 'p20';
+% NB. distance is in voxels
+
+method = 'cubic';
 switch method
     %An approximation of a PVE kernel by means of a cubic function:
     %for      distance <= -1,   area = 0, 

@@ -37,14 +37,23 @@ for i = 1:length(roiFile)
         temp = labelVolume(:, :, :, j);
         design(:, j) = temp(roi.volume == true);
     end
+    designSum = sum(design);
     m = max(design, [], 2);
     design(bsxfun(@ne, design, m)) = 0;
     design(bsxfun(@eq, design, m)) = 1;
     
+    intensityData = allVolumes.volume(roi.volume == true)';
+    % equivalent to: timeCourses{1} = (design \ intensityData')', for
+    % orthogonal design
+    timeCourses{1} = intensityData * design ./ sum(design);
     
-    timeCourses{1} = allVolumes.volume(roi.volume == true)' * design ./ sum(design);
+    %temporary: include individual voxels for scatter plot
+    layer = mod(find(design'), size(design, 2));
+    layer(layer == 0) = size(design, 2);
     
-    save(timeCourseFile{i}, 'timeCourses');
+    layerData = [layer, intensityData'];
+    
+    save(timeCourseFile{i}, 'timeCourses', 'layerData', 'designSum');
 end
 
 

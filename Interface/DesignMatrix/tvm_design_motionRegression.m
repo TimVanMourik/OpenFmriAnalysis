@@ -19,7 +19,6 @@ definitions = tvm_definitions();
 %%
 load(designFileIn, definitions.GlmDesign);
 
-
 numberOfMotionRegressors = 6;
 designMatrix = zeros(design.Length, design.NumberOfPartitions * numberOfMotionRegressors);
 [root, ~, ~] = fileparts(motionFiles);
@@ -28,12 +27,20 @@ motionFiles = dir(motionFiles);
 % @todo what if you don't want all given session within the folder
 for column = 1:design.NumberOfPartitions
     motionParameters = importdata(fullfile(root, motionFiles(column).name));
+    %de-mean motion parameters
+    motionParameters = bsxfun(@minus, motionParameters, mean(motionParameters, 1));
     designMatrix(design.Partitions{column}, (1:6) + 6 * (column - 1)) = motionParameters;
 end
 regressorLabels = cell(1, size(designMatrix, 2));
 for i = 1:size(designMatrix, 2)
     regressorLabels{i} = 'Motion';
 end
+% orthogonalise the parameters
+designMatrix = spm_orth(designMatrix);
+% and rescale
+designMatrix = bsxfun(@rdivide, designMatrix, sqrt(sum(designMatrix .^ 2, 1)));
+
+% add the design matrix to the rest
 design.DesignMatrix = [design.DesignMatrix, designMatrix];
 design.RegressorLabel = [design.RegressorLabel, regressorLabels];
 

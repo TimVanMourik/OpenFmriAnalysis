@@ -14,8 +14,14 @@ stimulusFiles           = tvm_getOption(configuration, 'i_Stimulus');
     %no default
 hrfParameters           = tvm_getOption(configuration, 'i_HrfParameters', '');
     %default:[6, 16, 1, 1, 6, 0, 32]
+labels                  = tvm_getOption(configuration, 'i_Labels', {});
+    %default: 1
 TR                      = tvm_getOption(configuration, 'i_TR', 1);
     %default: 1
+temporalDerivative      = tvm_getOption(configuration, 'i_TemporalDerivative', false);
+    %default: false
+dispersionDerivative    = tvm_getOption(configuration, 'i_DispersionDerivative', false);
+    %default: false
 designFileOut           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DesignMatrix'));
     %no default
     
@@ -52,22 +58,32 @@ for stimulus = 1:numberOfStimuli
         timePoints = design.Partitions{run} - min(design.Partitions{run}) + 1/2;
         timePoints = timePoints * TR;
         if exist(definitions.Duration, 'var')
-            designPerRun{stimulus, run} = tvm_hrf(timePoints, allStimuli{stimulus}{run}, allDurations{stimulus}{run}, hrfParameters)';
+            durations = allDurations{stimulus}{run};
         else
-            designPerRun{stimulus, run} = tvm_hrf(timePoints, allStimuli{stimulus}{run}, zeros(size(allStimuli{stimulus}{run})), hrfParameters)';
+            durations = zeros(size(allStimuli{stimulus}{run}));
         end
+        configuration = [];
+        configuration.Timepoints            = timePoints;
+        configuration.Stimuli               = allStimuli{stimulus}{run};
+        configuration.Durations             = durations;
+        configuration.HrfParameters         = hrfParameters;
+        configuration.TemporalDerivative    = temporalDerivative;
+        configuration.DispersionDerivative  = dispersionDerivative;
+        configuration.DeMean                = true;
+        designPerRun{stimulus, run}         = tvm_hrf(configuration)';
     end
 end
 
-designMatrix = zeros(design.Length, numberOfStimuli);
+n = sum([1, temporalDerivative, dispersionDerivative]);
+designMatrix = zeros(design.Length, numberOfStimuli * n);
 for i = 1:design.NumberOfPartitions
-    designMatrix(design.Partitions{i}, 1:numberOfStimuli) = [designPerRun{1:numberOfStimuli, i}];
+    designMatrix(design.Partitions{i}, 1:numberOfStimuli * n) = [designPerRun{1:numberOfStimuli, i}];
 end
-
+designMatrix = bsxfun(@rdivide, designMatrix, sqrt(sum(designMatrix .^ 2, 1)));
 
 regressorLabels = cell(1, size(designMatrix, 2));
-for i = 1:size(designMatrix, 2)
-    regressorLabels{i} = 'Stimulus';
+for i = 1:numberOfStimuli * n
+    regressorLabels{i} = labels{ceil(i / n)};
 end
 design.RegressorLabel = [design.RegressorLabel, regressorLabels];
 

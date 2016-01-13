@@ -38,6 +38,7 @@ function transformStack = recursiveTransformation(indices, dimension, iteration,
         currentAccuracy = round(min(max(100 * (numberOfIterations - iteration + 1) / numberOfIterations / 2 ^ (iteration - 1), accuracy), 100));
         selectedIndices = selectedIndices(mod(find(selectedIndices), round(100 / currentAccuracy)) == 0);
     else
+        currentAccuracy = accuracy;
         selectedIndices = selectedIndices(mod(find(selectedIndices), round(100 / accuracy)) == 0);
     end
     %find the best transformation...

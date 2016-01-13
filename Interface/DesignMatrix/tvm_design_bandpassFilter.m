@@ -32,6 +32,10 @@ for i = 1:numberOfFilterRegressors
     regressorLabels{i} = 'Filter';
 end
 
+% the continuous forms of the filters are orthogonal, but the sampled
+% version not necessarily orthogonal up to numerical precission.  
+filter = spm_orth(filter);
+
 design.DesignMatrix = [design.DesignMatrix, filter];
 design.RegressorLabel = [design.RegressorLabel, regressorLabels];
 save(designFileOut, definitions.GlmDesign);

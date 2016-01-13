@@ -23,7 +23,7 @@ frameSize =             tvm_getOption(configuration, 'i_MovieSize', [1042, 968])
     % 
 contourColours =        tvm_getOption(configuration, 'i_ContourColors', {'y', 'r', 'g', 'b'});
     %no default
-roiFile =                   tvm_getOption(configuration, 'i_RegionOfInterest', []);
+roiFiles =              tvm_getOption(configuration, 'i_RegionOfInterest', []);
     % 
 colorLimits =           tvm_getOption(configuration, 'i_ColorLimits', []);
     % 
@@ -51,11 +51,19 @@ end
 reference = spm_vol(referenceFile);
 reference.volume = spm_read_vols(reference);
 
-if ~isempty(roiFile)
-    roi = spm_vol(fullfile(subjectDirectory, roiFile));
-    roi.volume = spm_read_vols(roi);
+if ~isempty(roiFiles)
+    regionOfInterest = [];
+    for i = 1:length(roiFiles)
+        roi = spm_vol(fullfile(subjectDirectory, roiFiles{i}));
+        roi.volume = spm_read_vols(roi);
+        if isempty(regionOfInterest)
+            regionOfInterest = roi.volume;
+        else
+            regionOfInterest = regionOfInterest + roi.volume;
+        end
+    end
     %roi is 60 percent brighter
-    reference.volume(roi.volume > 0) = reference.volume(roi.volume > 0) * 1.6;
+    reference.volume(regionOfInterest > 0) = reference.volume(regionOfInterest > 0) * 1.6;
 end
 
 numberOfFrames  = reference.dim(dimension);
@@ -111,6 +119,8 @@ for i = 1:numberOfFrames
  
     tvm_showObjectContourOnSlice(configuration);
     
+    %@todo: give the getframe function a rectangle, such that dimensions
+    %are guaranteed to be consistent for every frame
     writeVideo(videoObject, getframe(overlayImage));
     close(overlayImage);
 end

@@ -1,181 +1,89 @@
-function regressor = tvm_hrf(timePoints, stimulusOnsets, stimulusDurations, hrfParameters)
+function stimulusRegressors = tvm_hrf(configuration)
 %
 % For duration = 0 an impuls response is taken and a regular HRF is used.
-%
-% Example:
-% timePoints = 0:0.2:20; 
-% onsetTimes = [2, 8];
-% durations  = [0, 0];
-% convolution = tvm_hrf(timePoints, onsetTimes, durations);
-% plot(timePoints, convolution);
 %
 % Note that the area under the HRF curve is computed for a given time step.
 % This will be small for small duration. Only when duration = 0, an impuls
 % response is used. This may result in unexpected behaviour when using zero
 % and non-zero durations for a single regressor.
+%
+%   Copyright (C) Tim van Mourik, 2015, DCCN
 
-if nargin < 4
-    hrfParameters = [6, 16, 1, 1, 6, 0, 32];
-end
-if nargin < 3
+%% Parse configuration
+timePoints              = tvm_getOption(configuration, 'Timepoints');
+    % 
+stimulusOnsets          = tvm_getOption(configuration, 'Stimuli');
+    %
+stimulusDurations       = tvm_getOption(configuration, 'Durations', []);
+    % if no durations are given, event related design is assumed
+hrfParameters           = tvm_getOption(configuration, 'HrfParameters', [6, 16, 1, 1, 6, 0, 32]);
+    % default HRF parameters, same as in SPM
+regularHrf              = tvm_getOption(configuration, 'Regular', true);
+    % by default, no temporal derivative is included
+temporalDerivative      = tvm_getOption(configuration, 'TemporalDerivative', false);
+    % by default, no temporal derivative is included
+dispersionDerivative    = tvm_getOption(configuration, 'DispersionDerivative', false);
+    % by default, no dispersion derivative is included
+demean                  = tvm_getOption(configuration, 'DeMean', false);
+    % by default, no dispersion derivative is included
+    
+%%
+if isempty(stimulusDurations)
     stimulusDurations = zeros(size(stimulusOnsets));
 end
 
-regressor = zeros(size(timePoints));
-for i = 1:length(stimulusOnsets)
-%     regressor = regressor + tvm_sampleHrf(timePoints, stimulusOnsets(i), stimulusDurations(i), hrfParameters);
-    regressor = regressor + tvm_sampleHrfTemporalDerivative(timePoints, stimulusOnsets(i), stimulusDurations(i), hrfParameters);
-%     regressor = regressor + tvm_sampleHrfDispersionDerivative(timePoints, stimulusOnsets(i), stimulusDurations(i), hrfParameters);
+stimulusRegressors = [];
+if regularHrf
+    regressor = tvm_sampleHrf(timePoints, stimulusOnsets, stimulusDurations, hrfParameters, 'Regular');
+    stimulusRegressors = [stimulusRegressors; regressor];
 end
+if temporalDerivative
+    regressor = tvm_sampleHrf(timePoints, stimulusOnsets, stimulusDurations, hrfParameters, 'TemporalDerivative');
+    stimulusRegressors = [stimulusRegressors; regressor];
+end
+if dispersionDerivative
+    regressor = tvm_sampleHrf(timePoints, stimulusOnsets, stimulusDurations, hrfParameters, 'DispersionDerivative');
+    stimulusRegressors = [stimulusRegressors; regressor];
+end
+
+if demean
+    stimulusRegressors = bsxfun(@minus, stimulusRegressors, mean(stimulusRegressors, 2));
+end
+
+%Calhoun (2004) explains why one should orthogonalise, then normalise your
+%regressors. Bottom line: this way you can use both together for explaining 
+%task variance.
+stimulusRegressors = spm_orth(stimulusRegressors')';
+stimulusRegressors = bsxfun(@rdivide, stimulusRegressors, sqrt(sum(stimulusRegressors .^ 2, 2)));
 
 end %end function
 
 
-function hrfValues = tvm_sampleHrf(timePoints, t0, duration, hrfParameters)
-%  
-% t0 is a single stimulus
-%
-
-k1 = hrfParameters(1) / hrfParameters(3);
-theta1 = 1 / hrfParameters(3);
-k2 = hrfParameters(2) / hrfParameters(4);
-theta2 = 1 / hrfParameters(4);
-
-hrfValues = zeros(size(timePoints));
-
-if duration == 0
-    indices = timePoints > t0;
-    %centre time around onset time
-    timePoints = timePoints - t0;
-    hrfValues(indices) = tvm_gammaPdf(timePoints(indices), k1, theta1) - tvm_gammaPdf(timePoints(indices), k2, theta2) / hrfParameters(5);
-    
-    %normalisation:
-    hrfValues = hrfValues / (1 - 1 / hrfParameters(5));
-else
-    t1 = t0 + duration;
-
-    indices = timePoints <= t0;
-    hrfValues(indices)      = 0;
-
-    indices = timePoints > t0;
-    hrfValues(indices) = tvm_gammaCdf(timePoints(indices) - t0, k1, theta1) - tvm_gammaCdf(timePoints(indices) - t0, k2, theta2) / hrfParameters(5);
-
-    indices = timePoints > t1;
-    hrfValues(indices) = hrfValues(indices) - (tvm_gammaCdf(timePoints(indices) - t1, k1, theta1) - tvm_gammaCdf(timePoints(indices) - t1, k2, theta2) / hrfParameters(5));
-
-    %normalisation:
-    hrfValues = hrfValues / (1 - 1 / hrfParameters(5));
-end
-
-end %end function
-
-function hrfValues = tvm_sampleHrfTemporalDerivative(timePoints, t0, duration, hrfParameters)
-%  
-% t0 is a single stimulus
-%
-
-k1 = hrfParameters(1) / hrfParameters(3);
-theta1 = 1 / hrfParameters(3);
-k2 = hrfParameters(2) / hrfParameters(4);
-theta2 = 1 / hrfParameters(4);
-
-hrfValues = zeros(size(timePoints));
-
-if duration == 0
-    indices = timePoints > t0;
-    %centre time around onset time
-    timePoints = timePoints - t0;
-    hrfValues(indices) = tvm_gammaPdf(timePoints(indices), k1, theta1) .* ((k1 -1) ./  timePoints(indices) - 1 / theta1)...
-        - tvm_gammaPdf(timePoints(indices), k2, theta2) .* ((k2 - 1)  ./ timePoints(indices) - 1 / theta2) / hrfParameters(5);
-    
-    orthogonalisation = ((4 ^ (k1 + -1) * exp(-2 * timePoints(indices))/ theta1) * (timePoints(indices) / theta1) .^ (2 * k) * theta1 * gamma(2 * k1 - 1)) / (timePoints(indices) .^ 2 * gammainc((2 * timePoints(indices)) / theta1, 2 * k1 - 1, 'upper'));
-
-%     hrfValues(indices) = hrfValues(indices) - orthogonalisation;
-    
-    %normalisation:
-    hrfValues = hrfValues / (1 - 1 / hrfParameters(5));
-else
-    t1 = t0 + duration;
-
-    indices = timePoints <= t0;
-    hrfValues(indices)      = 0;
-
-    indices = timePoints > t0;
-    hrfValues(indices) = tvm_gammaCdf(timePoints(indices) - t0, k1, theta1) - tvm_gammaCdf(timePoints(indices) - t0, k2, theta2) / hrfParameters(5);
-
-    indices = timePoints > t1;
-    hrfValues(indices) = hrfValues(indices) - (tvm_gammaCdf(timePoints(indices) - t1, k1, theta1) - tvm_gammaCdf(timePoints(indices) - t1, k2, theta2) / hrfParameters(5));
-
-    %normalisation:
-    hrfValues = hrfValues / (1 - 1 / hrfParameters(5));
-end
-
-
-end %end function
-
-function hrfValues = tvm_sampleHrfDispersionDerivative(timePoints, t0, duration, hrfParameters)
-%  
-% t0 is a single stimulus
-%
-
-k1 = hrfParameters(1) / hrfParameters(3);
-theta1 = 1 / hrfParameters(3);
-k2 = hrfParameters(2) / hrfParameters(4);
-theta2 = 1 / hrfParameters(4);
-
-hrfValues = zeros(size(timePoints));
-
-if duration == 0
-    indices = timePoints > t0;
-    %centre time around onset time
-    timePoints = timePoints - t0;
-%     hrfValues(indices) = tvm_gammaPdf(timePoints(indices), k1, theta1) .* (log(timePoints(indices) / theta1) + psi(timePoints(indices))) - ...
-%         tvm_gammaPdf(timePoints(indices), k2, theta2) .* (log(timePoints(indices) / theta2) + psi(timePoints(indices))) / hrfParameters(5);
-%     
-    hrfValues(indices) = tvm_gammaPdf(timePoints(indices), k1, theta1) .* (- k1 / theta1 - timePoints(indices) * log(theta1)) - ...
-        tvm_gammaPdf(timePoints(indices), k2, theta2) .* (- k2 / theta2 - timePoints(indices) * log(theta2)) / hrfParameters(5);
-    
-    %normalisation:
-    hrfValues = hrfValues / (1 - 1 / hrfParameters(5));
-else
-    t1 = t0 + duration;
-
-    indices = timePoints <= t0;
-    hrfValues(indices)      = 0;
-
-    indices = timePoints > t0;
-    hrfValues(indices) = tvm_gammaCdf(timePoints(indices) - t0, k1, theta1) - tvm_gammaCdf(timePoints(indices) - t0, k2, theta2) / hrfParameters(5);
-
-    indices = timePoints > t1;
-    hrfValues(indices) = hrfValues(indices) - (tvm_gammaCdf(timePoints(indices) - t1, k1, theta1) - tvm_gammaCdf(timePoints(indices) - t1, k2, theta2) / hrfParameters(5));
-
-    %normalisation:
-    hrfValues = hrfValues / (1 - 1 / hrfParameters(5));
-end
-
-
-end %end function
 
 function test
 
 %%
-% hrfParameters = [6, 16, 1, 1, 6, 0, 32];
-% timePoints = 0:1:300;
-% stimulus = [20, 120, 220];
-% duration = [60, 0, 60];
+dt              = 0.1;
+timePoints      = 0:dt:30;
+stimulus        = 0;
+duration        = 0;
 
-dt = 0.001;
-timePoints = 0:dt:30;
-stimulus = 0;
-duration = 0;
-hrfParameters = [6, 16, 1, 1, 6, 0, 32];
+% timePoints    = 0:1:130;
+% stimulus      = [20, 50, 100];
+% duration      = [3, 2, 4];
+
+configuration = [];
+configuration.Timepoints            = timePoints;
+configuration.Stimuli               = stimulus;
+configuration.Durations             = duration;
+configuration.HrfParameters         = [6, 16, 1, 1, 6, 0, 32];
+configuration.TemporalDerivative    = true;
+configuration.DispersionDerivative  = true;
 
 % figure;
-regressor = tvm_hrf(timePoints, stimulus, duration, hrfParameters);
+regressor = tvm_hrf(configuration);
 plot(timePoints, regressor);
 
-% hold on;
-% plot(spm_hrf(dt, hrfParameters));
 
 end %end function
 

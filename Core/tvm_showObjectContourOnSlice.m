@@ -1,4 +1,4 @@
-function overlayImage = tvm_showObjectContourOnSlice(configuration)
+function tvm_showObjectContourOnSlice(configuration)
 %
 %
 %   Copyright (C) Tim van Mourik, 2015, DCCN
@@ -31,9 +31,6 @@ colorMap =          tvm_getOption(configuration, 'i_ColorMap', []);
 % a regular matlab image function and you can choose to call a figure
 % first.
 
-% screenSize = get(0, 'ScreenSize');
-% overlayImage = figure('Visible', visibility, 'units', 'normalized', 'outerposition', [0, 0, 1, 1]);
-% subplot('position', [0, 0, 1, 1]);
 
 switch sliceAxis
     case {'x', 'coronal'}
@@ -73,11 +70,6 @@ for i = 1:length(vertices)
     end
 end
  
-% axis equal tight off
-% set(gcf, ...
-%     'units', 'normalized', ...
-%     'outerposition', [0, 0, screenSize(4) / screenSize(3), 1]);
-
 if ~isempty(colorMap)
     colormap(colorMap);
 end

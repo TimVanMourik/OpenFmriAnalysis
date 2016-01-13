@@ -15,8 +15,8 @@ subjectDirectory 	= tvm_getOption(configuration, 'i_SubjectDirectory', '.');
     %no default
 regionsOfInterest   = tvm_getOption(configuration, 'i_ROI');
     %no default
-layerFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Layers', 'LevelSets/brain.layers.nii'));
-    %'LevelSets/brain.layers.nii'
+layerFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Layers'));
+    %no default
 designMatrices      = tvm_getOption(configuration, 'o_DesignMatrix');
     %no default
     

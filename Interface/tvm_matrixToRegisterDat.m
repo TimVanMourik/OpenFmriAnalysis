@@ -11,7 +11,7 @@ subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', '.');
     %no default
 referenceFile =         fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
-moveFile =         fullfile(subjectDirectory, tvm_getOption(configuration, 'i_MoveVolume'));
+moveFile =              fullfile(subjectDirectory, tvm_getOption(configuration, 'i_MoveVolume'));
     %no default
 coregistrationFile =    fullfile(subjectDirectory, tvm_getOption(configuration, 'i_CoregistrationMatrix'));
     %no default

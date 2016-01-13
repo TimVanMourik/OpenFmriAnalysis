@@ -19,7 +19,7 @@ functionalFolders       = tvm_getOption(configuration, 'i_FunctionalFolder', [])
     %no default
 functionalFiles         = tvm_getOption(configuration, 'i_FunctionalFiles', []);
     %no default
-regressionApproach      = tvm_getOption(configuration, 'i_RegrassionApproach', 'OLS');
+regressionApproach      = tvm_getOption(configuration, 'i_RegressionApproach', 'OLS');
     %no default
 functionalIndices       = tvm_getOption(configuration, 'i_FunctionalSelection', []);
     %no default

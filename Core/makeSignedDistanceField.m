@@ -12,8 +12,3 @@
 % Voxel space goes from 1 to n, indicating the centre of the voxel. The
 % coordinates from the OBJ file are in the same space, i.e. coordinate 
 % [1, 1, 1] is in the centre of the first voxel. 
-%
-%
-%
-%
-%

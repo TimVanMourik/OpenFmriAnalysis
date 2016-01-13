@@ -91,7 +91,7 @@ if ~isempty(coregistrationFileOut)
         registrationParameters = p; 
         eval(tvm_changeVariableNames(definitions.CoregistrationMatrix, coregistrationMatrix));
         eval(tvm_changeVariableNames(definitions.RegistrationParameters, registrationParameters));
-        save(coregistrationFile, definitions.CoregistrationMatrix, definitions.RegistrationParameters);
+        save(fullfile(subjectDirectory, coregistrationFileOut), definitions.CoregistrationMatrix, definitions.RegistrationParameters);
     end
 end
 

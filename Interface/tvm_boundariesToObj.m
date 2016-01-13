@@ -42,8 +42,8 @@ for hemisphere = 1:2
     end
 
 %   vertex - 1?
-    tvm_saveToObj(wSurface{hemisphere}, faceData{hemisphere}, outputFileWhite); 
-    tvm_saveToObj(pSurface{hemisphere}, faceData{hemisphere}, outputFilePial);  
+    tvm_exportObjFile(wSurface{hemisphere}, faceData{hemisphere}, outputFileWhite); 
+    tvm_exportObjFile(pSurface{hemisphere}, faceData{hemisphere}, outputFilePial);  
     
 end  
 
