@@ -75,6 +75,7 @@ for x = 2:dimensions(1) - 1
     end
 end
 
+% Something's wrong here: curvature shouldn't have a directional preference.
 spm_write_vol(curv1, curv1.volume);
 spm_write_vol(curv2, curv2.volume);
 
