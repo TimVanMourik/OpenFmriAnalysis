@@ -13,7 +13,7 @@ function tvm_glmToTMap(configuration)
 %   configuration.Contrast
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory');
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
 designFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default

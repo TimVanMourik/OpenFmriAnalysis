@@ -9,7 +9,7 @@ function tvm_reconAll(configuration)
 %   configuration.Structural
 
 %% Parse configuration
-subjectDirectory    =  tvm_getOption(configuration, 'i_SubjectDirectory', '.');
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
 structuralScan      = tvm_getOption(configuration, 'i_Structural');
     %no default

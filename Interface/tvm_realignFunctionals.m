@@ -15,7 +15,7 @@ if nargin < 2
     realignmentConfiguration = [];
 end
 
-subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory');
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
 niftiFolder =           fullfile(subjectDirectory, tvm_getOption(configuration, 'i_NiftiDirectory'));
     %no default

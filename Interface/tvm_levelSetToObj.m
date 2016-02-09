@@ -9,7 +9,7 @@ function tvm_levelSetToObj(configuration)
 %
 
 %% Parse configuration
-subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory');
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
 levelSetFile            = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_LevelSet'));
     %no default

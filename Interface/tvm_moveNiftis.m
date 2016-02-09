@@ -10,7 +10,7 @@ function tvm_moveNiftis(configuration)
 %   configuration.DestinationFunctionals
 
 %% Parse configuration
-subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory');
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
 sourceFolder      = [subjectDirectory, tvm_getOption(configuration, 'i_SourceFolder')];
     %no default

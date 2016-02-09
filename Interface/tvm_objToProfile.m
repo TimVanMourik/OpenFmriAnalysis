@@ -9,7 +9,7 @@ function tvm_objToProfile(configuration)
 %
 
 %% Parse configuration
-subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory');
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
 objectFile              = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ObjFile'));
     %no default

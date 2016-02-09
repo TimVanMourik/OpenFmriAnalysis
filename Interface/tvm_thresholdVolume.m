@@ -13,7 +13,7 @@ function tvm_thresholdVolume(configuration)
 %   configuration.Contrast
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', '.');
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
 volumeFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Volume'));
     %no default

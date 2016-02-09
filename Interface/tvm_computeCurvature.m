@@ -14,7 +14,7 @@ function tvm_computeCurvature(configuration)
 %   configuration.PialCurvature2
 
 %% Parse configuration
-subjectDirectory 	= tvm_getOption(configuration, 'i_SubjectDirectory');
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
 white               = tvm_getOption(configuration, 'i_White');
     %no default
@@ -27,9 +27,11 @@ whiteK2             = tvm_getOption(configuration, 'o_WhiteCurvature2');
 pialK1              = tvm_getOption(configuration, 'o_PialCurvature1');
     %no default
 pialK2              = tvm_getOption(configuration, 'o_PialCurvature2');
-    %no default
+%     %no default
 
 %%
+
+
 cfg = [];
 cfg.i_SubjectDirectory = subjectDirectory;
 cfg.i_SDF = white;

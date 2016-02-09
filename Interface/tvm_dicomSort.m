@@ -15,7 +15,7 @@ function tvm_dicomSort(configuration)
 %       -'link'
 
 %% Parse configuration
-subjectDirectory =  tvm_getOption(configuration, 'i_SubjectDirectory', '.');
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
 moveOption =        tvm_getOption(configuration, 'p_MoveOption', 'move');
     %move

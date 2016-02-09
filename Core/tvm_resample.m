@@ -72,8 +72,8 @@ end
 % ==============================================
 % get input image size, and calculate the gain
 % ==============================================
-in_sz =  size( inputMatrix );
-gain = outputSize ./ in_sz;
+inputSize =  size( inputMatrix );
+gain = outputSize ./ inputSize;
 
 % build grid vectors for the up/down sampling
 % ============================================
@@ -89,22 +89,24 @@ inputMatrix = fftn(inputMatrix);
 
 for i = 1:numberOfDimensions
 
-    if (~mod( in_sz(i), 2 ) && (outputSize(i)>in_sz(i))) || (mod( in_sz(i),2 ) && (outputSize(i)<in_sz(i)))
-        output_space{i}  = max(floor((outputSize(i)-in_sz(i))/2),0) + (1:min(in_sz(i),outputSize(i)));
-        input_space{i}   = max(floor((in_sz(i)-outputSize(i))/2),0) + (1:min(in_sz(i),outputSize(i)));
+    if (~mod( inputSize(i), 2 ) && (outputSize(i)>inputSize(i))) || (mod( inputSize(i),2 ) && (outputSize(i)<inputSize(i)))
+        output_space{i}  = max(floor((outputSize(i)-inputSize(i))/2),0) + (1:min(inputSize(i),outputSize(i)));
+        input_space{i}   = max(floor((inputSize(i)-outputSize(i))/2),0) + (1:min(inputSize(i),outputSize(i)));
     else
-        output_space{i}  = max(ceil((outputSize(i)-in_sz(i))/2),0) + (1:min(in_sz(i),outputSize(i)));
-        input_space{i}   = max(ceil((in_sz(i)-outputSize(i))/2),0) + (1:min(in_sz(i),outputSize(i)));
+        output_space{i}  = max(ceil((outputSize(i)-inputSize(i))/2),0) + (1:min(inputSize(i),outputSize(i)));
+        input_space{i}   = max(ceil((inputSize(i)-outputSize(i))/2),0) + (1:min(inputSize(i),outputSize(i)));
     end
 
 end
 
 % perform the up/down sampling
-padded_out_m    = zeros(outputSize);
-inputMatrix            = fftshift(inputMatrix);
+paddedMatrix    = zeros(outputSize);
+inputMatrix     = fftshift(inputMatrix);
 
-padded_out_m(output_space{:}) = inputMatrix(input_space{:});
-outputMatrix           = prod(gain) * ifftn(ifftshift(padded_out_m));   
+% padded_out_m(output_space{:}) = inputMatrix(input_space{:}); %no window
+% paddedMatrix(output_space{:}) = inputMatrix(input_space{:}) .* hammingWindow(outputSize); %hamming window
+paddedMatrix(output_space{:}) = inputMatrix(input_space{:}) .* tukeyWindow(outputSize); %tukey window
+outputMatrix           = prod(gain) * ifftn(ifftshift(paddedMatrix));   
 
 switch isReal
     case 0, % do nothing
@@ -115,38 +117,33 @@ end
 end %end function
 
 
+function window = hammingWindow(windowSize)
 
-%@todo think about Tukey filering before resampling
-function window = filterWindow(windowLength, samplingRate)
-
-% w = 1D zero-padded nn-point Tukey filter window matched to the sampling ratio
-% 
-% Filter window is defined in three sections: taper, constant, taper
-% Period of the taper is defined as 1/2 period of a sine wave.
-
-if samplingRate < 1.25
-	window = ones(windowLength, 1);			% No filtering if we do no (or hardly any) downsampling
-	return
+numberOfDimensions = length(windowSize);
+window1D = cell(numberOfDimensions, 1);
+for i = 1:numberOfDimensions
+    window1D{i} = hamming(windowSize(i));
 end
-
-% Constants
-per = 0.25;					% = r/2, r=0.5 (= 1/4 taper + 1/2 constant + 1/4 taper)
-
-m = round(windowLength / samplingRate);			% Size of resampling (Src) window (must be < nn)
-if rem(m, 2) == 0;
-	n = m + 1;				% Make sure the Tukey window is symmetric, i.e. has an odd length 'n'
-else
-	n = m;
-end
-
-% Create the Tukey filter window of length n
-t   = linspace(0, 1, n)';
-tl  = floor(per * (n - 1)) + 1;
-th  = n - tl + 1;
-tw  = [((1 + cos(pi / per * (t(1:tl) - per))) / 2);  ones(th - tl - 1, 1); ((1 + cos(pi / per * (t(th:end) - 1 + per))) / 2)];
-
-% Zero-pad the filter window to the full (length nn) k-space
-window   = ifftshift([zeros(ceil((windowLength - n) / 2), 1); tw; zeros(floor((windowLength - n) / 2), 1)]);
+[window1D{:}] = meshgrid(window1D{:});
+window = reshape([window1D{:}], [windowSize(2), windowSize(1), length(windowSize), windowSize(3)]);
+window = prod(permute(window, [2, 1, 4, 3]), 4);
 
 end %end function
+
+
+function window = tukeyWindow(windowSize)
+
+r = 0.5;
+numberOfDimensions = length(windowSize);
+window1D = cell(numberOfDimensions, 1);
+for i = 1:numberOfDimensions
+    window1D{i} = tukeywin(windowSize(i) + mod(windowSize(i), 2), r);
+    window1D{i} = window1D{i}(1:end - mod(windowSize(i), 2));
+end
+[window1D{:}] = meshgrid(window1D{:});
+window = reshape([window1D{:}], [windowSize(2), windowSize(1), length(windowSize), windowSize(3)]);
+window = prod(permute(window, [2, 1, 4, 3]), 4);
+
+end %end function
+
 

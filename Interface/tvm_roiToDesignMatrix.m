@@ -11,7 +11,7 @@ function tvm_roiToDesignMatrix(configuration)
 %   configuration.Layers
 
 %% Parse configuration
-subjectDirectory 	= tvm_getOption(configuration, 'i_SubjectDirectory', '.');
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
 regionsOfInterest   = tvm_getOption(configuration, 'i_ROI');
     %no default

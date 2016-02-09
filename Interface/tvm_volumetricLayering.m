@@ -8,10 +8,8 @@ function tvm_volumetricLayering(configuration)
 %   configuration.SubjectDirectory
 %   configuration.White
 %   configuration.Pial
-%   configuration.WhiteCurvature1
-%   configuration.WhiteCurvature2
-%   configuration.PialCurvature1
-%   configuration.PialCurvature2
+%   configuration.WhiteCurvature
+%   configuration.WhiteCurvature
 %   configuration.Levels
 %   configuration.LevelSet
 %   configuration.Layers
@@ -20,22 +18,22 @@ function tvm_volumetricLayering(configuration)
 % The levels will be the volume in between the numbers given in configuration.Levels
 
 %% Parse configuration
-subjectDirectory 	= tvm_getOption(configuration, 'i_SubjectDirectory');
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
 white               = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_White'));
     %no default
 pial                = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Pial'));
     %no default
-whiteK1             = tvm_getOption(configuration, 'i_WhiteCurvature1', '');
+whiteK              = tvm_getOption(configuration, 'i_WhiteCurvature', '');
     %default: ''
     %when there is no curvature input, equidistant sampling will be used.
-whiteK2             = tvm_getOption(configuration, 'i_WhiteCurvature2', '');
+pialK               = tvm_getOption(configuration, 'i_PialCurvature', '');
     %default: ''
     %when there is no curvature input, equidistant sampling will be used.
-pialK1              = tvm_getOption(configuration, 'i_PialCurvature1', '');
+whiteNormals        = tvm_getOption(configuration, 'i_WhiteNormals', '');
     %default: ''
     %when there is no curvature input, equidistant sampling will be used.
-pialK2              = tvm_getOption(configuration, 'i_PialCurvature2', '');
+pialNormals         = tvm_getOption(configuration, 'i_PialNormals', '');
     %default: ''
     %when there is no curvature input, equidistant sampling will be used.
 levels              = tvm_getOption(configuration, 'i_Levels', 0:1/3:1);
@@ -48,11 +46,9 @@ layerFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o
 %%
 curvature = false;
 % if all of them are not empty
-if all(~[isempty(whiteK1), isempty(whiteK2), isempty(pialK1), isempty(pialK1)])
-    whiteK1             = fullfile(subjectDirectory, whiteK1);
-    whiteK2             = fullfile(subjectDirectory, whiteK2);
-    pialK1              = fullfile(subjectDirectory, pialK1);
-    pialK2              = fullfile(subjectDirectory, pialK2);
+if all(~[isempty(whiteK), isempty(pialK)])
+    whiteK             = fullfile(subjectDirectory, whiteK);
+    pialK              = fullfile(subjectDirectory, pialK);
 
     curvature = true;
 end
@@ -65,15 +61,11 @@ sdfIn.volume    = spm_read_vols(sdfIn);
 sdfOut.volume   = spm_read_vols(sdfOut);
 
 if curvature
-    curv1In     = spm_vol(whiteK1);
-    curv2In     = spm_vol(whiteK2);
-    curv1Out    = spm_vol(pialK1);
-    curv2Out    = spm_vol(pialK2);
+    curvIn     = spm_vol(whiteK);
+    curvOut    = spm_vol(pialK);
 
-    curv1In.volume  = spm_read_vols(curv1In);
-    curv2In.volume  = spm_read_vols(curv2In);
-    curv1Out.volume = spm_read_vols(curv1Out);
-    curv2Out.volume = spm_read_vols(curv2Out);
+    curvIn.volume  = spm_read_vols(curvIn);
+    curvOut.volume = spm_read_vols(curvOut);
     
     %%
     distance = sdfIn;
@@ -83,7 +75,7 @@ if curvature
     %%
     aIn = sdfIn;
 %     aIn.fname = 'brain.ain.nii';
-    aIn.volume = 4 / ((2 + sign(curv1In.volume - curv1Out.volume) .* distance.volume .* curv1In.volume) .* (2 + sign(curv2In.volume - curv2Out.volume) .* distance.volume .* curv2In.volume));
+    aIn.volume = 4 / (2 + sign(curvIn.volume - curvOut.volume) .* distance.volume .* curvIn.volume);
     aIn.volume(aIn.volume < 0) = 0;
     aIn.volume(aIn.volume > 3) = 3;
     aIn.volume(isnan(aIn.volume)) = 0;
@@ -91,13 +83,13 @@ if curvature
     %%
     aOut = sdfIn;
 %     aOut.fname = 'brain.aout.nii';
-    aOut.volume = 4 / ((2 + sign(curv1Out.volume - curv1In.volume) .* distance.volume .* curv1Out.volume) .* (2 + sign(curv2Out.volume - curv2In.volume) .* distance.volume .* curv2Out.volume));
+    aOut.volume = 4 / (2 + sign(curvOut.volume - curvIn.volume) .* distance.volume .* curvOut.volume);
     aOut.volume(aOut.volume < 0) = 0;
     aOut.volume(aOut.volume > 3) = 3;
     aOut.volume(isnan(aOut.volume)) = 0;
 
     %%
-    clear curv1In curv2In curv1Out curv2Out distance
+    clear('curvIn', 'curvOut', 'distance');
 
     %%
     aDif = sdfIn;
@@ -149,7 +141,8 @@ clear sdfIn sdfOut
 
 %%
 laminae = rho;
-laminae.volume = tvm_partialVolumeArea(rho.volume);
+laminae.volume = tvm_partialVolumeAreaGradient(rho.volume, gradient);
+
 laminae.volume = cat(4, ones(rho.dim), laminae.volume);
 cumulativeVolume = zeros(rho.dim);
 for lamina = (numberOfLaminae + 1):-1:1

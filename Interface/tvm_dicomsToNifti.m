@@ -9,7 +9,7 @@ function tvm_dicomsToNifti(configuration)
 
 % @todo Make sure copies are removed.
 %% Parse configuration
-subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory');
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
 dicomDirectory      = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DicomDirectory'));
     %no default

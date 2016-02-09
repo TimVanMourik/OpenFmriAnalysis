@@ -11,7 +11,7 @@ function tvm_designMatrixToTimeCourse(configuration)
 %   configuration.FunctionalFolders
 
 %% Parse configuration
-subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory');
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
 designMatricesFiles     = tvm_getOption(configuration, 'i_DesignMatrix');
     %no default

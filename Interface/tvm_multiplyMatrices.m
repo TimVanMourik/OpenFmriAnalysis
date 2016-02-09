@@ -7,7 +7,7 @@ function tvm_multiplyMatrices(configuration)
 %
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', '.');
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
 inputMatrices =         fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Matrices'));
     %no default

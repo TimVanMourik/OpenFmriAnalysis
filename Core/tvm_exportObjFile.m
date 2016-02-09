@@ -1,5 +1,5 @@
 function tvm_exportObjFile(vertices, faces, fileName)
-%TVM_SAVETOOBJ(VERTICES, FACES, FILENAME)
+%TVM_EXPORTTOOBJ(VERTICES, FACES, FILENAME)
 %
 %   Copyright (C) Tim van Mourik, 2015, DCCN
 
