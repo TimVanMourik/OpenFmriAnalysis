@@ -1,4 +1,4 @@
-function tvm_transFormStackToFieldmap(configuration)
+function tvm_transFormStackToDisplacementMap(configuration)
 %
 %
 %   Copyright (C) 2015, Tim van Mourik, DCCN
@@ -10,7 +10,9 @@ referenceFile =            	fullfile(subjectDirectory, tvm_getOption(configurati
     %no default
 transformFile =            	fullfile(subjectDirectory, tvm_getOption(configuration, 'i_TransformStack'));
     %no default
-displacementMapFile =            	fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DisplacementMap'));
+displacementMapFile =       fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DisplacementMap'));
+    %no default
+filterWidth =               tvm_getOption(configuration, 'i_Filter', [6, 6, 6]);
     %no default
     
 definitions = tvm_definitions();
@@ -43,7 +45,6 @@ end
 displacementMap = plus(displacementMap{:}) ./ repmat(plus(maskVolume{:}), [1, 1, 1, 3]);
 
 voxelSize = sqrt(sum(referenceVolume.mat(1:3, 1:3) .^ 2));
-filterWidth = [6, 6, 6];
 for i = 1:size(displacementMap, 4)
     displacementMap(:, :, :, i) = smoothVolume(displacementMap(:, :, :, i), voxelSize, filterWidth);
 end
