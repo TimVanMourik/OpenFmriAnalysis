@@ -14,37 +14,138 @@ function tvm_computeCurvature(configuration)
 %   configuration.PialCurvature2
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
-white               = tvm_getOption(configuration, 'i_White');
+white               = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_White'));
     %no default
-pial                = tvm_getOption(configuration, 'i_Pial');
+pial                = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Pial'));
     %no default
-whiteK1             = tvm_getOption(configuration, 'o_WhiteCurvature1');
+whiteK              = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_WhiteCurvature'));
     %no default
-whiteK2             = tvm_getOption(configuration, 'o_WhiteCurvature2');
-    %no default
-pialK1              = tvm_getOption(configuration, 'o_PialCurvature1');
-    %no default
-pialK2              = tvm_getOption(configuration, 'o_PialCurvature2');
+pialK               = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_PialCurvature'));
 %     %no default
+order               = tvm_getOption(configuration, 'i_Order', 10);
+    % 10
 
 %%
 
+%white matter surface
+brain = spm_vol(white);
+brain.volume = spm_read_vols(brain);
 
-cfg = [];
-cfg.i_SubjectDirectory = subjectDirectory;
-cfg.i_SDF = white;
-cfg.o_PrimaryCurvature1 = whiteK1;
-cfg.o_SecondaryCurvature2 = whiteK2;
-tvm_computeCurvatureFromSdf(cfg);
+stencil = tvm_getGradientStencil3D(order);
+filter = tvm_getGradientFilter3D(order);
 
-cfg = [];
-cfg.i_SubjectDirectory = subjectDirectory;
-cfg.i_SDF = pial;
-cfg.o_PrimaryCurvature1 = pialK1;
-cfg.o_SecondaryCurvature2 = pialK2;
-tvm_computeCurvatureFromSdf(cfg);
+gradient = zeros([brain.dim, 3]);
+gradient(:, :, :, 1) = convn(brain.volume, stencil .* filter(:, :, :, 1), 'same');
+gradient(:, :, :, 2) = convn(brain.volume, stencil .* filter(:, :, :, 2), 'same');
+gradient(:, :, :, 3) = convn(brain.volume, stencil .* filter(:, :, :, 3), 'same');
+gradient(1:2, :, :, :) = 0;
+gradient(:, 1:2, :, :) = 0;
+gradient(:, :, 1:2, :) = 0;
+gradient(end-1:end, :, :, :) = 0;
+gradient(:, end-1:end, :, :) = 0;
+gradient(:, :, end-1:end, :) = 0;
+
+gradient2 = zeros([brain.dim, 3]);
+gradient2(:, :, :, 1) = convn(gradient(:, :, :, 1), stencil .* filter(:, :, :, 1), 'same');
+gradient2(:, :, :, 2) = convn(gradient(:, :, :, 2), stencil .* filter(:, :, :, 2), 'same');
+gradient2(:, :, :, 3) = convn(gradient(:, :, :, 3), stencil .* filter(:, :, :, 3), 'same');
+gradient2(1:2, :, :, :) = 0;
+gradient2(:, 1:2, :, :) = 0;
+gradient2(:, :, 1:2, :) = 0;
+gradient2(end-1:end, :, :, :) = 0;
+gradient2(:, end-1:end, :, :) = 0;
+gradient2(:, :, end-1:end, :) = 0;
+
+gradientCross = zeros([brain.dim, 3]);
+gradientCross(:, :, :, 1) = convn(gradient(:, :, :, 1), stencil .* filter(:, :, :, 2), 'same');
+gradientCross(:, :, :, 2) = convn(gradient(:, :, :, 1), stencil .* filter(:, :, :, 3), 'same');
+gradientCross(:, :, :, 3) = convn(gradient(:, :, :, 2), stencil .* filter(:, :, :, 3), 'same');
+gradientCross(1:2, :, :, :) = 0;
+gradientCross(:, 1:2, :, :) = 0;
+gradientCross(:, :, 1:2, :) = 0;
+gradientCross(end-1:end, :, :, :) = 0;
+gradientCross(:, end-1:end, :, :) = 0;
+gradientCross(:, :, end-1:end, :) = 0;
+
+curvature = gradient(:, :, :, 1) .^ 2 .* gradient2(:, :, :, 2) ...
+          + gradient(:, :, :, 1) .^ 2 .* gradient2(:, :, :, 3) ...
+          + gradient(:, :, :, 2) .^ 2 .* gradient2(:, :, :, 1) ...
+          + gradient(:, :, :, 2) .^ 2 .* gradient2(:, :, :, 3) ...
+          + gradient(:, :, :, 3) .^ 2 .* gradient2(:, :, :, 1) ...
+          + gradient(:, :, :, 3) .^ 2 .* gradient2(:, :, :, 2) ...
+      - 2 * gradient(:, :, :, 1) .* gradient(:, :, :, 2) .* gradientCross(:, :, :, 1) ...
+      - 2 * gradient(:, :, :, 1) .* gradient(:, :, :, 3) .* gradientCross(:, :, :, 2) ...
+      - 2 * gradient(:, :, :, 2) .* gradient(:, :, :, 3) .* gradientCross(:, :, :, 3);
+
+% curvature = curvature ./ sum(gradient .^ 2, 4) .^ 3;
+dx = 1;
+curvature(curvature < -1 / dx) = -1 / dx;
+curvature(curvature >  1 / dx) =  1 / dx;
+curvature(isnan(curvature) | isinf(curvature)) = 0;
+
+tvm_write4D(brain, curvature, whiteK);
+    
+%pial surface
+brain = spm_vol(pial);
+brain.volume = spm_read_vols(brain);
+
+stencil = tvm_getGradientStencil3D(order);
+filter = tvm_getGradientFilter3D(order);
+
+gradient = zeros([brain.dim, 3]);
+gradient(:, :, :, 1) = convn(brain.volume, stencil .* filter(:, :, :, 1), 'same');
+gradient(:, :, :, 2) = convn(brain.volume, stencil .* filter(:, :, :, 2), 'same');
+gradient(:, :, :, 3) = convn(brain.volume, stencil .* filter(:, :, :, 3), 'same');
+gradient(1:2, :, :, :) = 0;
+gradient(:, 1:2, :, :) = 0;
+gradient(:, :, 1:2, :) = 0;
+gradient(end-1:end, :, :, :) = 0;
+gradient(:, end-1:end, :, :) = 0;
+gradient(:, :, end-1:end, :) = 0;
+
+gradient2 = zeros([brain.dim, 3]);
+gradient2(:, :, :, 1) = convn(gradient(:, :, :, 1), stencil .* filter(:, :, :, 1), 'same');
+gradient2(:, :, :, 2) = convn(gradient(:, :, :, 2), stencil .* filter(:, :, :, 2), 'same');
+gradient2(:, :, :, 3) = convn(gradient(:, :, :, 3), stencil .* filter(:, :, :, 3), 'same');
+gradient2(1:2, :, :, :) = 0;
+gradient2(:, 1:2, :, :) = 0;
+gradient2(:, :, 1:2, :) = 0;
+gradient2(end-1:end, :, :, :) = 0;
+gradient2(:, end-1:end, :, :) = 0;
+gradient2(:, :, end-1:end, :) = 0;
+
+gradientCross = zeros([brain.dim, 3]);
+gradientCross(:, :, :, 1) = convn(gradient(:, :, :, 1), stencil .* filter(:, :, :, 2), 'same');
+gradientCross(:, :, :, 2) = convn(gradient(:, :, :, 1), stencil .* filter(:, :, :, 3), 'same');
+gradientCross(:, :, :, 3) = convn(gradient(:, :, :, 2), stencil .* filter(:, :, :, 3), 'same');
+gradientCross(1:2, :, :, :) = 0;
+gradientCross(:, 1:2, :, :) = 0;
+gradientCross(:, :, 1:2, :) = 0;
+gradientCross(end-1:end, :, :, :) = 0;
+gradientCross(:, end-1:end, :, :) = 0;
+gradientCross(:, :, end-1:end, :) = 0;
+
+curvature = gradient(:, :, :, 1) .^ 2 .* gradient2(:, :, :, 2) ...
+          + gradient(:, :, :, 1) .^ 2 .* gradient2(:, :, :, 3) ...
+          + gradient(:, :, :, 2) .^ 2 .* gradient2(:, :, :, 1) ...
+          + gradient(:, :, :, 2) .^ 2 .* gradient2(:, :, :, 3) ...
+          + gradient(:, :, :, 3) .^ 2 .* gradient2(:, :, :, 1) ...
+          + gradient(:, :, :, 3) .^ 2 .* gradient2(:, :, :, 2) ...
+      - 2 * gradient(:, :, :, 1) .* gradient(:, :, :, 2) .* gradientCross(:, :, :, 1) ...
+      - 2 * gradient(:, :, :, 1) .* gradient(:, :, :, 3) .* gradientCross(:, :, :, 2) ...
+      - 2 * gradient(:, :, :, 2) .* gradient(:, :, :, 3) .* gradientCross(:, :, :, 3);
+
+%@todo make this optional: our level sets are normalised and don't need 
+% rescaling as the gradient should be 1 everywhere 
+% curvature = curvature ./ sum(gradient .^ 2, 4) .^ 3; 
+dx = 1;
+curvature(curvature < -1 / dx) = -1 / dx;
+curvature(curvature >  1 / dx) =  1 / dx;
+curvature(isnan(curvature) | isinf(curvature)) = 0;
+
+tvm_write4D(brain, curvature, pialK);
 
 end %end function
 

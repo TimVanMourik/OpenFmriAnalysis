@@ -33,7 +33,12 @@ if core
 end
 if interface
     addpath(fullfile(rootDirectory, 'Interface'));
+    addpath(fullfile(rootDirectory, 'Interface/Activation'));
     addpath(fullfile(rootDirectory, 'Interface/DesignMatrix'));
+    addpath(fullfile(rootDirectory, 'Interface/LaminarAnalysis'));
+    addpath(fullfile(rootDirectory, 'Interface/Preprocessing'));
+    addpath(fullfile(rootDirectory, 'Interface/Registration'));
+    addpath(fullfile(rootDirectory, 'Interface/Utilities'));
 end
 if development
     addpath(fullfile(rootDirectory, 'Development'));
@@ -41,7 +46,7 @@ end
 
 if display
     if core
-         tvm_workInProgress;
+         tvm_workInProgress();
          fprintf('You''re very welcome to use the Laminar Analysis toolbox, \nbut please be aware this version is in continuus development\n');
     end
 end
@@ -58,7 +63,7 @@ function optionValue = tvm_getOption(configuration, optionName, default)
 %   NAME is given in the cell array OPTIONS, the VALUE is the assigned
 %   value. Otherwise, the default value is returned.
 %
-%   Copyright (C) 2012-2013, Tim van Mourik, DCCN
+%   Copyright (C) 2012-2016, Tim van Mourik, DCCN
 
 if nargin == 2
     if isfield(configuration, optionName)

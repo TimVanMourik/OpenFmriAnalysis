@@ -3,8 +3,8 @@ function fullStencil3D = tvm_getGradientStencil3D(order, a, b, c)
 %These are the weights for the cross terms (Kowalczyk & Van Walstijn 2011)
 if nargin < 2
     a = 1;
-    b = 1;
-    c = 1;
+    b = 0;
+    c = 0;
 end
 % order should be an even number
 h           = 1;

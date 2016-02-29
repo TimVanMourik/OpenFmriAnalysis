@@ -141,7 +141,8 @@ clear sdfIn sdfOut
 
 %%
 laminae = rho;
-laminae.volume = tvm_partialVolumeAreaGradient(rho.volume, gradient);
+% laminae.volume = tvm_partialVolumeAreaGradient(rho.volume, gradient);
+laminae.volume = tvm_partialVolumeArea(rho.volume);
 
 laminae.volume = cat(4, ones(rho.dim), laminae.volume);
 cumulativeVolume = zeros(rho.dim);
