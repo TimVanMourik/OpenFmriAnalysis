@@ -33,6 +33,13 @@ for hemisphere = 1:length(wSurface)
         pTemp{hemisphere}(:, i) = pSurface{hemisphere}(:, i) + tvm_sampleVoxels(fieldMap(:, :, :, i), pSurface{hemisphere}(:, 1), pSurface{hemisphere}(:, 2), pSurface{hemisphere}(:, 3), configuration);
     end
 end
+
+% add a column of to save as 4D 
+for hemisphere = 1:length(wSurface)
+    wTemp{hemisphere} = [wTemp{hemisphere}, ones(size(wTemp{hemisphere},1), 1)];
+    pTemp{hemisphere} = [pTemp{hemisphere}, ones(size(pTemp{hemisphere},1), 1)];
+end
+
 wSurface = wTemp;
 pSurface = pTemp;
 
