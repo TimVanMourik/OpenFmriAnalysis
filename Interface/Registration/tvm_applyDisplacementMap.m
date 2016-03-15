@@ -1,4 +1,4 @@
-function tvm_applyFieldmap(configuration)
+function tvm_applyDisplacementMap(configuration)
 %
 %
 %   Copyright (C) 2015, Tim van Mourik, DCCN
@@ -29,8 +29,8 @@ pTemp = cell(size(pSurface));
 for hemisphere = 1:length(wSurface)
     for i = 1:3
         %todo, what to do with Nans?
-        wTemp{hemisphere}(:, i) = wSurface{hemisphere}(:, i) + tvm_sampleVoxels(fieldMap(:, :, :, i), wSurface{hemisphere}(:, 1), wSurface{hemisphere}(:, 2), wSurface{hemisphere}(:, 3), configuration);
-        pTemp{hemisphere}(:, i) = pSurface{hemisphere}(:, i) + tvm_sampleVoxels(fieldMap(:, :, :, i), pSurface{hemisphere}(:, 1), pSurface{hemisphere}(:, 2), pSurface{hemisphere}(:, 3), configuration);
+        wTemp{hemisphere}(:, i) = wSurface{hemisphere}(:, i) + tvm_sampleVoxels(fieldMap(:, :, :, i), wSurface{hemisphere}(:, 1:3), configuration);
+        pTemp{hemisphere}(:, i) = pSurface{hemisphere}(:, i) + tvm_sampleVoxels(fieldMap(:, :, :, i), pSurface{hemisphere}(:, 1:3), configuration);
     end
 end
 
