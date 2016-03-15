@@ -81,6 +81,6 @@ sampleX = sampleField(:, :, :, 1);
 sampleY = sampleField(:, :, :, 2);
 sampleZ = sampleField(:, :, :, 3);
 
-voxelGrid(:) = tvm_sampleVoxels(voxelGrid, sampleX(:), sampleY(:), sampleZ(:), {'InterpolationMethod', 'Trilinear'});
+voxelGrid(:) = tvm_sampleVoxels(voxelGrid, [sampleX(:), sampleY(:), sampleZ(:)], {'InterpolationMethod', 'Trilinear'});
 
 end %end function

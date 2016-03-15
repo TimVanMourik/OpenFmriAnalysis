@@ -36,7 +36,7 @@ else
 end
 
 profiles = zeros(length(arrayW), numberOfSteps);
-profiles(:) = tvm_sampleVoxels(volume, coordinates(:, 1), coordinates(:, 2), coordinates(:, 3), configuration);
+profiles(:) = tvm_sampleVoxels(volume, coordinates(:, 1:3), configuration);
 
 
 end %end function

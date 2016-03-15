@@ -28,6 +28,6 @@ sampleZ = sampleField(:, :, :, 3);
 
 configuration = [];
 configuration.InterpolationMethod = 'Trilinear';
-voxelGrid(:) = tvm_sampleVoxels(voxelGrid, sampleX(:), sampleY(:), sampleZ(:), configuration);
+voxelGrid(:) = tvm_sampleVoxels(voxelGrid, [sampleX(:), sampleY(:), sampleZ(:)], configuration);
 
 end %end function

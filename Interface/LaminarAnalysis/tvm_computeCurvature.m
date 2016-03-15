@@ -8,10 +8,8 @@ function tvm_computeCurvature(configuration)
 %   configuration.SubjectDirectory
 %   configuration.White
 %   configuration.Pial
-%   configuration.WhiteCurvature1
-%   configuration.WhiteCurvature2
-%   configuration.PialCurvature1
-%   configuration.PialCurvature2
+%   configuration.WhiteCurvature
+%   configuration.PialCurvature
 
 %% Parse configuration
 subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());

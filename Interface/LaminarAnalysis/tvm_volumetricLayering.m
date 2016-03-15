@@ -61,60 +61,43 @@ sdfIn.volume    = spm_read_vols(sdfIn);
 sdfOut.volume   = spm_read_vols(sdfOut);
 
 if curvature
-    curvIn     = spm_vol(whiteK);
-    curvOut    = spm_vol(pialK);
+    curvIn          = spm_vol(whiteK);
+    curvIn.volume   = spm_read_vols(curvIn);
+    curvOut         = spm_vol(pialK);
+    curvOut.volume  = spm_read_vols(curvOut);
 
-    curvIn.volume  = spm_read_vols(curvIn);
-    curvOut.volume = spm_read_vols(curvOut);
-    
-    %%
-    distance = sdfIn;
-%     distance.fname = 'brain.distance.nii';
+    distance        = sdfIn;
     distance.volume = abs(sdfIn.volume - sdfOut.volume);
 
-    %%
     aIn = sdfIn;
-%     aIn.fname = 'brain.ain.nii';
-    aIn.volume = 4 / (2 + sign(curvIn.volume - curvOut.volume) .* distance.volume .* curvIn.volume);
+    aIn.volume = 2 / (2 + sign(curvIn.volume - curvOut.volume) .* distance.volume .* curvIn.volume);
     aIn.volume(aIn.volume < 0) = 0;
     aIn.volume(aIn.volume > 3) = 3;
     aIn.volume(isnan(aIn.volume)) = 0;
 
-    %%
     aOut = sdfIn;
-%     aOut.fname = 'brain.aout.nii';
-    aOut.volume = 4 / (2 + sign(curvOut.volume - curvIn.volume) .* distance.volume .* curvOut.volume);
+    aOut.volume = 2 / (2 + sign(curvOut.volume - curvIn.volume) .* distance.volume .* curvOut.volume);
     aOut.volume(aOut.volume < 0) = 0;
     aOut.volume(aOut.volume > 3) = 3;
     aOut.volume(isnan(aOut.volume)) = 0;
-
-    %%
     clear('curvIn', 'curvOut', 'distance');
 
-    %%
+    %
     aDif = sdfIn;
-%     aDif.fname = 'brain.adif.nii';
     aDif.volume = aOut.volume - aIn.volume;
 
-
-    %%
     %number of volume layers, so number of SDFs is one more
     numberOfLaminae = length(levels);
 
-    %%
     rho = sdfIn;
-%     rho.fname = 'brain.layers.nii';
     rho.volume = zeros(rho.dim);
-
     for lamina = 1:numberOfLaminae
         rho.volume(:, :, :, lamina) = (sqrt(levels(lamina) * aOut.volume .^ 2 + (1 - levels(lamina)) * aIn.volume .^ 2) - aIn.volume) ./ aDif.volume;
     end
     rho.volume(isnan(rho.volume)) = 0;
+    clear('aIn', 'aOut', 'aDif', 'lamina');
 
-    %%
-    clear aIn aOut aDif lamina
-
-    %%
+    %
     for lamina = 1:numberOfLaminae
         rho.volume(:, :, :, lamina) = (1 - rho.volume(:, :, :, lamina)) .* sdfIn.volume + rho.volume(:, :, :, lamina) .* sdfOut.volume;
     end
@@ -124,11 +107,8 @@ else
     %number of volume layers, so number of SDFs is one more
     numberOfLaminae = length(levels);
     rho = sdfIn;
-%     rho.fname = 'brain.layers.nii';
     rho.volume = zeros([rho.dim, numberOfLaminae]);
 
-
-    %%
     for lamina = 1:numberOfLaminae
         rhoValue = (lamina - 1) / (numberOfLaminae - 1);
         rho.volume(:, :, :, lamina) = (1 - rhoValue) .* sdfIn.volume + rhoValue .* sdfOut.volume;
@@ -136,8 +116,7 @@ else
     tvm_write4D(rho, rho.volume, levelSetFile);
     
 end
-%%
-clear sdfIn sdfOut
+clear('sdfIn', 'sdfOut');
 
 %%
 laminae = rho;

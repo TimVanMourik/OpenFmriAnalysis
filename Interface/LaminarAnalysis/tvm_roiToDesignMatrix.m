@@ -40,17 +40,22 @@ for i = 1:length(regionsOfInterest)
         layerI = spm_read_vols(layers(j));
         designMatrix(:, j) = layerI(indices);
     end
-    % @todo
-    %if the ROI is not a binary mask, the weights should be adapted accordingly
+    missingValues = any(isnan(designMatrix), 2);
+    designMatrix(missingValues, :) = [];
+    indices(missingValues) = [];
+    % @todo if the ROI is not a binary mask, the weights should be adapted accordingly
     % designMatrix = bsxfun(@times, designMatrix, roi.volume(indices));
 
     design = [];
     design.Indices = indices;
+    [x, y, z] = ind2sub(roi.dim, indices);
+    design.Locations = [x, y, z];
     design.DesignMatrix = designMatrix;
     nonZeroColumns = ~all(designMatrix == 0);
     design.NonZerosColumns = find(nonZeroColumns);
     %The covariance matrix is undefined when there is a column of zeros
-    %involved, so these are taken out of the equation
+    %involved, so these are taken out of the equation. @todo write proper
+    %warning message
     design.CovarianceMatrix = zeros(numberOfLayers);
     design.CovarianceMatrix(nonZeroColumns, nonZeroColumns) = inv(designMatrix(:, nonZeroColumns)' * designMatrix(:, nonZeroColumns));
 

@@ -5,9 +5,6 @@ function tvm_makeLevelSet(configuration)
 %   the centre of the voxel to the nearest point at from the input
 %   boundaries.
 %
-%   @TODO Currently, the matrix is only used for writing the correct matrix
-%   to a volume. The obj-files are not transformed accordingly. This's
-%   gotta be changed.
 %
 %   Copyright (C) Tim van Mourik, 2014, DCCN
 %
@@ -58,8 +55,8 @@ cd(functionDirectory);
 referenceVolume = spm_vol(referenceFile);
 
 if isempty(strfind(objWhite, '?'))
-    makeSignedDistanceField(objWhite, white, referenceVolume.dim, referenceVolume.mat, objTransformationMatrix);
-    makeSignedDistanceField(objPial,  pial,  referenceVolume.dim, referenceVolume.mat, objTransformationMatrix);
+    makeSignedDistanceField(objWhite, white, referenceVolume(1).dim, referenceVolume(1).mat, objTransformationMatrix);
+    makeSignedDistanceField(objPial,  pial,  referenceVolume(1).dim, referenceVolume(1).mat, objTransformationMatrix);
     
 else
     for hemisphere = 1:2
@@ -73,7 +70,7 @@ else
         else
                 %@todo crash properly
         end
-        makeSignedDistanceField(objFile, sdfFile, referenceVolume.dim, referenceVolume.mat, objTransformationMatrix);
+        makeSignedDistanceField(objFile, sdfFile, referenceVolume(1).dim, referenceVolume(1).mat, objTransformationMatrix);
 
         if hemisphere == 1
             objFile = strrep(objPial, '?', 'r');
@@ -84,30 +81,30 @@ else
         else
                 %@todo crash properly
         end
-        makeSignedDistanceField(objFile, sdfFile, referenceVolume.dim, referenceVolume.mat, objTransformationMatrix);
+        makeSignedDistanceField(objFile, sdfFile, referenceVolume(1).dim, referenceVolume(1).mat, objTransformationMatrix);
 
     end
 
     %Sets the data type to float
-    referenceVolume.dt = [16, 0];
+    referenceVolume(1).dt = [16, 0];
 
-    referenceVolume.fname = white;
-    referenceVolume.volume = zeros(referenceVolume.dim);
+    referenceVolume(1).fname = white;
+    referenceVolume(1).volume = zeros(referenceVolume.dim);
     right = spm_vol(strrep(sdfWhite, '?', 'r'));
     right.volume = spm_read_vols(right);
     left  = spm_vol(strrep(sdfWhite, '?', 'l'));
     left.volume  = spm_read_vols(left);
-    referenceVolume.volume(:) = min([right.volume(:), left.volume(:)], [], 2);
-    spm_write_vol(referenceVolume, referenceVolume.volume);
+    referenceVolume(1).volume(:) = min([right.volume(:), left.volume(:)], [], 2);
+    spm_write_vol(referenceVolume(1), referenceVolume(1).volume);
 
-    referenceVolume.fname = pial;
-    referenceVolume.volume = zeros(referenceVolume.dim);
+    referenceVolume(1).fname = pial;
+    referenceVolume(1).volume = zeros(referenceVolume(1).dim);
     right = spm_vol(strrep(sdfPial, '?', 'r'));
     right.volume = spm_read_vols(right);
     left  = spm_vol(strrep(sdfPial, '?', 'l'));
     left.volume  = spm_read_vols(left);
-    referenceVolume.volume(:) = min([right.volume(:), left.volume(:)], [], 2);
-    spm_write_vol(referenceVolume, referenceVolume.volume);
+    referenceVolume(1).volume(:) = min([right.volume(:), left.volume(:)], [], 2);
+    spm_write_vol(referenceVolume(1), referenceVolume(1).volume);
 end
 
 end %end function

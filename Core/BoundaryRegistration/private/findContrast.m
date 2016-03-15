@@ -71,8 +71,8 @@ whitepixels = array1 - d * normals .* thickness;
 greypixels  = array1 + d * normals .* thickness;
 
 %determine the contrast
-white = tvm_sampleVoxels(voxelgrid, whitepixels(:, 1), whitepixels(:, 2), whitepixels(:, 3));
-grey  = tvm_sampleVoxels(voxelgrid, greypixels(:, 1) , greypixels(:, 2) , whitepixels(:, 3));
+white = tvm_sampleVoxels(voxelgrid, whitepixels(:, 1:3));
+grey  = tvm_sampleVoxels(voxelgrid, greypixels(:, 1:3));
 
 %computes the contrast
 contrast = (white - grey) ./ (grey + white);
@@ -135,8 +135,8 @@ for j = 1:numberOfSteps
     %The grey matter is supposed to be along the positive vertex normal
     stepsGrey(:, :, j)  = array1(:, :) + distance(:, :) * j;
     %Interpolates the pixels
-    pixelsWhite(:, j) = tvm_sampleVoxels(voxelgrid, stepsWhite(:, 1, j), stepsWhite(:, 2, j), stepsWhite(:, 3, j));
-    pixelsGrey(:, j)  = tvm_sampleVoxels(voxelgrid, stepsGrey(:, 1, j),  stepsGrey(:, 2, j) , stepsGrey(:, 3, j));
+    pixelsWhite(:, j) = tvm_sampleVoxels(voxelgrid, stepsWhite(:, 1:3, j));
+    pixelsGrey(:, j)  = tvm_sampleVoxels(voxelgrid, stepsGrey(:, 1:3, j));
 end
 
 grey  = sum(pixelsGrey, 2);
@@ -180,8 +180,8 @@ greypixels = array1 + d * normals;
 
 %determine the contrast
 
-white = tvm_sampleVoxels(voxelgrid, whitepixels(:, 1), whitepixels(:, 2), whitepixels(:, 3));
-grey  = tvm_sampleVoxels(voxelgrid, greypixels(:, 1),  greypixels(:, 2),  whitepixels(:, 3));
+white = tvm_sampleVoxels(voxelgrid, whitepixels(:, 1:3));
+grey  = tvm_sampleVoxels(voxelgrid, greypixels(:, 1:3));
     
 %computes the contrast
 contrast = (white - grey) ./ (grey + white);
