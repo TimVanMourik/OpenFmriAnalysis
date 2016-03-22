@@ -26,15 +26,15 @@ pial                = fullfile(subjectDirectory, tvm_getOption(configuration, 'i
     %no default
 % whiteNormals        = tvm_getOption(configuration, 'i_WhiteNormals', '');
     %default: ''
+    %when there is no curvature input, equidistant sampling will be used.
 % pialNormals         = tvm_getOption(configuration, 'i_PialNormals', '');
     %default: ''
-curvatureFile       = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Curvature'));
+    %when there is no curvature input, equidistant sampling will be used.
+potentialFile       = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Potential'));
     %no default
-levels              = tvm_getOption(configuration, 'i_Levels');
-    %
+levels              = tvm_getOption(configuration, 'i_Levels', 0:1/3:1);
+    %0:1/3:1
 layerFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Layering'));
-    %no default
-levelSetFile        = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_LevelSet'));
     %no default
 
 %%
@@ -44,23 +44,32 @@ sdfOut  = spm_vol(pial);
 sdfIn.volume    = spm_read_vols(sdfIn);
 sdfOut.volume   = spm_read_vols(sdfOut);
 
-curvature = spm_vol(curvatureFile);
-curvature.volume = spm_read_vols(curvature);
+potential = spm_vol(potentialFile);
+potential.volume = spm_read_vols(potential);
 
+%number of volume layers, so number of SDFs is one more
 numberOfLaminae = length(levels);
+rho = sdfIn;
+rho.volume = zeros([rho.dim, numberOfLaminae]);
 
-%%
-curvature.volume(isnan(curvature.volume)) = 0;
-levelSet = -reshape(squeeze(tvm_getBokCoordinates(sdfIn.volume(:), sdfOut.volume(:), curvature.volume(:), levels, sign(sdfOut.volume(:) - sdfIn.volume(:)), sdfIn.volume(:) - sdfOut.volume(:))), [curvature.dim, numberOfLaminae]);
-tvm_write4D(curvature, levelSet, levelSetFile);
-
-%%
-laminae = curvature;
-laminae.volume = tvm_partialVolumeArea(levelSet);
-for lamina = numberOfLaminae:-1:2
-    laminae.volume(:, :, :, lamina) = laminae.volume(:, :, :, lamina) - laminae.volume(:, :, :, lamina - 1);
+for lamina = 1:numberOfLaminae
+    rhoValue = (lamina - 1) / (numberOfLaminae - 1);
+    rho.volume(:, :, :, lamina) = (1 - rhoValue) .* sdfIn.volume + rhoValue .* sdfOut.volume;
 end
-laminae.volume = cat(4, laminae.volume, 1 - sum(laminae.volume, 4));
+tvm_write4D(rho, rho.volume, levelSetFile);
+
+
+%%
+laminae = rho;
+% laminae.volume = tvm_partialVolumeAreaGradient(rho.volume, gradient);
+laminae.volume = tvm_partialVolumeArea(rho.volume);
+
+laminae.volume = cat(4, ones(rho.dim), laminae.volume);
+cumulativeVolume = zeros(rho.dim);
+for lamina = (numberOfLaminae + 1):-1:1
+    laminae.volume(:, :, :, lamina) = laminae.volume(:, :, :, lamina) - cumulativeVolume;
+    cumulativeVolume = cumulativeVolume + laminae.volume(:, :, :, lamina);
+end
 
 % set all edges to zero: the curvature is not defined at the edges and
 % hence the layer distribution is undefined.

@@ -9,18 +9,17 @@ function tvm_objToBoundary(configuration)
 %
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
 objectFile              = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ObjFile'));
     %no default
-boundaryFile                 = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_BoundaryFile'));
+boundaryFile            = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_BoundaryFile'));
     %no default
     
 definitions = tvm_definitions();
 
 %%
-[vertices, faces] = tvm_importObjFile(objFiles);
-
+[vertices, faces] = tvm_importObjFile(objFile);
 save(boundaryFile, 'vertices', 'faces');
 
 

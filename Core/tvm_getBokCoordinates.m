@@ -1,4 +1,4 @@
-function coordinates = getBokCoordinates(arrayW, arrayP, curvature, volumeFraction, normals, thickness)
+function coordinates = tvm_getBokCoordinates(arrayW, arrayP, curvature, volumeFraction, normals, thickness)
 %GETBOKCOORDINATES finds interpolated coordinates between two surfaces,
 %given a certain curvature (Bok, 1929)
 %   COORDINATES = GETBOKCOORDINATES(ARRAYW, ARRAYP, CURV, VOLUMEDRACTION, NORMALS, THICKNESS)
@@ -42,7 +42,7 @@ radiusZero = R == 0;
 coordinates = zeros(numberOfVertices * numberOfSurfaces, size(arrayW, 2));
 
 %for the positive radius
-if sum(radiusPositive) > 0
+if any(radiusPositive)
     %volume preservation function:
     rCubed = bsxfun(@plus, bsxfun(@times, repmat(volumePercentage, sum(radiusPositive), 1), (R(radiusPositive) + thickness(radiusPositive)) .^ 3 - R(radiusPositive) .^ 3), R(radiusPositive) .^ 3);
     r = bsxfun(@minus, nthroot(rCubed, 3), R(radiusPositive)); %in percentage times thickness
@@ -52,7 +52,7 @@ if sum(radiusPositive) > 0
 end
 
 %for the negative radius
-if sum(radiusNegative) > 0
+if any(radiusNegative)
     %volume preservation function:
     rCubed = bsxfun(@plus, bsxfun(@times, repmat(volumePercentage, sum(radiusNegative), 1), (thickness(radiusNegative) - R(radiusNegative)) .^ 3 + R(radiusNegative) .^ 3), -R(radiusNegative) .^ 3);
     r = fliplr(bsxfun(@plus, nthroot(rCubed, 3), R(radiusNegative))); %in percentage times thickness
@@ -62,7 +62,7 @@ if sum(radiusNegative) > 0
 end
 
 %for no curvature
-if sum(radiusZero) > 0
+if any(radiusZero)
     %equidistant sampling
     T = thickness(radiusZero) * volumePercentage;
     samplingCoordinatesZero = repmat(arrayW(radiusZero, :), [numberOfSurfaces, 1]) + bsxfun(@times, T(:), repmat(normals(radiusZero, :), [numberOfSurfaces, 1]));

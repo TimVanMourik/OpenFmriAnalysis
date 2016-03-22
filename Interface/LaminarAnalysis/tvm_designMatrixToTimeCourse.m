@@ -116,22 +116,42 @@ end
 end %end function
 
 
-function [timePoints, covariance] = regressLayers(voxelValues, designMatrix, covariance, regressionApproach)
+function timePoints = regressLayers(designMatrix, voxelValues, estimationMethod, locations)
 
-switch regressionApproach
+if nargin == 3
+    locations = [];
+end
+
+switch estimationMethod
     case 'OLS'
-        % @todo instead, compute pinv and multiply that every time point!
         timePoints = designMatrix \ voxelValues;
-        sumOfSquares = sum((voxelValues - designMatrix * timePoints) .^ 2);
-%         vcov = X'X * SSres / (n - p)
-        covariance = covariance * (sumOfSquares / (length(voxelValues) - length(covariance)));
- 
-    case 'GLS'
         
+    case 'GLS'
+        numberOfPoints = size(locations, 1);
+        [x, y] = meshgrid(1:numberOfPoints, 1:numberOfPoints);
+        distances = sqrt(sum(reshape(locations(x, :) - locations(y, :), [numberOfPoints, numberOfPoints, 3]) .^ 2, 3));
+        gaussianFWHM = sqrt(2);
+        stddev = gaussianFWHM / (2 * sqrt(2 * log(2)));
+        covarianceMatrix = normpdf(distances, 0, stddev) / normpdf(0, 0, stddev);
+        covarianceMatrix(distances > 2 * gaussianFWHM) = 0; %after 2 FWHM, the normpdf < 10 ^ -4
+        timePoints = (designMatrix' / covarianceMatrix * designMatrix) \ designMatrix' / covarianceMatrix * voxelValues;
+
+    case 'RobustFit'
+        timePoints = robustfit(designMatrix, voxelValues, 'bisquare', 10);
+        % you can't un-model the constant in robustfit()
+        timePoints = timePoints(1) + timePoints(2:end);
+        
+    case 'Classification'
+        m = max(designMatrix, [], 2);
+        designMatrix(bsxfun(@ne, designMatrix, m)) = 0;
+        designMatrix(bsxfun(@eq, designMatrix, m)) = 1;
+        timePoints = designMatrix \ voxelValues;
+        
+    case 'Interpolation'
+        timePoints = designMatrix' * voxelValues ./ sum(designMatrix, 1)';
 end
 
 end
-
 
 
 

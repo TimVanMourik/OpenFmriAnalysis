@@ -15,20 +15,16 @@ function tvm_computeDivergence(configuration)
 %% Parse configuration
 subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
-white               = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_WhiteNormal'));
+normalFile          = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_VectorField'));
     %no default
-pial                = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_PialNormal'));
+divergenceFile   	= fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Divergence'));
     %no default
-whiteDivergence   	= fullfile(subjectDirectory, tvm_getOption(configuration, 'o_WhiteDivergence'));
-    %no default
-pialDivergence     	= fullfile(subjectDirectory, tvm_getOption(configuration, 'o_PialDivergence'));
-    %no default
-order               = tvm_getOption(configuration, 'i_Order', 10);
+order               = tvm_getOption(configuration, 'i_Order', 2);
     %no default
     
 %%
 %white matter surface
-brain = spm_vol(white);
+brain = spm_vol(normalFile);
 brainVolume = spm_read_vols(brain);
 
 stencil = tvm_getGradientStencil3D(order);
@@ -44,28 +40,8 @@ gradient(:, :, 1:2, :) = 0;
 gradient(end-1:end, :, :, :) = 0;
 gradient(:, end-1:end, :, :) = 0;
 gradient(:, :, end-1:end, :) = 0;
-tvm_write4D(brain(1), sum(gradient, 4), whiteDivergence);
-    
+tvm_write4D(brain(1), sum(gradient, 4), divergenceFile);
 
-%pial surface
-brain = spm_vol(pial);
-brainVolume = spm_read_vols(brain);
-
-stencil = tvm_getGradientStencil3D(order);
-filter = tvm_getGradientFilter3D(order);
-
-gradient = zeros([brain(1).dim, 3]);
-gradient(:, :, :, 1) = convn(brainVolume(:, :, :, 1), stencil .* filter(:, :, :, 1), 'same');
-gradient(:, :, :, 2) = convn(brainVolume(:, :, :, 1), stencil .* filter(:, :, :, 2), 'same');
-gradient(:, :, :, 3) = convn(brainVolume(:, :, :, 1), stencil .* filter(:, :, :, 3), 'same');
-gradient(1:2, :, :, :) = 0;
-gradient(:, 1:2, :, :) = 0;
-gradient(:, :, 1:2, :) = 0;
-gradient(end-1:end, :, :, :) = 0;
-gradient(:, end-1:end, :, :) = 0;
-gradient(:, :, end-1:end, :) = 0;
-tvm_write4D(brain(1), sum(gradient, 4), pialDivergence);
-    
 end %end function
 
 
