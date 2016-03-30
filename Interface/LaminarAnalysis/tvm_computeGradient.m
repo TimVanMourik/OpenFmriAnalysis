@@ -49,6 +49,10 @@ gradient(:, :, end-1:end, :) = 0;
 if normalise
     gradient = bsxfun(@rdivide, gradient, sqrt(sum(gradient .^ 2, 4)));
 end
+
+% [gx, gy, gz] = gradnan(gradient);
+% gradient = cat(gx, gy, gz, 4);
+
 tvm_write4D(brain, gradient, whiteGradient);
     
 

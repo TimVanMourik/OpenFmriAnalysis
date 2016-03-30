@@ -41,9 +41,9 @@ for hemisphere = 1:2
         outputFilePial = strrep(objPial, '?', 'l');
     end
 
-%   vertex - 1?
-    tvm_exportObjFile(wSurface{hemisphere}, faceData{hemisphere}, outputFileWhite); 
-    tvm_exportObjFile(pSurface{hemisphere}, faceData{hemisphere}, outputFilePial);  
+%   vertex - 1, because obj as a file format has default origin at 0 
+    tvm_exportObjFile(wSurface{hemisphere} - 1, faceData{hemisphere}, outputFileWhite); 
+    tvm_exportObjFile(pSurface{hemisphere} - 1, faceData{hemisphere}, outputFilePial);  
     
 end  
 

@@ -9,13 +9,13 @@ function tvm_resampleVolume(configuration)
 
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
-referenceFile =         fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
+referenceFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
-voxelSize =             tvm_getOption(configuration, 'i_VoxelSize');
+voxelSize               = tvm_getOption(configuration, 'i_VoxelSize');
     %
-outputFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'o_OutputVolume'));
+outputFile              = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_OutputVolume'));
     %no default
 
 %%

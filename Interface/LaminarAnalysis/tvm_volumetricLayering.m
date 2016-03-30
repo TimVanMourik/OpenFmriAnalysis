@@ -24,9 +24,7 @@ white               = fullfile(subjectDirectory, tvm_getOption(configuration, 'i
     %no default
 pial                = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Pial'));
     %no default
-% whiteNormals        = tvm_getOption(configuration, 'i_WhiteNormals', '');
-    %default: ''
-% pialNormals         = tvm_getOption(configuration, 'i_PialNormals', '');
+gradientFile        = tvm_getOption(configuration, 'i_Gradient', '');
     %default: ''
 curvatureFile       = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Curvature'));
     %no default
@@ -34,7 +32,7 @@ levels              = tvm_getOption(configuration, 'i_Levels');
     %
 layerFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Layering'));
     %no default
-levelSetFile        = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_LevelSet'));
+levelSetFile        = tvm_getOption(configuration, 'o_LevelSet', '');
     %no default
 
 %%
@@ -52,11 +50,18 @@ numberOfLaminae = length(levels);
 %%
 curvature.volume(isnan(curvature.volume)) = 0;
 levelSet = -reshape(squeeze(tvm_getBokCoordinates(sdfIn.volume(:), sdfOut.volume(:), curvature.volume(:), levels, sign(sdfOut.volume(:) - sdfIn.volume(:)), sdfIn.volume(:) - sdfOut.volume(:))), [curvature.dim, numberOfLaminae]);
-tvm_write4D(curvature, levelSet, levelSetFile);
+if ~isempty(levelSetFile)
+    tvm_write4D(curvature, levelSet, fullfile(subjectDirectory, levelSetFile));
+end
 
 %%
 laminae = curvature;
-laminae.volume = tvm_partialVolumeArea(levelSet);
+if ~isempty(gradientFile)
+    gradient = spm_read_vols(spm_vol(fullfile(subjectDirectory, gradientFile)));
+    laminae.volume = tvm_partialVolumeArea(levelSet, 'gradient', gradient);
+else
+    laminae.volume = tvm_partialVolumeArea(levelSet, 'cubic');
+end
 for lamina = numberOfLaminae:-1:2
     laminae.volume(:, :, :, lamina) = laminae.volume(:, :, :, lamina) - laminae.volume(:, :, :, lamina - 1);
 end

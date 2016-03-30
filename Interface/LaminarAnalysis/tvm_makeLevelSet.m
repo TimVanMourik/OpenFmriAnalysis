@@ -28,13 +28,8 @@ objWhite                = fullfile(subjectDirectory, tvm_getOption(configuration
     %no default
 objPial                 = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ObjPial'));
     %no default
-objTransformationMatrix = tvm_getOption(configuration, 'i_Matrix', [1, 0, 0, -1; 0, 1, 0, -1; 0, 0, 1, -1; 0, 0, 0, 1]);
-    %default: shift by -1
-    %The obj.file is multiplied with this matrix. The matrix written to the
-    %file is still the matrix from the reference volume
-    %@todo, see if this is a logical default. It seems so, as the input is
-    %delivered in Matlab space and the level set is computed in 1-indexing
-    %space
+objTransformationMatrix = tvm_getOption(configuration, 'i_Matrix', eye(4));
+    %default: no shift
 sdfWhite                = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_SdfWhite', ''));
     %no default
 sdfPial                 = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_SdfPial', ''));

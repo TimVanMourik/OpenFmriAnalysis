@@ -17,7 +17,7 @@ if twoHemispheres
         configuration.i_ObjWhite        = configuration.o_ObjWhite;
         configuration.i_ObjPial         = configuration.o_ObjPial;
     catch
-        warning('Skipping tvm_boundariesToObj\n');
+        warning('Skipping tvm_boundariesToObj');
     end
     %%
     try
@@ -25,7 +25,7 @@ if twoHemispheres
         configuration.i_White                   = configuration.o_White;
         configuration.i_Pial                    = configuration.o_Pial;
     catch
-        warning('Skipping tvm_makeLevelSet\n');
+        warning('Skipping tvm_makeLevelSet');
     end
     %%
     try
@@ -34,7 +34,7 @@ if twoHemispheres
         configuration.i_Normalise               = true;
         configuration.i_Order                   = 2;
     catch
-        warning('Skipping tvm_laplacePotentials\n');
+        warning('Skipping tvm_laplacePotentials');
     end
     %%
     try
@@ -42,7 +42,7 @@ if twoHemispheres
         configuration.i_VectorField             = configuration.o_Gradient ;
         configuration.o_Divergence              = configuration.o_Curvature;
     catch
-        warning('Skipping tvm_gradient\n');
+        warning('Skipping tvm_gradient');
     end
     %%
     try
@@ -50,13 +50,13 @@ if twoHemispheres
         configuration.i_Curvature               = configuration.o_Curvature;
         configuration.i_Gradient                = configuration.o_Gradient;
     catch
-        warning('Skipping tvm_computeDivergence\n');
+        warning('Skipping tvm_computeDivergence');
     end
     %%
     try
         tvm_volumetricLayering(configuration);
     catch
-        warning('Skipping tvm_volumetricLayering\n');
+        warning('Skipping tvm_volumetricLayering');
     end
     %%
 %     try
@@ -65,13 +65,13 @@ if twoHemispheres
 %         tvm_leprincePotential(configuration);
 %         configuration.i_Potential               = configuration.o_EquivolumePotential;
 %     catch
-%         warning('Skipping tvm_leprincePotential\n');
+%         warning('Skipping tvm_leprincePotential');
 %     end
 %     %%
 %     try
 %         tvm_potentialToLayers(configuration);
 %     catch
-%         warning('Skipping tvm_potentialToLayers\n');
+%         warning('Skipping tvm_potentialToLayers');
 %     end
 else
     %%
@@ -80,7 +80,7 @@ else
         configuration.i_ObjWhite        = configuration.o_ObjWhite;
         configuration.i_ObjPial         = configuration.o_ObjPial;
     catch
-        warning('Skipping tvm_boundariesToObj\n');
+        warning('Skipping tvm_boundariesToObj');
     end
     %%
     try
@@ -88,7 +88,7 @@ else
         configuration.i_White                   = configuration.o_White;
         configuration.i_Pial                    = configuration.o_Pial;
     catch
-        warning('Skipping tvm_makeLevelSet\n');
+        warning('Skipping tvm_makeLevelSet');
     end
     %%
     try
@@ -97,7 +97,7 @@ else
         configuration.i_Normalise               = true;
         configuration.i_Order                   = 2;
     catch
-        warning('Skipping tvm_laplacePotentials\n');
+        warning('Skipping tvm_laplacePotentials');
     end
     %%
     try
@@ -105,7 +105,7 @@ else
         configuration.i_VectorField             = configuration.o_Gradient ;
         configuration.o_Divergence              = configuration.o_Curvature;
     catch
-        warning('Skipping tvm_gradient\n');
+        warning('Skipping tvm_gradient');
     end
     %%
     try
@@ -113,26 +113,26 @@ else
         configuration.i_Curvature               = configuration.o_Curvature;
         configuration.i_Gradient                = configuration.o_Gradient;
     catch
-        warning('Skipping tvm_computeDivergence\n');
+        warning('Skipping tvm_computeDivergence');
     end
     %%
     try
         tvm_volumetricLayering(configuration);
     catch
-        warning('Skipping tvm_volumetricLayering\n');
+        warning('Skipping tvm_volumetricLayering');
     end
     %%
 %     try
 %         tvm_leprincePotential(configuration);
 %         configuration.i_Potential               = configuration.o_EquivolumePotential;
 %     catch
-%         warning('Skipping tvm_leprincePotential\n');
+%         warning('Skipping tvm_leprincePotential');
 %     end
 %     %%
 %     try
 %         tvm_potentialToLayers(configuration);
 %     catch
-%         warning('Skipping tvm_potentialToLayers\n');
+%         warning('Skipping tvm_potentialToLayers');
 %     end
 end
 
