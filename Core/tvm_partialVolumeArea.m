@@ -1,4 +1,4 @@
-function distance = tvm_partialVolumeArea(distance)
+function distance = tvm_partialVolumeArea(distance, method, normals)
 % The mode needs to be added as soon a different method is implementedy
 % function distance = partialVolumeArea(distance, mode)
 %
@@ -7,14 +7,19 @@ function distance = tvm_partialVolumeArea(distance)
 %
 % NB. distance is in voxels
 
-method = 'cubic';
 switch method
-    %An approximation of a PVE kernel by means of a cubic function:
-    %for      distance <= -1,   area = 0, 
-    %for -1 < distance <= 0,    area = 0, 1 - 3 * x ^ 2 - 2 * x ^3
-    %for  0 < distance <  1,    area = 0, 1 - 3 * x ^ 2 + 2 * x ^3
-    %for      distance >= 1,    area = 0, 
+    case 'rectangle'
+        distance = distance + 1/2;
+        distance(distance < 0) = 0;
+        distance(distance > 1) = 1;
+        
     case 'cubic'
+        %% An approximation of a PVE kernel by means of a cubic function:
+        %for      distance <= -1,   area = 0, 
+        %for -1 < distance <= 0,    area = 0, 1 - 3 * x ^ 2 - 2 * x ^3
+        %for  0 < distance <  1,    area = 0, 1 - 3 * x ^ 2 + 2 * x ^3
+        %for      distance >= 1,    area = 0
+        
         %first scale it to a kernel from -1 to 1
         distance = distance * 2 / sqrt(3);
         
@@ -33,29 +38,107 @@ switch method
         
         distance(zeroIndices) = 1 /2;
         
-    case 'p20'
-%         f = @(x, a)a(1) + a(2) * x .^ 2 + a(3) * x .^ 4 + a(4) * x .^ 6 + a(5) * x .^ 8 + a(6) * x .^ 10 + a(7) * x .^ 12 + a(8) * x .^ 14 + a(9) * x .^ 16 + a(10) * x .^ 18 + a(11) * x .^ 20;
-        F = @(x, a)0.5 + a(1) * x + a(2) * x .^ 3 / 3 + a(3) * x .^ 5 / 5 + a(4) * x .^ 7 / 7 + a(5) * x .^ 9 / 9 + a(6) * x .^ 11 / 11 + a(7) * x .^ 13 / 13 + a(8) * x .^ 15 / 15 + a(9) * x .^ 17 / 17 + a(10) * x .^ 19 / 19 + a(11) * x .^ 21 / 21;
-        coefficients = ...
-            [0.5593585,	...% x^0
-            -0.0373305,	...% x^2
-            -2.2497690,	...% x^4
-             9.2712318,	...% x^6
-            -18.6792429,...% x^8
-             20.2455425,...% x^10
-            -12.7699239,...% x^12
-             4.8372428,	...% x^14
-            -1.0801467,	...% x^16
-             0.1299689,	...% x^18
-            -0.0064062];...% x^20
-            
-        indices = distance > -sqrt(3)  & distance < sqrt(3);
-        distance(distance <= -sqrt(3)) = 0;
-        distance(distance >=  sqrt(3)) = 1;
-        distance(indices) = F(distance(indices), coefficients);
+    case 'gradient'
+        if nargin < 3
+            error('Please provide normals for the image');
+        end
+        %@todo make this properly N-dimensional
+        sizeNormals = size(normals);
+        sizeVolume = size(distance);
+        numberOfVoxels = prod(sizeVolume(1:end - 1));
+        assert(all(sizeNormals(1:end - 1) == sizeVolume(1:end - 1)));
+        assert(sizeNormals(end) == 3, 'Normals need to have three dimensions'); %@todo to be expanded to N dimensions
+        normals = abs(normals);
+        epsilon = 0.001;
         
-    %A proper PVE kernel has not yet been implemented, if an exact formula can be computed.
-    case 'PVE'
+        normals = reshape(normals, [numberOfVoxels, sizeNormals(end)]);
+        distance = reshape(distance, [numberOfVoxels, sizeVolume(end)]);
+        
+        noGradient = any(isnan(normals) | isinf(normals) | abs(normals) < epsilon, 2);
+        distanceNoGradient = tvm_partialVolumeArea(distance(noGradient, :), 'cubic');
+        
+        kernelSize = sum(normals, 2);
+        farDistance = bsxfun(@gt, distance,  kernelSize / 2);
+        farBehind   = bsxfun(@lt, distance, -kernelSize / 2);
+        distance = bsxfun(@plus, distance, kernelSize / 2);
+        
+        %% zeroth term
+        cumulativeArea = distance .^ 3;
+        
+        %% single terms
+        indices = find(bsxfun(@gt, distance, normals(:, 1)));
+        normalIndices = mod(indices, numberOfVoxels);
+        normalIndices(normalIndices == 0) = normalIndices(normalIndices == 0) + numberOfVoxels;
+        cumulativeArea(indices) = cumulativeArea(indices) - (distance(indices) - normals(normalIndices, 1)) .^ 3;
+        
+        indices = find(bsxfun(@gt, distance, normals(:, 2)));
+        normalIndices = mod(indices, numberOfVoxels);
+        normalIndices(normalIndices == 0) = normalIndices(normalIndices == 0) + numberOfVoxels;
+        cumulativeArea(indices) = cumulativeArea(indices) - (distance(indices) - normals(normalIndices, 2)) .^ 3;
+        
+        indices = find(bsxfun(@gt, distance,  normals(:, 3)));
+        normalIndices = mod(indices, numberOfVoxels);
+        normalIndices(normalIndices == 0) = normalIndices(normalIndices == 0) + numberOfVoxels;
+        cumulativeArea(indices) = cumulativeArea(indices) - (distance(indices) - normals(normalIndices, 3)) .^ 3;
+        
+        %% double terms
+        indices = find(bsxfun(@gt, distance,  normals(:, 1) + normals(:, 2)));
+        normalIndices = mod(indices, numberOfVoxels);
+        normalIndices(normalIndices == 0) = normalIndices(normalIndices == 0) + numberOfVoxels;
+        cumulativeArea(indices) = cumulativeArea(indices) + (distance(indices) - normals(normalIndices, 1) - normals(normalIndices, 2)) .^ 3;
+        
+        indices = find(bsxfun(@gt, distance,  normals(:, 2) + normals(:, 3)));
+        normalIndices = mod(indices, numberOfVoxels);
+        normalIndices(normalIndices == 0) = normalIndices(normalIndices == 0) + numberOfVoxels;
+        cumulativeArea(indices) = cumulativeArea(indices) + (distance(indices) - normals(normalIndices, 2) - normals(normalIndices, 3)) .^ 3;
+        
+        indices = find(bsxfun(@gt, distance,  normals(:, 3) + normals(:, 1)));
+        normalIndices = mod(indices, numberOfVoxels);
+        normalIndices(normalIndices == 0) = normalIndices(normalIndices == 0) + numberOfVoxels;
+        cumulativeArea(indices) = cumulativeArea(indices) + (distance(indices) - normals(normalIndices, 3) - normals(normalIndices, 1)) .^ 3;
+        
+        %% triple terms
+        indices = find(bsxfun(@gt, distance,  normals(:, 1) + normals(:, 2) + normals(:, 3)));
+        normalIndices = mod(indices, numberOfVoxels);
+        normalIndices(normalIndices == 0) = normalIndices(normalIndices == 0) + numberOfVoxels;
+        cumulativeArea(indices) = cumulativeArea(indices) + (distance(indices) - normals(normalIndices, 1) - normals(normalIndices, 2) - normals(normalIndices, 3)) .^ 3;
+        
+        %% 
+        normalisationFactor = 6 * prod(normals, 2);
+        distance                = bsxfun(@rdivide, cumulativeArea, normalisationFactor);
+        distance(farBehind)     = 0;
+        distance(farDistance)   = 1;
+        distance(noGradient, :) = distanceNoGradient;
+        distance = reshape(distance, sizeVolume);
 end
 
 end %end function
+
+
+function test %#ok<DEFNU>
+
+ph = 0:pi/32:pi;
+th = 0:pi/32:2*pi;
+[phi, theta] = meshgrid(ph, th);
+
+x = cos(phi(:)) .* cos(theta(:));
+y = sin(phi(:)) .* cos(theta(:));
+z = sin(theta(:));
+
+gradient = [x, y, z];
+gradient = repmat(gradient, [2, 1]);
+r = -1:0.01:1;
+figure();
+plot(r, tvm_partialVolumeAreaGradient(repmat(r, [size(gradient, 1), 1]), 'gradient', gradient));
+figure();
+plot(r, tvm_partialVolumeAreaGradient(repmat(r, [size(gradient, 1), 1]), 'rectangle', gradient));
+figure();
+plot(r, tvm_partialVolumeAreaGradient(repmat(r, [size(gradient, 1), 1]), 'cubic', gradient));
+
+
+
+end %end function
+
+
+
+
