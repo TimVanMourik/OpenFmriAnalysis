@@ -59,8 +59,9 @@ for i = 1:length(regionsOfInterest)
     design.CovarianceMatrix = zeros(numberOfLayers);
     design.CovarianceMatrix(nonZeroColumns, nonZeroColumns) = inv(designMatrix(:, nonZeroColumns)' * designMatrix(:, nonZeroColumns));
 
+    %@todo, check out why the following line crashes
     %save design matrix
-    eval(tvm_changeVariableNames(definitions.GlmDesign, design));
+%     eval(tvm_changeVariableNames(definitions.GlmDesign, design));
     save(fullfile(subjectDirectory, designMatrices{i}), definitions.GlmDesign);
 end
 
