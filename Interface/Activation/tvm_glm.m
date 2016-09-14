@@ -21,8 +21,10 @@ designFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 
     %no default
 referenceVolumeFile =   fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
-functionalFolder =      fullfile(subjectDirectory, tvm_getOption(configuration, 'i_FunctionalFolder'));
+functionalFolder        = tvm_getOption(configuration, 'i_FunctionalFolder', '');
     %no default
+functionalFiles         = tvm_getOption(configuration, 'i_FunctionalFiles', '');
+    % ''
 roiMask =               tvm_getOption(configuration, 'i_Mask', []);
     %default: empty
 functionalIndices  =    tvm_getOption(configuration, 'i_FunctionalSelection', []);
@@ -49,12 +51,17 @@ residualSumOfSquares = zeros(referenceVolume.dim);
 numberOfVoxels = prod(referenceVolume.dim);
 voxelsPerSlice = numberOfVoxels / referenceVolume.dim(3);
 
-if functionalFolder(end) ~= filesep()
-    functionalFolder = [functionalFolder, filesep()];
+if ~isempty(functionalFolder)
+    if functionalFolder(end) ~= filesep()
+        functionalFolder = [fullfile(subjectDirectory, functionalFolder), filesep()];
+    end
+    allVolumes = dir(fullfile(fsubjectDirectory, unctionalFolder, '*.nii'));
+    allVolumes = fullfile(subjectDirectory, functionalFolder, {allVolumes.name});
+elseif ~isempty(functionalFiles)
+    allVolumes = dir(fullfile(subjectDirectory, functionalFiles));
+    [path, file, extension] = fileparts(functionalFiles);
+    allVolumes = fullfile(subjectDirectory, path, {allVolumes.name});
 end
-
-allVolumes = dir(fullfile(functionalFolder, '*.nii'));
-allVolumes = fullfile(functionalFolder, {allVolumes.name});
 
 if isempty(functionalIndices)
 	functionalIndices = 1:size(allVolumes, 2);
@@ -68,9 +75,9 @@ else
     %double negation to make sure the mask is binary.
     mask = ~~spm_read_vols(spm_vol(roiMask));
 end
+
 % This is done per slice, otherwise you're loading in ALL functional data 
 % at once. Computers don't like.
-
 pseudoInverse = pinv(design.DesignMatrix);
 for slice = 1:referenceVolume.dim(3)
     indexRange = voxelsPerSlice * (slice - 1) + (1:voxelsPerSlice);

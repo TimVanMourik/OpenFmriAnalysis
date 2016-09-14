@@ -1,4 +1,4 @@
-function tvm_glmToTMap(configuration)
+function tvm_glmToFMap(configuration)
 % TVM_GLMTOTMAP
 %   TVM_GLMTOTMAP(configuration)
 %   
@@ -9,7 +9,7 @@ function tvm_glmToTMap(configuration)
 %   configuration.Design
 %   configuration.GlmOutput
 %   configuration.ResidualSumOfSquares
-%   configuration.TMap
+%   configuration.FMap
 %   configuration.Contrast
 
 %% Parse configuration
@@ -23,7 +23,7 @@ resDevFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 
     %no default
 contrasts =              tvm_getOption(configuration, 'i_Contrast');
     %no default
-tMapFiles =              fullfile(subjectDirectory, tvm_getOption(configuration, 'o_TMap'));
+fMapFiles =              fullfile(subjectDirectory, tvm_getOption(configuration, 'o_FMap'));
     %no default
     
 definitions = tvm_definitions();
@@ -35,11 +35,10 @@ design = eval(definitions.GlmDesign);
 designMatrix = design.DesignMatrix;
 % note that the actual covariance matrix is the inverse of this. But this allows us to use
 % a matrix division later on, which is faster if you don't have to many contrasts 
-covarianceMatrix = designMatrix' * designMatrix;
 degreesOfFreedom = size(designMatrix, 1) - size(designMatrix, 2);
 
-if ~iscell(tMapFiles)
-    tMapFiles = {tMapFiles};
+if ~iscell(fMapFiles)
+    fMapFiles = {fMapFiles};
     contrasts = {contrasts};
 end
 
@@ -51,19 +50,14 @@ residualSumOfSquares.volume = spm_read_vols(residualSumOfSquares);
 numberOfContrasts = length(contrasts);
 for i = 1:numberOfContrasts
     currentContrast = tvm_getContrastVector(contrasts{i}, designMatrix, design.RegressorLabel);
-    numberOfRegressors = length(currentContrast);
-    tMap = zeros(residualSumOfSquares.dim);
-    for j = 1:numberOfRegressors
-        tMap = tMap + currentContrast(j) * betaValues(:, :, :, j);
+    fMap = zeros(residualSumOfSquares.dim);
+    for j = find(currentContrast)
+        fMap = fMap + currentContrast(j) * (betaValues(:, :, :, j) .^ 2 * sum(design.DesignMatrix(:, j) .^ 2));
     end
-    
-    squaredError = currentContrast / covarianceMatrix * currentContrast' * residualSumOfSquares.volume / degreesOfFreedom;
-    standardError = sqrt(squaredError);
-    tMap = tMap ./ standardError;
-    tMap(standardError == 0) = 0;
-
-    residualSumOfSquares.fname = tMapFiles{i};
-    spm_write_vol(residualSumOfSquares, tMap);
+    fMap = fMap ./ residualSumOfSquares.volume * (degreesOfFreedom / sum(currentContrast));
+    fMap(residualSumOfSquares.volume == 0) = 0;
+    residualSumOfSquares.fname = fMapFiles{i};
+    spm_write_vol(residualSumOfSquares, fMap);
 end
 
 end %end function
