@@ -1,4 +1,4 @@
-function tvm_design_timeCourse(configuration)
+function tvm_design_bandpassFilter(configuration)
 %   
 %
 %   Copyright (C) Tim van Mourik, 2015, DCCN

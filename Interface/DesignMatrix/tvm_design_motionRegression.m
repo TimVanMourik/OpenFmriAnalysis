@@ -5,7 +5,7 @@ function tvm_design_motionRegression(configuration)
 %
 
 %% Parse configuration
-subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', '.');
+subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
 designFileIn            = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
@@ -29,20 +29,20 @@ for column = 1:design.NumberOfPartitions
     motionParameters = importdata(fullfile(root, motionFiles(column).name));
     %de-mean motion parameters
     motionParameters = bsxfun(@minus, motionParameters, mean(motionParameters, 1));
-    designMatrix(design.Partitions{column}, (1:6) + 6 * (column - 1)) = motionParameters;
+    % orthogonalise the parameters
+    motionParameters = spm_orth(motionParameters);
+    % and rescale
+    motionParameters = bsxfun(@rdivide, motionParameters, sqrt(sum(motionParameters .^ 2, 1)));
+
+    designMatrix(design.Partitions{column}, (1:numberOfMotionRegressors) + numberOfMotionRegressors * (column - 1)) = motionParameters;
 end
 regressorLabels = cell(1, size(designMatrix, 2));
 for i = 1:size(designMatrix, 2)
     regressorLabels{i} = 'Motion';
 end
-% orthogonalise the parameters
-designMatrix = spm_orth(designMatrix);
-% and rescale
-designMatrix = bsxfun(@rdivide, designMatrix, sqrt(sum(designMatrix .^ 2, 1)));
-
 % add the design matrix to the rest
-design.DesignMatrix = [design.DesignMatrix, designMatrix];
-design.RegressorLabel = [design.RegressorLabel, regressorLabels];
+design.DesignMatrix     = [design.DesignMatrix, designMatrix];
+design.RegressorLabel   = [design.RegressorLabel, regressorLabels];
 
 % @todo add temporal derivatives
 

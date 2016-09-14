@@ -5,30 +5,42 @@ function tvm_design_empty(configuration)
 %
 
 %% Parse configuration
-subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', '.');
+subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
 designFileOut           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DesignMatrix'));
     %no default
-functionalFolder =      fullfile(subjectDirectory, tvm_getOption(configuration, 'i_FunctionalFolder'));
+functionalFiles         = tvm_getOption(configuration, 'i_FunctionalFiles', '');
+    %no default
+functionalFolder        = tvm_getOption(configuration, 'i_FunctionalFolder', '');
     %no default
   
 definitions = tvm_definitions();
 
 %%
-allVolumes = [];
-for file = 1:length(definitions.VolumeFileTypes)
-    allVolumes = [allVolumes; dir(fullfile(functionalFolder, ['*', definitions.VolumeFileTypes{file}]))];
-end
+if ~isempty(functionalFolder)
+    allVolumes = [];
+    for file = 1:length(definitions.VolumeFileTypes)
+        allVolumes = [allVolumes; dir(fullfile(subjectDirectory, functionalFolder, ['*', definitions.VolumeFileTypes{file}]))];
+    end
 
-numberOfRuns = length(allVolumes);
-numberOfVolumes = zeros(1, numberOfRuns);
-for session = 1:length(allVolumes)
-    sessionVolumes = spm_vol(fullfile(functionalFolder, allVolumes(session).name));
-    numberOfVolumes(session) = length(sessionVolumes);
+    numberOfRuns = length(allVolumes);
+    numberOfVolumes = zeros(1, numberOfRuns);
+    for session = 1:length(allVolumes)
+        sessionVolumes = spm_vol(fullfile(subjectDirectory, functionalFolder, allVolumes(session).name));
+        numberOfVolumes(session) = length(sessionVolumes);
+    end
+    startOfRun = [0, cumsum(numberOfVolumes)] + 1;
+    partitions = [startOfRun(1:end-1); startOfRun(2:end) - 1]';
+elseif ~isempty(functionalFiles)
+    numberOfRuns = length(functionalFiles);
+    numberOfVolumes = zeros(1, numberOfRuns);
+    for i = 1:numberOfRuns
+        allVolumes = dir(fullfile(subjectDirectory, functionalFiles{i}));
+        numberOfVolumes(i) = length(allVolumes);
+    end
+    startOfRun = [0, cumsum(numberOfVolumes)] + 1;
+    partitions = [startOfRun(1:end-1); startOfRun(2:end) - 1]';
 end
-startOfRun = [0, cumsum(numberOfVolumes)] + 1;
-partitions = [startOfRun(1:end-1); startOfRun(2:end) - 1]';
-
 
 %%
 numberOfPartitions = size(partitions, 1);

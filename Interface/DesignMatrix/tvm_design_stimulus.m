@@ -6,13 +6,13 @@ function tvm_design_stimulus(configuration)
 %
 
 %% Parse configuration
-subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', '.');
+subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
 designFileIn            = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
 stimulusFiles           = tvm_getOption(configuration, 'i_Stimulus');
     %no default
-hrfParameters           = tvm_getOption(configuration, 'i_HrfParameters', '');
+hrfParameters           = tvm_getOption(configuration, 'i_HrfParameters', []);
     %default:[6, 16, 1, 1, 6, 0, 32]
 labels                  = tvm_getOption(configuration, 'i_Labels', {});
     %default: 1
@@ -43,6 +43,8 @@ end
 
 if isempty(hrfParameters)
     hrfParameters = [6, 16, 1, 1, 6, 0, 32];
+elseif isnumeric(hrfParameters)
+    %do nothing
 else
     hrfFile = fullfile(subjectDirectory, hrfParameters);
     load(hrfFile, definitions.HrfParameters);
@@ -69,7 +71,7 @@ for stimulus = 1:numberOfStimuli
         configuration.HrfParameters         = hrfParameters;
         configuration.TemporalDerivative    = temporalDerivative;
         configuration.DispersionDerivative  = dispersionDerivative;
-        configuration.DeMean                = true;
+        configuration.DeMean                = false;
         designPerRun{stimulus, run}         = tvm_hrf(configuration)';
     end
 end
@@ -79,11 +81,23 @@ designMatrix = zeros(design.Length, numberOfStimuli * n);
 for i = 1:design.NumberOfPartitions
     designMatrix(design.Partitions{i}, 1:numberOfStimuli * n) = [designPerRun{1:numberOfStimuli, i}];
 end
-designMatrix = bsxfun(@rdivide, designMatrix, sqrt(sum(designMatrix .^ 2, 1)));
+% designMatrix = bsxfun(@rdivide, designMatrix, sqrt(sum(designMatrix .^ 2, 1)));
 
-regressorLabels = cell(1, size(designMatrix, 2));
-for i = 1:numberOfStimuli * n
-    regressorLabels{i} = labels{ceil(i / n)};
+regressorLabels = {};%cell(1, size(designMatrix, 2));
+for i = 1:numberOfStimuli
+    r = cell(1, n);
+    index = 1;
+    r{index} = labels{i};
+    index = index + 1;
+    if temporalDerivative
+        r{index} = [labels{i} ', Temp. Deriv.'];
+        index = index + 1;
+    end
+    if dispersionDerivative
+        r{index} = [labels{i} ', Disp. Deriv.'];
+        index = index + 1;
+    end
+    regressorLabels = [regressorLabels, r];
 end
 design.RegressorLabel = [design.RegressorLabel, regressorLabels];
 
