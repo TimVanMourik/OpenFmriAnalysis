@@ -35,6 +35,9 @@ end
 stimulusRegressors = [];
 if regularHrf
     regressor = tvm_sampleHrf(timePoints, stimulusOnsets, stimulusDurations, hrfParameters, 'Regular');
+    %scale by the height of an isolated two second event (Mumford,
+    %http://mumford.bol.ucla.edu/perchange_guide.pdf)
+    regressor = regressor / max(tvm_sampleHrf(0:0.01:16, 0, 2, hrfParameters, 'Regular'));
     stimulusRegressors = [stimulusRegressors; regressor];
 end
 if temporalDerivative
@@ -50,11 +53,10 @@ if demean
     stimulusRegressors = bsxfun(@minus, stimulusRegressors, mean(stimulusRegressors, 2));
 end
 
-%Calhoun (2004) explains why one should orthogonalise, then normalise your
-%regressors. Bottom line: this way you can use both together for explaining 
-%task variance.
+% Orthogonalise derivatives wrt the main
 stimulusRegressors = spm_orth(stimulusRegressors')';
-stimulusRegressors = bsxfun(@rdivide, stimulusRegressors, sqrt(sum(stimulusRegressors .^ 2, 2)));
+% in case you want to pursue a Calhoun 2004 strategy:
+% stimulusRegressors = bsxfun(@rdivide, stimulusRegressors, sqrt(sum(stimulusRegressors .^ 2, 2)));
 
 end %end function
 
