@@ -1,4 +1,4 @@
-function tvm_computeCurvatureFromSdf(configuration)
+function tvm_computeCurvatureFromGradient(configuration)
 %% Parse configuration
 subjectDirectory 	= tvm_getOption(configuration, 'i_SubjectDirectory');
     %no default

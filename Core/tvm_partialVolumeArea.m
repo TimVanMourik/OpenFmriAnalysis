@@ -49,11 +49,12 @@ switch method
         assert(all(sizeNormals(1:end - 1) == sizeVolume(1:end - 1)));
         assert(sizeNormals(end) == 3, 'Normals need to have three dimensions'); %@todo to be expanded to N dimensions
         normals = abs(normals);
-        epsilon = 0.001;
         
         normals = reshape(normals, [numberOfVoxels, sizeNormals(end)]);
         distance = reshape(distance, [numberOfVoxels, sizeVolume(end)]);
         
+        % The normalisation factor can't handle NaNs, Infs and zeros
+        epsilon = 0.001;
         noGradient = any(isnan(normals) | isinf(normals) | abs(normals) < epsilon, 2);
         distanceNoGradient = tvm_partialVolumeArea(distance(noGradient, :), 'cubic');
         
@@ -101,7 +102,7 @@ switch method
         indices = find(bsxfun(@gt, distance,  normals(:, 1) + normals(:, 2) + normals(:, 3)));
         normalIndices = mod(indices, numberOfVoxels);
         normalIndices(normalIndices == 0) = normalIndices(normalIndices == 0) + numberOfVoxels;
-        cumulativeArea(indices) = cumulativeArea(indices) + (distance(indices) - normals(normalIndices, 1) - normals(normalIndices, 2) - normals(normalIndices, 3)) .^ 3;
+        cumulativeArea(indices) = cumulativeArea(indices) - (distance(indices) - normals(normalIndices, 1) - normals(normalIndices, 2) - normals(normalIndices, 3)) .^ 3;
         
         %% 
         normalisationFactor = 6 * prod(normals, 2);
@@ -116,7 +117,7 @@ end %end function
 
 
 function test %#ok<DEFNU>
-
+%%
 ph = 0:pi/32:pi;
 th = 0:pi/32:2*pi;
 [phi, theta] = meshgrid(ph, th);
@@ -129,11 +130,11 @@ gradient = [x, y, z];
 gradient = repmat(gradient, [2, 1]);
 r = -1:0.01:1;
 figure();
-plot(r, tvm_partialVolumeAreaGradient(repmat(r, [size(gradient, 1), 1]), 'gradient', gradient));
+plot(r, tvm_partialVolumeArea(repmat(r, [size(gradient, 1), 1]), 'gradient', gradient));
 figure();
-plot(r, tvm_partialVolumeAreaGradient(repmat(r, [size(gradient, 1), 1]), 'rectangle', gradient));
+plot(r, tvm_partialVolumeArea(repmat(r, [size(gradient, 1), 1]), 'rectangle', gradient));
 figure();
-plot(r, tvm_partialVolumeAreaGradient(repmat(r, [size(gradient, 1), 1]), 'cubic', gradient));
+plot(r, tvm_partialVolumeArea(repmat(r, [size(gradient, 1), 1]), 'cubic', gradient));
 
 
 

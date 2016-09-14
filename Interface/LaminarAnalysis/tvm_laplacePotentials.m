@@ -51,8 +51,8 @@ XYZ(:, 2, 4) = XYZ(:, 2, 4) + 1;
 XYZ(:, 3, 5) = XYZ(:, 3, 5) - 1;
 XYZ(:, 3, 6) = XYZ(:, 3, 6) + 1;
 
-mi      = squeeze(u_to_w(sub2ind(size(potential), XYZ(:, 1, :), XYZ(:, 2, :), XYZ(:, 3, :))));
-kind = squeeze(potential(sub2ind(size(potential), XYZ(:, 1, :), XYZ(:, 2, :), XYZ(:, 3, :))));
+mi          = squeeze(u_to_w(sub2ind(size(potential), XYZ(:, 1, :), XYZ(:, 2, :), XYZ(:, 3, :))));
+kind        = squeeze(potential(sub2ind(size(potential), XYZ(:, 1, :), XYZ(:, 2, :), XYZ(:, 3, :))));
 
 indices     = kind == -Inf & mi > 0;
 k           = mod(find(indices), N);
@@ -68,6 +68,15 @@ kind(isnan(kind))   = 0;
 b                   = -sum(kind, 2);  
 
 potential(sub2ind(size(potential), w_to_u(:, 1), w_to_u(:, 2), w_to_u(:, 3))) = M \ b;
+
+% In order to smoothen the transition at the borders for the subsequent
+% gradient and curvature steps
+slope = mean(whiteLevelSet.volume(:) - pialLevelSet.volume(:));
+inside = whiteLevelSet.volume < 0;
+potential(inside) = 1 - whiteLevelSet.volume(inside) / slope;
+outside = pialLevelSet.volume > 0;
+potential(outside) = -pialLevelSet.volume(outside) / (slope * 3);
+
 whiteLevelSet.fname = potentialFile;
 spm_write_vol(whiteLevelSet, potential);
 

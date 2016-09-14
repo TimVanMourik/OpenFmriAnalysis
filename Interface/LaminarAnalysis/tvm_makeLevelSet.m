@@ -30,6 +30,8 @@ objPial                 = fullfile(subjectDirectory, tvm_getOption(configuration
     %no default
 objTransformationMatrix = tvm_getOption(configuration, 'i_Matrix', eye(4));
     %default: no shift
+upsampleFactor          = tvm_getOption(configuration, 'i_UpsampleFactor', 1);
+    %default: no shift
 sdfWhite                = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_SdfWhite', ''));
     %no default
 sdfPial                 = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_SdfPial', ''));
@@ -45,14 +47,24 @@ pial                    = fullfile(subjectDirectory, tvm_getOption(configuration
 % @todo This is ugly, but I haven't found a way to load liblapack.so
 functionDirectory = mfilename('fullpath');
 functionDirectory = functionDirectory(1:end - length(mfilename()));
-cd(functionDirectory);
+workingDirectory = cd(functionDirectory);
 
 referenceVolume = spm_vol(referenceFile);
-
+[newMatrix, newDimensions] = tvm_getResampledMatrix(referenceVolume(1).mat, referenceVolume(1).dim, 1 ./ upsampleFactor);
+%%
+shiftByHalf = [1, 0, 0, 1/2; 0, 1, 0, 1/2; 0, 0, 1, 1/2; 0, 0, 0, 1];
+upsampleMatrix = eye(4);
+upsampleMatrix([1, 6, 11]) = upsampleFactor;
 if isempty(strfind(objWhite, '?'))
-    makeSignedDistanceField(objWhite, white, referenceVolume(1).dim, referenceVolume(1).mat, objTransformationMatrix);
-    makeSignedDistanceField(objPial,  pial,  referenceVolume(1).dim, referenceVolume(1).mat, objTransformationMatrix);
+    makeSignedDistanceField(objWhite, white, newDimensions, newMatrix, (shiftByHalf \ upsampleMatrix * shiftByHalf) * objTransformationMatrix);
+    makeSignedDistanceField(objPial,  pial,  newDimensions, newMatrix, (shiftByHalf \ upsampleMatrix * shiftByHalf) * objTransformationMatrix);
     
+    v = spm_vol(white);
+    v.volume = spm_read_vols(v);
+    spm_write_vol(v, v.volume * nthroot(abs(det(v.mat)), 3));
+    v = spm_vol(pial);
+    v.volume = spm_read_vols(v);
+    spm_write_vol(v, v.volume * nthroot(abs(det(v.mat)), 3));
 else
     for hemisphere = 1:2
     %1 = right
@@ -101,6 +113,8 @@ else
     referenceVolume(1).volume(:) = min([right.volume(:), left.volume(:)], [], 2);
     spm_write_vol(referenceVolume(1), referenceVolume(1).volume);
 end
+
+cd(workingDirectory);
 
 end %end function
 

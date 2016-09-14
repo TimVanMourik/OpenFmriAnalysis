@@ -19,10 +19,13 @@ boundaryFile            = fullfile(subjectDirectory, tvm_getOption(configuration
 definitions = tvm_definitions();
 
 %%
-[vertices, faces] = tvm_importObjFile(objFile);
-save(boundaryFile, 'vertices', 'faces');
-
-
+numberOfFiles = length(objectFile);
+vertices = cell(numberOfFiles, 1);
+faceData = cell(numberOfFiles, 1);
+for i = 1:numberOfFiles
+    [vertices{i}, faceData{i}] = tvm_importObjFile(objectFile{i});
+end
+save(boundaryFile, 'vertices', 'faceData');
 
 end %end function
 

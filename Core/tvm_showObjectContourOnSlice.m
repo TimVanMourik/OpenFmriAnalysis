@@ -7,6 +7,8 @@ function tvm_showObjectContourOnSlice(configuration)
 %% Parse configuration
 volume =            tvm_getOption(configuration, 'i_Volume');
     %no default
+roi =               tvm_getOption(configuration, 'i_ROI', '');
+    %no default
 slice =             tvm_getOption(configuration, 'i_Slice');
     %no default
 vertices =          tvm_getOption(configuration, 'i_Vertices');
@@ -19,6 +21,8 @@ colorRange =      	tvm_getOption(configuration, 'i_ColorLimits', []);
     %
 contourColours =   	tvm_getOption(configuration, 'i_ContourColors', {'y', 'r', 'g', 'b'});
     %no default
+rotation =          tvm_getOption(configuration, 'i_Rotation', '');
+    % ''
 colorMap =          tvm_getOption(configuration, 'i_ColorMap', []);
     %
     
@@ -30,23 +34,30 @@ colorMap =          tvm_getOption(configuration, 'i_ColorMap', []);
 % @todo the figure() lines have been removed such that it behaves more like
 % a regular matlab image function and you can choose to call a figure
 % first.
-
+if isempty(roi)
+    roi = zeros(size(volume));
+end
 
 switch sliceAxis
-    case {'x', 'coronal'}
+    case {'x', 'coronal', 1}
         imageData = squeeze(volume(slice, :, :));
         imageData = permute(imageData, [2, 1]);
+        roiData = squeeze(roi(slice, :, :));
+        roiData = permute(roiData, [2, 1]);
         dimension = 1;
         xDimension = 2;
         yDimension = 3;
-    case {'y', 'sagittal'}
+    case {'y', 'sagittal', 2}
         imageData = squeeze(volume(:, slice, :));
         imageData = permute(imageData, [2, 1]);
+        roiData = squeeze(roi(:, slice, :));
+        roiData = permute(roiData, [2, 1]);
         dimension = 2;
         xDimension = 1;
         yDimension = 3;
-    case {'z', 'transversal', 'transverse', 'horizontal'}
+    case {'z', 'transversal', 'transverse', 'horizontal', 3}
         imageData = squeeze(volume(:, :, slice));
+        roiData = squeeze(roi(:, :, slice));
         dimension = 3;
         xDimension = 2;
         yDimension = 1;
@@ -55,17 +66,46 @@ switch sliceAxis
         error('Invalid Axis');
 end
 
+switch rotation
+    case ''
+        set(gca, 'YDir', 'normal');
+    case {'left', '90'}
+        set(gca, 'YDir', 'normal');
+        imageData = permute(fliplr(imageData), [2, 1]);
+        roiData = permute(fliplr(roiData), [2, 1]);
+    case {'right', '-90'}
+        set(gca, 'YDir', 'reverse');
+        imageData = fliplr(permute(imageData, [2, 1]));
+        roiData = fliplr(permute(roiData, [2, 1]));
+    case {'180', 'OneHundredAndEeeeeeighty'}
+        set(gca, 'YDir', 'reverse');
+end
+
 if isempty(colorRange)
     colorRange = [min(imageData(:)), max(imageData(:))];
 end
-colormap('gray');
+
 imagesc(imageData, colorRange);
-set(gca, 'YDir', 'normal')
-hold on;
+colormap('gray');
+% Make a truecolor all-green image.
+red = cat(3, ones(size(imageData)), zeros(size(imageData)), zeros(size(imageData)));
+hold('on');
+h = imshow(red); 
+set(h, 'AlphaData', 0.4 * roiData);
 
 %draws the vertices close to the slice
 for i = 1:length(vertices)
     for j = 1:length(vertices{i})
+        
+        switch rotation
+            case ''
+            case {'left', '90'}
+                vertices{i}{j} = [size(volume, 2) - vertices{i}{j}(:, 2), vertices{i}{j}(:, 1), vertices{i}{j}(:, 3)];
+            case {'right', '-90'}
+                vertices{i}{j} = [vertices{i}{j}(:, 2), size(volume, 1) - vertices{i}{j}(:, 1), vertices{i}{j}(:, 3)];
+            case {'180', 'OneHundredAndEeeeeeighty'}
+                vertices{i}{j} = [size(volume, 1) - vertices{i}{j}(:, 1), size(volume, 2) - vertices{i}{j}(:, 2), vertices{i}{j}(:, 3)];
+        end
         drawCrossSection(vertices{i}{j}, faceData{i}{j}, slice, dimension, xDimension, yDimension, contourColours{i});
     end
 end
