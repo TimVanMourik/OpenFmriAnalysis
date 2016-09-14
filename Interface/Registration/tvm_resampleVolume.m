@@ -41,9 +41,9 @@ x0 = translation - scale / 2;
 x1 = oldDimensions .* scale + x0;
 
 % these are the new dimensions...
-newDimensions           = round(oldDimensions ./ voxelSize(:)' .* abs(scale));
-newScale = (x1 - x0) ./ newDimensions;
-newTranslation = x0 - newScale / 2;
+newDimensions 	= round(oldDimensions ./ voxelSize(:)' .* abs(scale));
+newScale     	= (x1 - x0) ./ newDimensions;
+newTranslation  = x0 - newScale / 2;
 
 % ...that make the new matrix
 newMatrix = spm_matrix([newTranslation, ...

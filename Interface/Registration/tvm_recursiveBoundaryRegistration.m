@@ -26,9 +26,9 @@ definitions = tvm_definitions();
 tic();
 referenceVolume = spm_read_vols(spm_vol(referenceFile));
 load(boundariesFile, definitions.WhiteMatterSurface, definitions.PialSurface, definitions.FaceData);
-wSurface = eval(definitions.WhiteMatterSurface);
-pSurface = eval(definitions.PialSurface);
-faceData = eval(definitions.FaceData);
+% wSurface = eval(definitions.WhiteMatterSurface);
+% pSurface = eval(definitions.PialSurface);
+% faceData = eval(definitions.FaceData);
 
 if isempty(maskFile)
     mask = true(size(referenceVolume));
@@ -46,10 +46,10 @@ for hemisphere = 1:2
     [wSurface{hemisphere}(selectedVertices, :), pSurface{hemisphere}(selectedVertices, :), transformStack{hemisphere}] = tvm_wrapperRecursiveRegistration(wSurface{hemisphere}(selectedVertices, :), pSurface{hemisphere}(selectedVertices, :), referenceVolume, registrationConfiguration);  
 end
 
-eval(tvm_changeVariableNames(definitions.WhiteMatterSurface, wSurface));
-eval(tvm_changeVariableNames(definitions.PialSurface, pSurface));
-eval(tvm_changeVariableNames(definitions.FaceData, faceData));
-eval(tvm_changeVariableNames(definitions.TransformStack, transformStack));
+% eval(tvm_changeVariableNames(definitions.WhiteMatterSurface, wSurface));
+% eval(tvm_changeVariableNames(definitions.PialSurface, pSurface));
+% eval(tvm_changeVariableNames(definitions.FaceData, faceData));
+% eval(tvm_changeVariableNames(definitions.TransformStack, transformStack));
 
 computationTime = [];
 computationTime.RecursiveRegistration = toc();

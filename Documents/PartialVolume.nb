@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[     19761,        577]
-NotebookOptionsPosition[     19199,        555]
-NotebookOutlinePosition[     19624,        571]
-CellTagsIndexPosition[     19581,        568]
+NotebookDataLength[     19806,        578]
+NotebookOptionsPosition[     19251,        556]
+NotebookOutlinePosition[     19669,        572]
+CellTagsIndexPosition[     19626,        569]
 WindowFrame->Normal
 ContainsDynamic->False*)
 
@@ -112,7 +112,7 @@ Cell[BoxData[{
           RowBox[{"\[Phi]", ",", "\[Theta]"}], "]"}], "-", 
          RowBox[{"n0", "[", 
           RowBox[{"\[Phi]", ",", "\[Theta]"}], "]"}]}], ",", "0"}], "]"}], 
-      "2"], "\[IndentingNewLine]", "+", 
+      "2"], "\[IndentingNewLine]", "-", 
      SuperscriptBox[
       RowBox[{"Max", "[", 
        RowBox[{
@@ -186,7 +186,7 @@ Cell[BoxData[{
           RowBox[{"\[Phi]", ",", "\[Theta]"}], "]"}], "-", 
          RowBox[{"n0", "[", 
           RowBox[{"\[Phi]", ",", "\[Theta]"}], "]"}]}], ",", "0"}], "]"}], 
-      "3"], "\[IndentingNewLine]", "+", 
+      "3"], "\[IndentingNewLine]", "-", 
      SuperscriptBox[
       RowBox[{"Max", "[", 
        RowBox[{
@@ -203,7 +203,8 @@ Cell[BoxData[{
    3.6682335797594404`*^9}, {3.668233615833048*^9, 3.668233707598223*^9}, {
    3.668244295268941*^9, 3.6682443164563513`*^9}, {3.668244403227351*^9, 
    3.668244405029351*^9}, {3.6682445531263514`*^9, 3.6682445746603518`*^9}, {
-   3.668256056209983*^9, 3.668256091996561*^9}, 3.6682561618145423`*^9}],
+   3.668256056209983*^9, 3.668256091996561*^9}, 3.6682561618145423`*^9, {
+   3.6684063043394547`*^9, 3.668406406010455*^9}}],
 
 Cell[BoxData[
  RowBox[{"Manipulate", "[", "\[IndentingNewLine]", 
@@ -553,8 +554,8 @@ Cell[BoxData[{
 }, Open  ]]
 }, Open  ]]
 },
-WindowSize->{1280, 1002},
-WindowMargins->{{Automatic, -1288}, {Automatic, -39}},
+WindowSize->{1664, 915},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
 FrontEndVersion->"6.0 for Microsoft Windows (64-bit) (April 20, 2007)",
 StyleDefinitions->FrontEnd`FileName[{"Creative"}, "NaturalColor.nb", 
   CharacterEncoding -> "WindowsANSI"]
@@ -574,9 +575,9 @@ Cell[CellGroupData[{
 Cell[590, 23, 119, 1, 73, "Title"],
 Cell[CellGroupData[{
 Cell[734, 28, 175, 2, 75, "Section"],
-Cell[912, 32, 6295, 173, 442, "Input"],
-Cell[7210, 207, 6185, 161, 270, "Input"],
-Cell[13398, 370, 5773, 181, 449, "Input"]
+Cell[912, 32, 6347, 174, 442, "Input"],
+Cell[7262, 208, 6185, 161, 270, "Input"],
+Cell[13450, 371, 5773, 181, 449, "Input"]
 }, Open  ]]
 }, Open  ]]
 }

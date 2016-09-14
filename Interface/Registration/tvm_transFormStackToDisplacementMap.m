@@ -18,9 +18,9 @@ filterWidth =               tvm_getOption(configuration, 'i_Filter', [6, 6, 6]);
 definitions = tvm_definitions();
 %%
 load(transformFile, definitions.WhiteMatterSurface, definitions.PialSurface, definitions.TransformStack);
-wSurface        = eval(definitions.WhiteMatterSurface);
-pSurface        = eval(definitions.PialSurface);
-transformStack  = eval(definitions.TransformStack);
+% wSurface        = eval(definitions.WhiteMatterSurface);
+% pSurface        = eval(definitions.PialSurface);
+% transformStack  = eval(definitions.TransformStack);
 
 referenceVolume = spm_vol(referenceFile);
 numberOfVertices = prod(referenceVolume.dim);

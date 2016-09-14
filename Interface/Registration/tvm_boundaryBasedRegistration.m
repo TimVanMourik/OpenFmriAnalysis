@@ -62,9 +62,10 @@ for hemisphere = 1:2
     wSurface{hemisphere} = wSurface{hemisphere} * t;
     pSurface{hemisphere} = pSurface{hemisphere} * t;
 end
-eval(tvm_changeVariableNames(definitions.WhiteMatterSurface, wSurface));
-eval(tvm_changeVariableNames(definitions.PialSurface, pSurface));
-eval(tvm_changeVariableNames(definitions.FaceData, faceData));
+% the inputname function does not seem to work in some MATLAB versions
+% eval(tvm_changeVariableNames(definitions.WhiteMatterSurface, wSurface));
+% eval(tvm_changeVariableNames(definitions.PialSurface, pSurface));
+% eval(tvm_changeVariableNames(definitions.FaceData, faceData));
 save(boundariesFileOut, definitions.WhiteMatterSurface, definitions.PialSurface, definitions.FaceData);
 
 
@@ -79,18 +80,21 @@ if ~isempty(coregistrationFileOut)
         if exist(definitions.RegistrationParameters, 'var')
             registrationParameters = registrationParameters + p; 
             
-            eval(tvm_changeVariableNames(definitions.CoregistrationMatrix, coregistrationMatrix));
-            eval(tvm_changeVariableNames(definitions.RegistrationParameters, registrationParameters));
+% the inputname function does not seem to work in some MATLAB versions
+%             eval(tvm_changeVariableNames(definitions.CoregistrationMatrix, coregistrationMatrix));
+%             eval(tvm_changeVariableNames(definitions.RegistrationParameters, registrationParameters));
             save(fullfile(subjectDirectory, coregistrationFileOut), definitions.CoregistrationMatrix, definitions.RegistrationParameters);
         else
-            eval(tvm_changeVariableNames(definitions.CoregistrationMatrix, coregistrationMatrix));
+% the inputname function does not seem to work in some MATLAB versions
+%             eval(tvm_changeVariableNames(definitions.CoregistrationMatrix, coregistrationMatrix));
             save(fullfile(subjectDirectory, coregistrationFileOut), definitions.CoregistrationMatrix);
         end      
     else
         coregistrationMatrix = t'; 
         registrationParameters = p; 
-        eval(tvm_changeVariableNames(definitions.CoregistrationMatrix, coregistrationMatrix));
-        eval(tvm_changeVariableNames(definitions.RegistrationParameters, registrationParameters));
+% the inputname function does not seem to work in some MATLAB versions
+%         eval(tvm_changeVariableNames(definitions.CoregistrationMatrix, coregistrationMatrix));
+%         eval(tvm_changeVariableNames(definitions.RegistrationParameters, registrationParameters));
         save(fullfile(subjectDirectory, coregistrationFileOut), definitions.CoregistrationMatrix, definitions.RegistrationParameters);
     end
 end

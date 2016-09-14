@@ -22,6 +22,8 @@ coregistrationFile  = tvm_getOption(configuration, 'i_CoregistrationMatrix', [])
     %no default
 moveFiles           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_MoveVolumes'));
     %no default
+interpolationMethod = tvm_getOption(configuration, 'i_InterpolationMethod', false);
+    %no default
 inverseRegistration = tvm_getOption(configuration, 'i_InverseRegistration', false);
     %no default
 volumeFiles         = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_OutputVolumes'));
@@ -45,7 +47,14 @@ for i = 1:length(files)
     files{i}.mat = coregistrationMatrix \ files{i}.mat;
 end
 files = [reference, files{:}];
-spm_reslice(files);
+cfg = [];
+switch interpolationMethod
+    case 'NearestNeighbour'
+        cfg.interp = 0;
+    otherwise
+        cfg.interp = 1;
+end
+spm_reslice(files, cfg);
 
 for i = 1:length(moveFiles)
     [root, file, extension] = fileparts(moveFiles{i});
