@@ -100,11 +100,11 @@ for i = 1:length(vertices)
         switch rotation
             case ''
             case {'left', '90'}
-                vertices{i}{j} = [size(volume, 2) - vertices{i}{j}(:, 2), vertices{i}{j}(:, 1), vertices{i}{j}(:, 3)];
+                vertices{i}{j} = [1 + size(volume, 2) - vertices{i}{j}(:, 2), vertices{i}{j}(:, 1), vertices{i}{j}(:, 3)];
             case {'right', '-90'}
-                vertices{i}{j} = [vertices{i}{j}(:, 2), size(volume, 1) - vertices{i}{j}(:, 1), vertices{i}{j}(:, 3)];
+                vertices{i}{j} = [vertices{i}{j}(:, 2), 1 + size(volume, 1) - vertices{i}{j}(:, 1), vertices{i}{j}(:, 3)];
             case {'180', 'OneHundredAndEeeeeeighty'}
-                vertices{i}{j} = [size(volume, 1) - vertices{i}{j}(:, 1), size(volume, 2) - vertices{i}{j}(:, 2), vertices{i}{j}(:, 3)];
+                vertices{i}{j} = [1 + size(volume, 1) - vertices{i}{j}(:, 1), 1 + size(volume, 2) - vertices{i}{j}(:, 2), vertices{i}{j}(:, 3)];
         end
         drawCrossSection(vertices{i}{j}, faceData{i}{j}, slice, dimension, xDimension, yDimension, contourColours{i});
     end
