@@ -84,7 +84,7 @@ end
 laminae = curvature;
 if ~isempty(gradientFile)
     gradient = spm_read_vols(spm_vol(fullfile(subjectDirectory, gradientFile)));
-    laminae.volume = tvm_partialVolumeArea(levelSet / nthroot(abs(det(oldMatrix)), 3), 'gradient', gradient);
+    laminae.volume = tvm_partialVolumeArea(levelSet / nthroot(abs(det(oldMatrix)), 3), 'gradient', gradient);      
 else
     laminae.volume = tvm_partialVolumeArea(levelSet / nthroot(abs(det(oldMatrix)), 3), 'cubic');
 end
@@ -93,14 +93,20 @@ for lamina = numberOfLaminae:-1:2
 end
 laminae.volume = cat(4, laminae.volume, 1 - sum(laminae.volume, 4));
 
+% if gradientVolumes
+%     laminae.gradient = tvm_partialVolumeGradient(levelSet(:, :, :, 2:end - 1) / nthroot(abs(det(oldMatrix)), 3), 'gradient', gradient);
+% %     laminae.gradient = bsxfun(@minus, laminae.gradient, mean(mean(mean(laminae.gradient, 1), 2), 3));
+%     laminae.volume = cat(4, laminae.volume, laminae.gradient);
+% end
+
 % set all edges to zero: the curvature is not defined at the edges and
 % hence the layer distribution is undefined.
-laminae.volume(1, :, :, :) = 0;
-laminae.volume(:, 1, :, :) = 0;
-laminae.volume(:, :, 1, :) = 0;
-laminae.volume(end, :, :, :) = 0;
-laminae.volume(:, end, :, :) = 0;
-laminae.volume(:, :, end, :) = 0;
+laminae.volume(1,   :,   :,   :) = 0;
+laminae.volume(:,   1,   :,   :) = 0;
+laminae.volume(:,   :,   1,   :) = 0;
+laminae.volume(end, :,   :,   :) = 0;
+laminae.volume(:,   end, :,   :) = 0;
+laminae.volume(:,   :,   end, :) = 0;
 
 if upsampleFactor ~= 1
     downsampledVolume = zeros([laminae.dim, numberOfLaminae + 1]);

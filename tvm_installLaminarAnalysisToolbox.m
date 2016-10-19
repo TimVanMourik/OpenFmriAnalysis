@@ -47,7 +47,7 @@ end
 if display
     if core
          tvm_workInProgress();
-         fprintf('You''re very welcome to use the Laminar Analysis toolbox, \nbut please be aware this version is in continuus development\n');
+         fprintf('You''re very welcome to use the Laminar Analysis toolbox, \nbut please be aware this version is in continuous development\n');
     end
 end
 

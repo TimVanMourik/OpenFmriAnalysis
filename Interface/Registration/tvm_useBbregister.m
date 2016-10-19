@@ -7,23 +7,27 @@ function tvm_useBbregister(configuration)
 %
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
-referenceFile =         fullfile(subjectDirectory, tvm_getOption(configuration, 'i_RegistrationVolume'));
+referenceFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_RegistrationVolume'));
     %no default
-freeSurferName =        tvm_getOption(configuration, 'i_FreeSurferFolder', 'FreeSurfer');
+freeSurferName          = tvm_getOption(configuration, 'i_FreeSurferFolder', 'FreeSurfer');
     %[subjectDirectory, 'FreeSurfer']
-fslInitialisation =     tvm_getOption(configuration, 'i_FslInitialisation', true);
+spmInitialisation       = tvm_getOption(configuration, 'i_SpmInitialisation', false);
     %no default
-contrast =              tvm_getOption(configuration, 'i_Contrast', 'T2');
+fslInitialisation       = tvm_getOption(configuration, 'i_FslInitialisation', true);
     %no default
-degreesOfFreedom =      tvm_getOption(configuration, 'i_DegreesOfFreedom', 6);
+contrast                = tvm_getOption(configuration, 'i_Contrast', 'T2');
     %no default
-boundariesFile =        fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
+degreesOfFreedom    	= tvm_getOption(configuration, 'i_DegreesOfFreedom', 6);
     %no default
-registerDatFile =      	fullfile(subjectDirectory, tvm_getOption(configuration, 'o_RegisterDat'));
+initialisationMatrix    = tvm_getOption(configuration, 'i_InititialMatrix', '');
     %no default
-coregistrationFile =    fullfile(subjectDirectory, tvm_getOption(configuration, 'o_CoregistrationMatrix'));
+boundariesFile          = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
+    %no default
+registerDatFile       	= fullfile(subjectDirectory, tvm_getOption(configuration, 'o_RegisterDat'));
+    %no default
+coregistrationFile      = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_CoregistrationMatrix'));
     %no default
     
 definitions = tvm_definitions();    
@@ -33,6 +37,11 @@ if fslInitialisation
     fsl = ' --init-fsl';
 else
     fsl = [];
+end
+if spmInitialisation %doesn't start matlab properly
+    spm = ' --init-spm';
+else
+    spm = [];
 end
 switch contrast 
     case 'T1'
@@ -48,9 +57,14 @@ switch degreesOfFreedom
     case 12
         dof = ' --12';
 end
-
-unixCommand = ['SUBJECTS_DIR=', subjectDirectory ';'];
-unixCommand = [unixCommand 'bbregister --s ' freeSurferName ' --mov ' referenceFile ' --reg ' registerDatFile fsl contrastArgument dof ';'];
+if isempty(initialisationMatrix)
+    matrixInitialisation = '';
+else
+    matrixInitialisation = sprintf(' --init-reg %s', fullfile(subjectDirectory, initialisationMatrix));
+end
+[~, name, ~] = fileparts(freeSurferName);
+unixCommand = ['SUBJECTS_DIR=', fullfile(freeSurferFolder, '..') ';'];
+unixCommand = [unixCommand 'bbregister --s ' name ' --mov ' referenceFile ' --reg ' registerDatFile fsl spm contrastArgument dof matrixInitialisation ';'];
 unix(unixCommand);
 
 if ~exist(fullfile(freeSurferFolder, 'mri/brain.nii'), 'file')
@@ -100,7 +114,7 @@ transformation = bbrCoregistrationMatrix' * inv(freeSurferMatrixFunctional)' * s
 %world space to world space coregistration matrix
 coregistrationMatrix = inv(functionalScan.mat)' * inv(shiftByOne)' * freeSurferMatrixFunctional' * inv(bbrCoregistrationMatrix)' * inv(freeSurferMatrixStructural') * shiftByOne' * structuralScan.mat'; %#ok<NASGU>
 coregistrationMatrix = coregistrationMatrix';
-% @todo shuoldn't this be equal to directly:
+% @todo shouldn't this be equal to directly:
 % coregistrationMatrix =  structuralScan.mat * shiftByOne * inv(freeSurferMatrixStructural) * inv(bbrCoregistrationMatrix) * freeSurferMatrixFunctional * inv(shiftByOne) * inv(functionalScan.mat);
 
 

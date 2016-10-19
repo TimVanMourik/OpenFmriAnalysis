@@ -52,7 +52,7 @@ function [transformation, registrationParameters] = optimalTransformation(arrayW
 %   Copyright (C) 2012-2013, Tim van Mourik, DCCN
 
 %% Parse configuration
-pivot =                 tvm_getOption(configuration, 'Pivot', mean(arrayW));
+pivot =                 tvm_getOption(configuration, 'Pivot', mean(arrayW, 1));
     % mean(arrayW)
 mode =                  tvm_getOption(configuration, 'Mode', 'rst');
     % 'rst'

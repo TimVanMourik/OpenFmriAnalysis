@@ -5,29 +5,13 @@ function tvm_layerPipeline(configuration)
 %   Copyright (C) Tim van Mourik, 2014, DCCN
 %
 
-% if isfield(configuration, 'o_ObjWhite') && ~isempty(strfind(configuration.o_ObjWhite, '?'))
-%     twoHemispheres = true;
-% else
-%     twoHemispheres = false;
-% end
-% 
-% if twoHemispheres
-%     try
-%         tvm_boundariesToObj(configuration);    
-%         configuration.i_ObjWhite        = configuration.o_ObjWhite;
-%         configuration.i_ObjPial         = configuration.o_ObjPial;
-%     catch
-%         warning('Skipping tvm_boundariesToObj');
-%     end
-% end
-
 %%
 try
     tvm_boundariesToObj(configuration);    
     configuration.i_ObjWhite        = configuration.o_ObjWhite;
     configuration.i_ObjPial         = configuration.o_ObjPial;
 catch err
-    warning([err.message '\nSkipping tvm_boundariesToObj']);
+    warning('%s\nSkipping tvm_boundariesToObj', err.message);
 end
 %%
 try
@@ -35,7 +19,7 @@ try
     configuration.i_White                   = configuration.o_White;
     configuration.i_Pial                    = configuration.o_Pial;
 catch err
-    warning([err.message '\nSkipping tvm_makeLevelSet']);
+    warning('%s\nSkipping tvm_makeLevelSet', err.message);
 end
 %%
 try
@@ -43,7 +27,7 @@ try
     configuration.i_Potential               = configuration.o_LaplacePotential;
     configuration.i_Normalise               = true;
 catch err
-    warning([err.message '\nSkipping tvm_laplacePotentials']);
+    warning('%s\nSkipping tvm_laplacePotentials', err.message);
 end
 %%
 try
@@ -51,7 +35,7 @@ try
     configuration.i_VectorField             = configuration.o_Gradient ;
     configuration.o_Divergence              = configuration.o_Curvature;
 catch err
-    warning([err.message '\nSkipping tvm_gradient']);
+    warning('%s\nSkipping tvm_gradient', err.message);
 end
 %%
 try
@@ -59,14 +43,14 @@ try
     configuration.i_Curvature               = configuration.o_Curvature;
     configuration.i_Gradient                = configuration.o_Gradient;
 catch err
-    warning([err.message '\nSkipping tvm_computeDivergence']);
+    warning('%s\nSkipping tvm_computeDivergence', err.message);
 end
 
 %%
 try
     tvm_volumetricLayering(configuration);
 catch err
-    warning([err.message '\nSkipping tvm_volumetricLayering']);
+    warning('%s\nSkipping tvm_volumetricLayering', err.message);
 end
 
 end %end function

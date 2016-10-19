@@ -9,11 +9,13 @@ function tvm_reconAll(configuration)
 %   configuration.Structural
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
 structuralScan      = tvm_getOption(configuration, 'i_Structural');
     %no default
 highRes             = tvm_getOption(configuration, 'i_HighRes', false);
+    %no default
+expertFile          = tvm_getOption(configuration, 'i_ExpertFile', '');
     %no default
 timeRequirement     = tvm_getOption(configuration, 'i_ComputationTime', '22:00:00');
     %no default
@@ -33,9 +35,15 @@ if exist(fullfile(subjectDirectory, freeSurferFolder), 'dir')
 end
 
 if highRes
-    highResCommand = ' -hires';
+    highResCommand = '-hires';
 else
     highResCommand = '';
+end
+
+if ~isempty(expertFile)
+    expertCommand = ['-expert ' fullfile(subjectDirectory, expertFile)];
+else
+    expertCommand = '';
 end
 
 qScript = fullfile(subjectDirectory, 'FreeSurferScript.sh');
@@ -45,7 +53,7 @@ f = fopen(qScript, 'w');
 fprintf(f, '#!/bin/bash\n');
 unixCommand = ['SUBJECTS_DIR=', subjectDirectory ';'];
 fprintf(f, '%s\n', unixCommand);
-unixCommand = ['recon-all -subjid ' freeSurferFolder ' -i ' fullfile(subjectDirectory, structuralScan) highResCommand ' -all;'];
+unixCommand = sprintf('recon-all -all -subjid %s -i %s %s %s;', freeSurferFolder, fullfile(subjectDirectory, structuralScan), highResCommand, expertCommand);
 fprintf(f, '%s\n', unixCommand);
 unixCommand = ['rm ' qScript ';'];
 fprintf(f, '%s\n', unixCommand);
