@@ -11,19 +11,19 @@ function tvm_boundaryBasedRegistration(configuration, registrationConfiguration)
 %
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
-referenceFile =         fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
+referenceFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
-coregistrationFileIn =  tvm_getOption(configuration, 'i_CoregistrationMatrix', []);
+coregistrationFileIn    = tvm_getOption(configuration, 'i_CoregistrationMatrix', []);
     %no default
-coregistrationFileOut = tvm_getOption(configuration, 'o_CoregistrationMatrix', []);
+boundariesFileIn        = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Boundaries'));
     %no default
-boundariesFileIn =      fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Boundaries'));
+coregistrationFileOut   = tvm_getOption(configuration, 'o_CoregistrationMatrix', []);
     %no default
-boundariesFileOut =     fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
+boundariesFileOut       = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
     %no default
-maskFile =              tvm_getOption(configuration, 'p_Mask', '');
+maskFile                = tvm_getOption(configuration, 'i_Mask', '');
     %no default
 
 definitions = tvm_definitions();
@@ -56,7 +56,7 @@ registereSurfaceP = [pSurface{1}; pSurface{2}];
 [~, selectedVerticesP] = selectVertices(registereSurfaceP, mask);
 selectedVertices = selectedVerticesW | selectedVerticesP;
 
-[t, p] = tvm_BoundaryBasedRegistration(registereSurfaceW(selectedVertices, :), registereSurfaceP(selectedVertices, :), referenceVolume, registrationConfiguration);
+[t, p] = tvm_bbregister(registereSurfaceW(selectedVertices, :), registereSurfaceP(selectedVertices, :), referenceVolume, registrationConfiguration);
 
 for hemisphere = 1:2
     wSurface{hemisphere} = wSurface{hemisphere} * t;
@@ -73,12 +73,12 @@ if ~isempty(coregistrationFileOut)
     if ~isempty(coregistrationFileIn)
         load(fullfile(subjectDirectory, coregistrationFileIn), definitions.CoregistrationMatrix, definitions.RegistrationParameters);
         
-        coregistrationMatrix = eval(definitions.CoregistrationMatrix);
-        registrationParameters = eval(definitions.RegistrationParameters);
+%         coregistrationMatrix = eval(definitions.CoregistrationMatrix);
+%         registrationParameters = eval(definitions.RegistrationParameters);
 
-        coregistrationMatrix = coregistrationMatrix * t'; 
+        coregistrationMatrix = t' * coregistrationMatrix;  %#ok<*NODEF>
         if exist(definitions.RegistrationParameters, 'var')
-            registrationParameters = registrationParameters + p; 
+            registrationParameters = registrationParameters + p;  %#ok<*NASGU>
             
 % the inputname function does not seem to work in some MATLAB versions
 %             eval(tvm_changeVariableNames(definitions.CoregistrationMatrix, coregistrationMatrix));

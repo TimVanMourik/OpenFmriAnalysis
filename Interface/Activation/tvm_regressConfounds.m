@@ -37,15 +37,16 @@ design = eval(definitions.GlmDesign);
 contrast = tvm_getContrastVector(confounds, design.DesignMatrix, design.RegressorLabel);
 
 if ~isempty(functionalFolder)
+    functionalFolder = fullfile(subjectDirectory, functionalFolder);
     if functionalFolder(end) ~= filesep()
-        functionalFolder = [fullfile(subjectDirectory, functionalFolder), filesep()];
+        functionalFolder = fullfile(functionalFolder, filesep());
     end
 
-    allVolumes = dir(fullfile(subjectDirectory, functionalFolder, '*.nii'));
+    allVolumes = dir(fullfile(functionalFolder, '*.nii'));
     allVolumes = {allVolumes.name};
 
     for i = 1:length(allVolumes)
-        volumeFiles = spm_vol(fullfile(subjectDirectory, functionalFolder, allVolumes{i}));
+        volumeFiles = spm_vol(fullfile(functionalFolder, allVolumes{i}));
         numberOfVolumes = length(volumeFiles);
         volumeData = spm_read_vols(volumeFiles);
         volumeData = reshape(volumeData, [prod(volumeFiles(1).dim(1:3)), numberOfVolumes])';

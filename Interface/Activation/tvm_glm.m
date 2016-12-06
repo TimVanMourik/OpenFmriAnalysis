@@ -55,7 +55,7 @@ if ~isempty(functionalFolder)
     if functionalFolder(end) ~= filesep()
         functionalFolder = [fullfile(subjectDirectory, functionalFolder), filesep()];
     end
-    allVolumes = dir(fullfile(fsubjectDirectory, unctionalFolder, '*.nii'));
+    allVolumes = dir(fullfile(subjectDirectory, functionalFolder, '*.nii'));
     allVolumes = fullfile(subjectDirectory, functionalFolder, {allVolumes.name});
 elseif ~isempty(functionalFiles)
     allVolumes = dir(fullfile(subjectDirectory, functionalFiles));

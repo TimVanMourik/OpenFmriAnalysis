@@ -29,7 +29,8 @@ switch interpolationMethod
         insideVolume = ~any(integerParts < 1 | bsxfun(@gt, integerParts, volumeSize(1:3) - 1) | isnan(integerParts), 2);
         %Makes sure that the integer part are larger than 0...
         if ~any(insideVolume)
-            error('None of the sampled voxels are inside the volume');
+            return
+%             error('None of the sampled voxels are inside the volume');
         end
 
         integerParts = integerParts(insideVolume, :);

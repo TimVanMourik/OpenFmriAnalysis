@@ -17,7 +17,7 @@ function tvm_dicomSort(configuration)
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
-moveOption =        tvm_getOption(configuration, 'p_MoveOption', 'move');
+moveOption =        tvm_getOption(configuration, 'i_MoveOption', 'move');
     %move
     %link
 dicomDirectory =    fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DicomDirectory'));
@@ -56,18 +56,18 @@ for file = 1:size(fullFileNames,1)
 	end
 	switch moveOption
         case 'move'
-            [~, FName, Ext] = fileparts(strtrim(fullFileNames(file,:)));
-            fileNames{file} = fullfile(protocolDirectory, [FName Ext]);
+            [~, fileName, extension] = fileparts(strtrim(fullFileNames(file,:)));
+            fileNames{file} = fullfile(protocolDirectory, [fileName extension]);
             movefile(strtrim(fullFileNames(file,:)), fileNames{file}, 'f')
         case 'link'
-            if isunix()
-                fileNames{file} = sprintf('%s%s%s_%s_%04d_%04d.dcm', protocolDirectory, filesep, ...
-                    strtrim(dicomHeader.PatientsName), strtrim(dicomHeader.ProtocolName), ...
-                    dicomHeader.SeriesNumber, dicomHeader.InstanceNumber);
-                unix(['ln -sf ' strtrim(fullFileNames(file,:)) ' ' fileNames{file}]);
-            else
+            if ~isunix()
                 error('Linking option is implemented for unix/linux only')
             end
+            fileNames{file} = sprintf('%s%s%s_%s_%04d_%04d.dcm', protocolDirectory, filesep, ...
+                strtrim(dicomHeader.PatientsName), strtrim(dicomHeader.ProtocolName), ...
+                dicomHeader.SeriesNumber, dicomHeader.InstanceNumber);
+            unix(['ln -sf ' strtrim(fullFileNames(file,:)) ' ' fileNames{file}]);
+
         otherwise
 		error('This option is not implemented')
 	end

@@ -21,7 +21,7 @@ timeRequirement     = tvm_getOption(configuration, 'i_ComputationTime', '22:00:0
     %no default
 memoryRequirement   = tvm_getOption(configuration, 'i_Memory', '8gb');
     %no default
-freeSurferFolder    = tvm_getOption(configuration, 'i_FreeSurferFolder', 'FreeSurfer');
+freeSurferFolder    = tvm_getOption(configuration, 'o_FreeSurferFolder', 'FreeSurfer');
     %'FreeSurfer'
     
 %%

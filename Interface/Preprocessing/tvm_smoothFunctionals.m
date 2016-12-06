@@ -26,7 +26,7 @@ smoothingDirectory =    fullfile(subjectDirectory, tvm_getOption(configuration, 
 volumeNames = dir(fullfile(functionalDirectory, '*.nii'));
 volumeNames = {volumeNames.name};
 allVolumes = fullfile(functionalDirectory, volumeNames);
-newVolumes = fullfile(smoothingDirectory, strcat('s', volumeNames));
+newVolumes = fullfile(smoothingDirectory,  volumeNames);
 
 if useQsub
     compilation = 'no';

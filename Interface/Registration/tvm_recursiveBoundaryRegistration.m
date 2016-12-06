@@ -18,7 +18,7 @@ boundariesFile =            fullfile(subjectDirectory, tvm_getOption(configurati
     %no default
 registeredBoundaries =   	fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
     %no default
-maskFile =                  tvm_getOption(configuration, 'p_Mask', '');
+maskFile =                  tvm_getOption(configuration, 'i_Mask', '');
     %no default
     
 definitions = tvm_definitions();
