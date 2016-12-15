@@ -132,8 +132,9 @@ for i = 1:numberOfFrames
  
     tvm_showObjectContourOnSlice(configuration);
     
-    %@todo: give the getframe function a rectangle, such that dimensions
-    %are guaranteed to be consistent for every frame
+    %@todo: sometimes the picture hasn't been drawn before the getframe.
+    %Not sure to what extent the drawnow() is a stable fix.
+    drawnow();
     writeVideo(videoObject, getframe(overlayImage));
     close(overlayImage);
 end
