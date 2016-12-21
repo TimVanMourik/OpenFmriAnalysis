@@ -4,48 +4,28 @@ function tvm_moveNiftis(configuration)
 %
 %   Copyright (C) Tim van Mourik, 2014, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.SourceFolder
-%   configuration.DestinationAnatomicals
-%   configuration.DestinationFunctionals
+%   configuration.i_SubjectDirectory
+%   configuration.i_SourceFolder
+%   configuration.i_Characteristic
+%   configuration.o_Destination
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+subjectDirectory    =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
-sourceFolder      = [subjectDirectory, tvm_getOption(configuration, 'i_SourceFolder')];
+sourceFolder        = [subjectDirectory, tvm_getOption(configuration, 'i_SourceFolder')];
     %no default
-destinationAnatomicals = tvm_getOption(configuration, 'i_DestinationAnatomicals', []);
+characteristic      = tvm_getOption(configuration, 'i_Characteristic', []);
     %no default
-destinationFunctionals = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DestinationFunctionals'));
+destination         = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Destination'));
     %no default
     
-definitions = tvm_definitions();  
 %%
-anatomicalData = definitions.AnatomicalData;
-anatomicals = [];
-for i = 1:length(anatomicalData)
-   folders = dir(fullfile(sourceFolder, ['*' anatomicalData{i} '*']));
-   folders = folders([folders.isdir]);
-   anatomicals = [anatomicals; {folders.name}]; %#ok<AGROW>
-end
-
-if ~isempty(destinationAnatomicals)
-    for i = 1:length(anatomicals)
-        movefile(fullfile(sourceFolder, anatomicals{i}), fullfile(subjectDirectory, destinationAnatomicals));
-    end
-end
-
-functionalData = definitions.FunctionalData;
-functionals=[];
-for i = 1:length(functionalData)
-    folders = dir(fullfile(sourceFolder, ['*' functionalData{i} '*']));
-    folders = folders([folders.isdir]);
-    functionals = [functionals; {folders.name}']; %#ok<AGROW>
-end
-
+folders = dir(fullfile(sourceFolder, characteristic));
+folders = folders([folders.isdir]);
+functionals = {folders.name}'; 
 for i = 1:length(functionals)
     if ~isempty(dir(fullfile(sourceFolder, functionals{i}, '*.nii')))
-        movefile(fullfile(sourceFolder, functionals{i}, '*.nii'), destinationFunctionals);  %to move functional folders remome '/' '*.nii'
+        movefile(fullfile(sourceFolder, functionals{i}, '*.nii'), destination);  %to move functional folders remome '/' '*.nii'
     end
 end
 
