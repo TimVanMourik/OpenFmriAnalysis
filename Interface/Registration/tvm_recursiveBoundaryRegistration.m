@@ -41,7 +41,8 @@ transformStack = cell(size(wSurface));
 for hemisphere = 1:2
     [~, selectedVerticesW] = selectVertices(wSurface{hemisphere}, mask);
     [~, selectedVerticesP] = selectVertices(pSurface{hemisphere}, mask);
-    selectedVertices = intersect(selectedVerticesW, selectedVerticesP);
+%     selectedVertices = intersect(selectedVerticesW, selectedVerticesP);
+    selectedVertices = selectedVerticesW & selectedVerticesP;
 
     [wSurface{hemisphere}(selectedVertices, :), pSurface{hemisphere}(selectedVertices, :), transformStack{hemisphere}] = tvm_wrapperRecursiveRegistration(wSurface{hemisphere}(selectedVertices, :), pSurface{hemisphere}(selectedVertices, :), referenceVolume, registrationConfiguration);  
 end
