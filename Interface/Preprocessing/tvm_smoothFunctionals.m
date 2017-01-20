@@ -13,20 +13,20 @@ function tvm_smoothFunctionals(configuration)
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
-functionalDirectory =   fullfile(subjectDirectory, tvm_getOption(configuration, 'i_FunctionalDirectory'));
+functionalDirectory =   fullfile(subjectDirectory, tvm_getOption(configuration, 'i_SourceDirectory'));
     %no default
 smoothingKernel =       tvm_getOption(configuration, 'i_SmoothingKernel', [4, 4, 4]);
     %'[4, 4, 4]
 useQsub =               tvm_getOption(configuration, 'i_Qsub', false);
-    %'[4, 4, 4]
-smoothingDirectory =    fullfile(subjectDirectory, tvm_getOption(configuration, 'o_SmoothingDirectory'));
+    % false
+smoothingDirectory =    fullfile(subjectDirectory, tvm_getOption(configuration, 'o_OutputDirectory'));
     %no default
     
 %%
 volumeNames = dir(fullfile(functionalDirectory, '*.nii'));
 volumeNames = {volumeNames.name};
 allVolumes = fullfile(functionalDirectory, volumeNames);
-newVolumes = fullfile(smoothingDirectory,  volumeNames);
+newVolumes = fullfile(smoothingDirectory, strcat('s', volumeNames));
 
 if useQsub
     compilation = 'no';
