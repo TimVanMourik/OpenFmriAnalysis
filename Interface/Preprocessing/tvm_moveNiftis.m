@@ -10,9 +10,9 @@ function tvm_moveNiftis(configuration)
 %   configuration.o_Destination
 
 %% Parse configuration
-subjectDirectory    =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     %no default
-sourceFolder        = [subjectDirectory, tvm_getOption(configuration, 'i_SourceFolder')];
+sourceFolder        = [subjectDirectory, tvm_getOption(configuration, 'i_SourceDirectory')];
     %no default
 characteristic      = tvm_getOption(configuration, 'i_Characteristic', []);
     %no default

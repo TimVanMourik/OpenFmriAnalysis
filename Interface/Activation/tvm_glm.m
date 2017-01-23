@@ -21,7 +21,7 @@ designFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 
     %no default
 referenceVolumeFile =   fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
-functionalFolder        = tvm_getOption(configuration, 'i_FunctionalFolder', '');
+functionalFolder        = tvm_getOption(configuration, 'i_SourceDirectory', '');
     %no default
 functionalFiles         = tvm_getOption(configuration, 'i_FunctionalFiles', '');
     % ''
