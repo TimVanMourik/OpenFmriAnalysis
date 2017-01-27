@@ -85,7 +85,7 @@ if diagonaliseElements == true
     designMatrix = zeros(design.Length, numberOfStimuli * n * numberOfRuns);
     x = zeros(1,numberOfRuns);
     for i = 1:numberOfRuns
-        x(i) = numberOfStimuli*(i-1);
+        x(i) = numberOfStimuli * n * (i-1);
     end
 else
     designMatrix = zeros(design.Length, numberOfStimuli * n);
