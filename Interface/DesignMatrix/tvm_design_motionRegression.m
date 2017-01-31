@@ -1,12 +1,22 @@
 function tvm_design_motionRegression(configuration)
-%   
+% TVM_DESIGN_MOTIONREGRESSION
+%   TVM_DESIGN_MOTIONREGRESSION(configuration)
+%   @todo Add description
+%   @todo Support different formats of motion files. Currently it's
+%   identical to adding a matrix from a file
 %
-%   Copyright (C) Tim van Mourik, 2015, DCCN
+%   Copyright (C) Tim van Mourik, 2015-2016, DCCN
 %
+% Input:
+%   i_SubjectDirectory
+%   i_DesignMatrix
+%   i_MotionFiles
+% Output:
+%   o_DesignMatrix
 
 %% Parse configuration
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 designFileIn            = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
 motionFiles             = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_MotionFiles'));

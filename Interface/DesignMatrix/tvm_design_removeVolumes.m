@@ -1,12 +1,20 @@
 function tvm_design_removeVolumes(configuration)
-%   
+% TVM_DESIGN_REMOVEVOLUMES
+%   TVM_DESIGN_REMOVEVOLUMES(configuration)
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2015, DCCN
+%   Copyright (C) Tim van Mourik, 2017, DCCN
 %
+% Input:
+%   i_SubjectDirectory
+%   i_DesignMatrix
+%   i_Deletions
+% Output:
+%   o_DesignMatrix
 
 %% Parse configuration
-subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', '.');
-    %no default
+subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+    % default: current working directory
 designFileIn            = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
 deletions               = tvm_getOption(configuration, 'i_Deletions');

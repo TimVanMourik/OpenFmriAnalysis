@@ -1,31 +1,32 @@
 function tvm_regressConfounds(configuration)
 % TVM_REGRESSCONFOUNDS
 %   TVM_REGRESSCONFOUNDS(configuration)
-%   
+%   @todo Add description
 %
 %   Copyright (C) Tim van Mourik, 2016, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.Design
-%   configuration.ReferenceVolume
-%   configuration.FunctionalFolder
-%   configuration.Mask
-%   configuration.GlmOutput
-%   configuration.ResidualSumOfSquares
+% Input:
+%   i_SubjectDirectory
+%   i_DesignMatrix
+%   i_FunctionalFolder
+%   i_FunctionalFiles
+%   i_Confounds
+% Output:
+%   o_FilteredFolder
 
 
 %% Parse configuration
 subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 designFile          = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
 functionalFolder    = tvm_getOption(configuration, 'i_FunctionalFolder', '');
-    %no default
+    % default: empty
 functionalFiles     = tvm_getOption(configuration, 'i_FunctionalFiles', '');
-    %no default
+    % default: empty
 confounds           = tvm_getOption(configuration, 'i_Confounds');
     %no default
-filteredFolder      = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_FilteredFolder'));
+filteredFolder      = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_OutputDirectory'));
     %no default
 
 definitions = tvm_definitions();  

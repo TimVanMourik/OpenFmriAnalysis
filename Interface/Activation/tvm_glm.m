@@ -1,37 +1,41 @@
 function tvm_glm(configuration)
 % TVM_GLM
 %   TVM_GLM(configuration)
-%   
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+%   Copyright (C) Tim van Mourik, 2014-2017, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.Design
-%   configuration.ReferenceVolume
-%   configuration.FunctionalFolder
-%   configuration.Mask
-%   configuration.GlmOutput
-%   configuration.ResidualSumOfSquares
+% Input:
+%   i_SubjectDirectory
+%   i_DesignMatrix
+%   i_ReferenceVolume
+%   i_SourceDirectory
+%   i_FunctionalFiles
+%   i_Mask
+%   i_FunctionalSelection
+% Output:
+%   o_Betas
+%   o_ResidualSumOfSquares
 
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+subjectDirectory            = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+    % default: current working directory
+designFile                  = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
-designFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
+referenceVolumeFile         = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
-referenceVolumeFile =   fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
-    %no default
-functionalFolder        = tvm_getOption(configuration, 'i_SourceDirectory', '');
-    %no default
-functionalFiles         = tvm_getOption(configuration, 'i_FunctionalFiles', '');
-    % ''
-roiMask =               tvm_getOption(configuration, 'i_Mask', []);
+functionalFolder            = tvm_getOption(configuration, 'i_SourceDirectory', '');
+    % default: empty
+functionalFiles             = tvm_getOption(configuration, 'i_FunctionalFiles', '');
+    % default: empty
+roiMask                     = tvm_getOption(configuration, 'i_Mask', []);
     %default: empty
-functionalIndices  =    tvm_getOption(configuration, 'i_FunctionalSelection', []);
+functionalIndices           = tvm_getOption(configuration, 'i_FunctionalSelection', []);
+    % default: empty
+glmFile                     = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Betas'));
     %no default
-glmFile =               fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Betas'));
-    %no default
-resVarFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'o_ResidualSumOfSquares'));
+resVarFile                  = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_ResidualSumOfSquares'));
     %no default
 if ~isempty(roiMask)
     roiMask = fullfile(subjectDirectory, roiMask);

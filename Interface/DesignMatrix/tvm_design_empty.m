@@ -1,17 +1,25 @@
 function tvm_design_empty(configuration)
-%   
+% TVM_DESIGN_EMPTY
+%   TVM_DESIGN_EMPTY(configuration)
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2015, DCCN
+%   Copyright (C) Tim van Mourik, 2015-2016, DCCN
 %
+% Input:
+%   i_SubjectDirectory
+%   i_FunctionalFiles
+%   i_FunctionalFolder
+% Output:
+%   o_DesignMatrix
 
 %% Parse configuration
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
-designFileOut           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DesignMatrix'));
-    %no default
+    % default: current working directory
 functionalFiles         = tvm_getOption(configuration, 'i_FunctionalFiles', '');
-    %no default
+    % default: empty
 functionalFolder        = tvm_getOption(configuration, 'i_FunctionalFolder', '');
+    % default: empty
+designFileOut           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DesignMatrix'));
     %no default
   
 definitions = tvm_definitions();

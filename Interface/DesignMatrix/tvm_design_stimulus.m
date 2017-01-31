@@ -1,29 +1,42 @@
 function tvm_design_stimulus(configuration)
-
-%   
+% TVM_DESIGN_STIMULUS
+%   TVM_DESIGN_STIMULUS(configuration)
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2015, DCCN
+%   Copyright (C) Tim van Mourik, 2015-2017, DCCN
 %
+% Input:
+%   i_SubjectDirectory
+%   i_DesignMatrix
+%   i_Stimulus
+%   i_HrfParameters
+%   i_Labels
+%   i_TR
+%   i_TemporalDerivative
+%   i_DispersionDerivative
+%   i_DiagonaliseElements
+% Output:
+%   o_DesignMatrix
 
 %% Parse configuration
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 designFileIn            = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
 stimulusFiles           = tvm_getOption(configuration, 'i_Stimulus');
     %no default
 hrfParameters           = tvm_getOption(configuration, 'i_HrfParameters', []);
-    %default:[6, 16, 1, 1, 6, 0, 32]
+    %default: empty (later standard settings will be inserted)
 labels                  = tvm_getOption(configuration, 'i_Labels', {});
-    %default: 1
+    %default: empty
 TR                      = tvm_getOption(configuration, 'i_TR', 1);
-    %default: 1
+    %default: 1 second
 temporalDerivative      = tvm_getOption(configuration, 'i_TemporalDerivative', false);
     %default: false
 dispersionDerivative    = tvm_getOption(configuration, 'i_DispersionDerivative', false);
     %default: false
-diagonaliseElements     = tvm_getOption(configuration, 'i_DiagonaliseElements', false);
-    %default: false
+diagonaliseElements     = tvm_getOption(configuration, 'i_DiagonaliseElements', true);
+    %default: true
 designFileOut           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DesignMatrix'));
     %no default
     

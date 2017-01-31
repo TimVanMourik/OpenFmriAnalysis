@@ -1,20 +1,23 @@
 function tvm_glmToTMap(configuration)
 % TVM_GLMTOTMAP
 %   TVM_GLMTOTMAP(configuration)
-%   
+%   @todo Add description
+%   @todo Fix bug with degrees of freedom
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+%   Copyright (C) Tim van Mourik, 2016-2017, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.Design
-%   configuration.GlmOutput
-%   configuration.ResidualSumOfSquares
-%   configuration.TMap
-%   configuration.Contrast
+% Input:
+%   i_SubjectDirectory
+%   i_DesignMatrix
+%   i_Betas
+%   i_ResidualSumOfSquares
+%   i_Contrast
+% Output:
+%   o_TMap
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 designFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
 glmFile =               fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Betas'));

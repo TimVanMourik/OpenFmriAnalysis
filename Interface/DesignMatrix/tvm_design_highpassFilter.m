@@ -1,20 +1,29 @@
-function tvm_design_bandpassFilter(configuration)
-%   
+function tvm_design_highpassFilter(configuration)
+% TVM_DESIGN_HIGHPASSFILTER
+%   TVM_DESIGN_HIGHPASSFILTER(configuration)
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2015, DCCN
+%   Copyright (C) Tim van Mourik, 2015-2016, DCCN
 %
+% Input:
+%   i_SubjectDirectory
+%   i_DesignMatrix
+%   i_CutOffFrequency
+%   i_TR
+% Output:
+%   o_DesignMatrix
 
 %% Parse configuration
-subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', '.');
-    %no default
+subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+    % default: current working directory
 designFileIn            = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
+cutOffFrequency         = tvm_getOption(configuration, 'i_CutOffFrequency', 1/64);
+    %default: 1/64 Hz
+TR                      = tvm_getOption(configuration, 'i_TR', 1);
+    %default: 1 second
 designFileOut           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DesignMatrix'));
     %no default
-cutOffFrequency =       tvm_getOption(configuration, 'i_CutOffFrequency', 1/64);
-    %default: 1/64 Hz
-TR =                    tvm_getOption(configuration, 'i_TR', 1);
-    %default: 1
     
 definitions = tvm_definitions();
 

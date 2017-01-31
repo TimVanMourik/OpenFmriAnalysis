@@ -1,22 +1,33 @@
 function tvm_design_retroicor(configuration)
-%   
+% TVM_DESIGN_RETROICOR
+%   TVM_DESIGN_RETROICOR(configuration)
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2015, DCCN
+%   Copyright (C) Tim van Mourik, 2015-2016, DCCN
 %
+% Input:
+%   i_SubjectDirectory
+%   i_DesignMatrix
+%   i_PhysioFiles
+%   i_ScanTriggers
+%   i_Order
+%   i_Type
+% Output:
+%   o_DesignMatrix
 
 %% Parse configuration
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 designFileIn            = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
-physioFiles            = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_PhysioFiles'));
+physioFiles             = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_PhysioFiles'));
     %no default
 ScanTriggerFiles      	= fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ScanTriggers'));
     %no default
 orderOfRegressors       = tvm_getOption(configuration, 'i_Order', 1);
     %default: 1
 type                    = tvm_getOption(configuration, 'i_Type', 'Physio');
-    %default: 1
+    %default: 'Physio'
 designFileOut           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DesignMatrix'));
     %no default
   
