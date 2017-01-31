@@ -93,12 +93,6 @@ for lamina = numberOfLaminae:-1:2
 end
 laminae.volume = cat(4, laminae.volume, 1 - sum(laminae.volume, 4));
 
-% if gradientVolumes
-%     laminae.gradient = tvm_partialVolumeGradient(levelSet(:, :, :, 2:end - 1) / nthroot(abs(det(oldMatrix)), 3), 'gradient', gradient);
-% %     laminae.gradient = bsxfun(@minus, laminae.gradient, mean(mean(mean(laminae.gradient, 1), 2), 3));
-%     laminae.volume = cat(4, laminae.volume, laminae.gradient);
-% end
-
 % set all edges to zero: the curvature is not defined at the edges and
 % hence the layer distribution is undefined.
 laminae.volume(1,   :,   :,   :) = 0;

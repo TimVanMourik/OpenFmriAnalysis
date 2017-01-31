@@ -13,23 +13,24 @@ function tvm_unionVolumes(configuration)
 %% Parse configuration
 subjectDirectory =    	tvm_getOption(configuration, 'i_SubjectDirectory');
     %no default
-volumeFiles =          	fullfile(subjectDirectory, tvm_getOption(configuration, 'i_InputVolumes'));
+volumeFiles =           tvm_getOption(configuration, 'i_InputVolumes');
     %no default
 outputFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'o_OutputVolume'));
     %no default
     
 %%
-%Load the volume data
+for i = 1:length(volumeFiles)
+    inputVolumes = fullfile(subjectDirectory, volumeFiles{i});
 
-inputVolume = spm_vol(volumeFiles{1});
-unionVolume = spm_read_vols(inputVolume);
+    currentVolume = spm_vol(inputVolumes{1});
+    unionVolume = spm_read_vols(currentVolume);
 
-for i = 2:length(volumeFiles)
-    inputVolume = spm_vol(volumeFiles{i});
-    unionVolume = unionVolume | spm_read_vols(inputVolume);
+    for j = 2:length(volumeFiles{i})
+        currentVolume = spm_vol(inputVolumes{j});
+        unionVolume = unionVolume | spm_read_vols(currentVolume);
+    end
+    currentVolume.fname = outputFile{i};
+    spm_write_vol(currentVolume, unionVolume);
 end
-inputVolume.fname = outputFile;
-inputVolume.dt = [2, 0];
-spm_write_vol(inputVolume, unionVolume);
 
 end %end function
