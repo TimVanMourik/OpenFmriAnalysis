@@ -22,6 +22,8 @@ temporalDerivative      = tvm_getOption(configuration, 'i_TemporalDerivative', f
     %default: false
 dispersionDerivative    = tvm_getOption(configuration, 'i_DispersionDerivative', false);
     %default: false
+diagonaliseElements     = tvm_getOption(configuration, 'i_DiagonaliseElements', false);
+    %default: false
 designFileOut           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DesignMatrix'));
     %no default
     
@@ -76,10 +78,22 @@ for stimulus = 1:numberOfStimuli
     end
 end
 
+
 n = sum([1, temporalDerivative, dispersionDerivative]);
-designMatrix = zeros(design.Length, numberOfStimuli * n);
+
+if diagonaliseElements == true
+    designMatrix = zeros(design.Length, numberOfStimuli * n * numberOfRuns);
+    x = zeros(1,numberOfRuns);
+    for i = 1:numberOfRuns
+        x(i) = numberOfStimuli * n * (i-1);
+    end
+else
+    designMatrix = zeros(design.Length, numberOfStimuli * n);
+    x = zeros(1,numberOfRuns);
+end
+
 for i = 1:design.NumberOfPartitions
-    designMatrix(design.Partitions{i}, 1:numberOfStimuli * n) = [designPerRun{1:numberOfStimuli, i}];
+    designMatrix(design.Partitions{i}, (1:numberOfStimuli * n) + x(i)) = [designPerRun{1:numberOfStimuli, i}];
 end
 % designMatrix = bsxfun(@rdivide, designMatrix, sqrt(sum(designMatrix .^ 2, 1)));
 
