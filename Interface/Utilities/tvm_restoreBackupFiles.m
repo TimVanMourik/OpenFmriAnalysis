@@ -1,19 +1,24 @@
 function tvm_restoreBackupFiles(configuration)
-% TVM_BACKUPFILES 
-%   TVM_BACKUPFILES(configuration)
+% TVM_RESTOREBACKUPFILES
+%   TVM_RESTOREBACKUPFILES(configuration)
+%   @todo Add description
 %   
+%
 %   Copyright (C) Tim van Mourik, 2015, DCCN
 %
-%   configuration.i_SubjectDirectory
-%   configuration.i_Files
-%   configuration.p_Suffix
+% Input:
+%   i_SubjectDirectory
+%   i_Files
+%   i_Suffix
+% Output:
+%
 
 %% Parse configuration
-subjectDirectory =      	tvm_getOption(configuration, 'i_SubjectDirectory');
-    %no default
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+    % default: current working directory
 files =                     fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Files'));
     %no default
-suffix =                    tvm_getOption(configuration, 'p_Suffix', '_backup');
+suffix =                    tvm_getOption(configuration, 'i_Suffix', '_backup');
     %no default
  
 %%

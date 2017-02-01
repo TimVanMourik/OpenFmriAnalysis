@@ -1,21 +1,31 @@
 function tvm_convertRegisterDat(configuration)
-% TVM_REGISTERVOLUMES 
-%   TVM_REGISTERVOLUMES(configuration)
+% TVM_CONVERTREGISTERDAT
+%   TVM_CONVERTREGISTERDAT(configuration)
+%   @todo Add description
 %   
 %
 %   Copyright (C) Tim van Mourik, 2014, DCCN
 %
+% Input:
+%   i_SubjectDirectory
+%   i_RegistrationVolume
+%   i_FreeSurferFolder
+%   i_RegisterDat
+% Output:
+%   o_Boundaries
+%   o_CoregistrationMatrix
+%
 
 %% Parse configuration
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 referenceFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_RegistrationVolume'));
     %no default
 freeSurferName          = tvm_getOption(configuration, 'i_FreeSurferFolder', 'FreeSurfer');
     %[subjectDirectory, 'FreeSurfer']
-boundariesFile          = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
-    %no default
 registerDatFile       	= fullfile(subjectDirectory, tvm_getOption(configuration, 'i_RegisterDat'));
+    %no default
+boundariesFile          = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
     %no default
 coregistrationFile      = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_CoregistrationMatrix'));
     %no default

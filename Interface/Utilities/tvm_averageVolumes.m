@@ -1,11 +1,21 @@
 function tvm_averageVolumes(configuration)
+% TVM_AVERAGEVOLUMES
+%   TVM_AVERAGEVOLUMES(configuration)
+%   @todo Add description
+%   
 %
+%   Copyright (C) Tim van Mourik, 2016, DCCN
 %
-%   Copyright (C) 2016, Tim van Mourik, DCCN
+% Input:
+%   i_SubjectDirectory
+%   i_NiftiFiles
+% Output:
+%   o_MeanVolume
+%
 
 %% Parse configuration
-subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory');
-    %no default
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+    % default: current working directory
 inputfile               = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_NiftiFiles'));
     %no default
 meanFile                = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_MeanVolume'));

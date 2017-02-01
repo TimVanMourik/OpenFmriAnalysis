@@ -1,24 +1,30 @@
 function tvm_registerVolumes(configuration, registrationConfiguration)
-% TVM_REGISTERVOLUMES 
+% TVM_REGISTERVOLUMES
 %   TVM_REGISTERVOLUMES(configuration)
+%   @todo Add description
 %   
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+%   Copyright (C) Tim van Mourik, 2014-2015, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.FunctionalDirectory
-%   configuration.SmoothingDirectory
-%   configuration.SmoothingKernel
+% Input:
+%   i_SubjectDirectory
+%   i_ReferenceVolume
+%   i_FreeSurferFolder
+%   i_CoregistrationMatrix
+% Output:
+%   o_CoregistrationMatrix
+%   o_Boundaries
+%
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 referenceFile =         fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
 freeSurferFolder =      fullfile(subjectDirectory, tvm_getOption(configuration, 'i_FreeSurferFolder', 'FreeSurfer'));
     %[subjectDirectory, 'FreeSurfer']
 coregistrationFileIn =  fullfile(subjectDirectory, tvm_getOption(configuration, 'i_CoregistrationMatrix', []));
-    %no default
+    % default: empty
 coregistrationFileOut = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_CoregistrationMatrix'));
     %no default
 boundariesFile =        fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));

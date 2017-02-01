@@ -1,14 +1,19 @@
 function tvm_realignFunctionals(configuration, realignmentConfiguration)
-% TVM_REALIGNFUNCTIONALS
-%   TVM_REALIGNFUNCTIONALS(configuration)
+% TVM_REALIGNFUNCTIONALS Moves niftis to destination folder
+%   TVM_REALIGNFUNCTIONALS(configuration, realignmentConfiguration)
+%   @todo Add description
 %   
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+%   Copyright (C) Tim van Mourik, 2014-2015, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.NiftiDirectory
-%   configuration.RealignmentDirectory
-%   configuration.MeanFunctional
+% Input:
+%   i_SubjectDirectory
+%   i_SourceDirectory
+%   i_Characteristic
+% Output:
+%   o_OutputDirectory
+%   o_MeanFunctional
+%
 
 %% Parse configuration
 if nargin < 2
@@ -16,15 +21,15 @@ if nargin < 2
 end
 
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 niftiFolder             = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_SourceDirectory'));
     %no default
 characteristic          = tvm_getOption(configuration, 'i_Characteristic', '*');
-    %no default
+    % default: '*'
 realignmentFolder       = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_OutputDirectory'));
     %no default
 meanName                = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_MeanFunctional', 'MeanFunctional.nii'));
-    %'MeanFunctional.nii'
+    % default: 'MeanFunctional.nii'
     
 definitions = tvm_definitions();  
 %%

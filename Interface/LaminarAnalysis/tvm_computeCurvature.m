@@ -1,28 +1,32 @@
 function tvm_computeCurvature(configuration)
-% TVM_COMPUTECURVATURE 
+% TVM_COMPUTECURVATURE
 %   TVM_COMPUTECURVATURE(configuration)
-%   
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+%   Copyright (C) Tim van Mourik, 2015-2016, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.White
-%   configuration.Pial
-%   configuration.WhiteCurvature
-%   configuration.PialCurvature
+% Input:
+%   i_SubjectDirectory
+%   i_Potential
+%   i_White
+%   i_Pial
+%   i_Order
+% Output:
+%   o_Curvature
+%
 
 %% Parse configuration
-subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+    % default: current working directory
+potential               = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Potential'));
     %no default
-potential           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Potential'));
-    %no default
-curvatureFile       = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Curvature'));
-    %no default
-order               = tvm_getOption(configuration, 'i_Order', 2);
-    % 2
 white                   = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_White'));
     %no default
 pial                    = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Pial'));
+    %no default
+order                   = tvm_getOption(configuration, 'i_Order', 2);
+    % default: 2
+curvatureFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Curvature'));
     %no default
 
 %%

@@ -1,14 +1,22 @@
 function tvm_freesurferBoundariesToVolume(configuration)
-% TVM_FREESURFERBOUNDARIESTOVOLUME 
+% TVM_FREESURFERBOUNDARIESTOVOLUME
 %   TVM_FREESURFERBOUNDARIESTOVOLUME(configuration)
+%   @todo Add description
 %   
 %
 %   Copyright (C) Tim van Mourik, 2014, DCCN
 %
+% Input:
+%   i_SubjectDirectory
+%   i_RegistrationVolume
+%   i_FreeSurferFolder
+% Output:
+%   o_Boundaries
+%
 
 %% Parse configuration
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 referenceFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_RegistrationVolume'));
     %no default
 freeSurferName          = tvm_getOption(configuration, 'i_FreeSurferFolder', 'FreeSurfer');

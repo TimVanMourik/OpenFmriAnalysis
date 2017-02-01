@@ -1,35 +1,26 @@
-function tvm_volumetricLayering(configuration)
-% TVM_VOLUMETRICLAYERING 
-%   TVM_VOLUMETRICLAYERING(configuration)
-%   
+function tvm_potentialtoLayers(configuration)
+% TVM_POTENTIALTOLAYERS
+%   TVM_POTENTIALTOLAYERS(configuration)
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+%   Copyright (C) Tim van Mourik, 2016-2017, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.White
-%   configuration.Pial
-%   configuration.WhiteCurvature
-%   configuration.WhiteCurvature
-%   configuration.Levels
-%   configuration.LevelSet
-%   configuration.Layers
-%
-%
-% The levels will be the volume in between the numbers given in configuration.Levels
+% Input:
+%   i_SubjectDirectory
+%   i_White
+%   i_Pial
+%   i_Potential
+%   i_Levels
+% Output:
+%   o_Layering
 
 %% Parse configuration
 subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 white               = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_White'));
     %no default
 pial                = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Pial'));
     %no default
-% whiteNormals        = tvm_getOption(configuration, 'i_WhiteNormals', '');
-    %default: ''
-    %when there is no curvature input, equidistant sampling will be used.
-% pialNormals         = tvm_getOption(configuration, 'i_PialNormals', '');
-    %default: ''
-    %when there is no curvature input, equidistant sampling will be used.
 potentialFile       = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Potential'));
     %no default
 levels              = tvm_getOption(configuration, 'i_Levels', 0:1/3:1);

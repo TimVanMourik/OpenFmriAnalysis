@@ -1,24 +1,30 @@
 function tvm_smoothFunctionals(configuration)
-% TVM_SMOOTHFUNCTIONALS 
-%   TVM_SMOOTHFUNCTIONALS(configuration)
+% TVM_RECONALL 
+%   TVM_RECONALL(configuration)
+%   From a structural scan, this matlab routine runs FreeSurfer
+%   @todo Expand description
 %   
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+%   Copyright (C) Tim van Mourik, 2014-2015, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.FunctionalDirectory
-%   configuration.SmoothingDirectory
-%   configuration.SmoothingKernel
+% Input:
+%   i_SubjectDirectory
+%   i_SourceDirectory
+%   i_SmoothingKernel
+%   i_Qsub
+% Output:
+%   o_OutputDirectory
+%
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 functionalDirectory =   fullfile(subjectDirectory, tvm_getOption(configuration, 'i_SourceDirectory'));
     %no default
 smoothingKernel =       tvm_getOption(configuration, 'i_SmoothingKernel', [4, 4, 4]);
-    %'[4, 4, 4]
+    % default: [4, 4, 4]
 useQsub =               tvm_getOption(configuration, 'i_Qsub', false);
-    % false
+    % default: no parallellisation
 smoothingDirectory =    fullfile(subjectDirectory, tvm_getOption(configuration, 'o_OutputDirectory'));
     %no default
     

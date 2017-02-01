@@ -9,7 +9,7 @@ Before you start:
 -FieldTrip needs to be in your MATLAB path (only if you want to the use qsub functions, cluster distribution)
 -dcm2nii needs to be in the .profile (only if you actually want to convert dicoms to niftis)
 -FreeSurfer needs to be installed and the setup needs to be in the .profile
--to your .bashrc, add:
+-[probably only at the Donders Institute] to your .bashrc, add:
 	export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
 
 	

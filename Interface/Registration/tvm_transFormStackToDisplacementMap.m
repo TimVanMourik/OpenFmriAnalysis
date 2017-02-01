@@ -1,18 +1,30 @@
 function tvm_transFormStackToDisplacementMap(configuration)
+% TVM_TRANSFORMSTACKTODISPLACEMENTMAP(configuration)
+%   TVM_TRANSFORMSTACKTODISPLACEMENTMAP(configuration)
+%   @todo Add description
+%   
 %
+%   Copyright (C) Tim van Mourik, 2015, DCCN
 %
-%   Copyright (C) 2015, Tim van Mourik, DCCN
+% Input:
+%   i_SubjectDirectory
+%   i_ReferenceVolume
+%   i_TransformStack
+%   i_Filter
+% Output:
+%   o_DisplacementMap
+%
 
 %% Parse configuration
 subjectDirectory =      	tvm_getOption(configuration, 'i_SubjectDirectory');
-    %no default
+    % default: current working directory
 referenceFile =            	fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
 transformFile =            	fullfile(subjectDirectory, tvm_getOption(configuration, 'i_TransformStack'));
     %no default
-displacementMapFile =       fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DisplacementMap'));
-    %no default
 filterWidth =               tvm_getOption(configuration, 'i_Filter', [6, 6, 6]);
+    %no default
+displacementMapFile =       fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DisplacementMap'));
     %no default
     
 definitions = tvm_definitions();

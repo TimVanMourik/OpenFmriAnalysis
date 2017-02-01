@@ -1,18 +1,20 @@
 function tvm_roiToDesignMatrix(configuration)
-% TVM_ROITODESIGNMATRIX 
+% TVM_ROITODESIGNMATRIX
 %   TVM_ROITODESIGNMATRIX(configuration)
-%   
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+%   Copyright (C) Tim van Mourik, 2014-2017, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.ROI
-%   configuration.DesignMatrix
-%   configuration.Layers
+% Input:
+%   i_SubjectDirectory
+%   i_ROI
+%   i_Layers
+% Output:
+%   o_DesignMatrix
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 regionsOfInterest   = tvm_getOption(configuration, 'i_ROI');
     %no default
 layerFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Layers'));

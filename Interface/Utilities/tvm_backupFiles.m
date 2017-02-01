@@ -1,20 +1,25 @@
 function tvm_backupFiles(configuration)
-% TVM_BACKUPFILES 
-%   TVM_BACKUPFILES(configuration)
+% TVM_AVERAGEVOLUMES
+%   TVM_AVERAGEVOLUMES(configuration)
+%   @todo Add description
 %   
-%   Copyright (C) Tim van Mourik, 2015, DCCN
 %
-%   configuration.i_SubjectDirectory
-%   configuration.i_Files
-%   configuration.p_Suffix
+%   Copyright (C) Tim van Mourik, 2016, DCCN
+%
+% Input:
+%   i_SubjectDirectory
+%   i_Files
+%   i_Suffix
+% Output:
+%
 
 %% Parse configuration
-subjectDirectory =      	tvm_getOption(configuration, 'i_SubjectDirectory');
-    %no default
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+    % default: current working directory
 files =                     fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Files'));
     %no default
-suffix =                    tvm_getOption(configuration, 'p_Suffix', '_backup');
-    %no default
+suffix =                    tvm_getOption(configuration, 'i_Suffix', '_backup');
+    % default: 'backup'
  
 %%
 for i = 1:length(files)

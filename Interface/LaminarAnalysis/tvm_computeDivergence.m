@@ -1,25 +1,26 @@
 function tvm_computeDivergence(configuration)
-% TVM_COMPUTECURVATURE 
-%   TVM_COMPUTECURVATURE(configuration)
-%   
+% TVM_COMPUTEGRADIENT
+%   TVM_COMPUTEGRADIENT(configuration)
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+%   Copyright (C) Tim van Mourik, 2015-2016, DCCN
 %
-%   configuration.i_SubjectDirectory
-%   configuration.i_White
-%   configuration.i_Pial
-%   configuration.i_Order
-%   configuration.o_WhiteGradient
-%   configuration.o_PialGradient
+% Input:
+%   i_SubjectDirectory
+%   i_VectorField
+%   i_Order
+% Output:
+%   o_Divergence
+%
 
 %% Parse configuration
 subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 normalFile          = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_VectorField'));
     %no default
-divergenceFile   	= fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Divergence'));
-    %no default
 order               = tvm_getOption(configuration, 'i_Order', 2);
+    % order: 2
+divergenceFile   	= fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Divergence'));
     %no default
     
 %%

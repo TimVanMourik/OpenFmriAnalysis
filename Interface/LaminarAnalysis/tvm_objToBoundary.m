@@ -1,22 +1,25 @@
 function tvm_objToBoundary(configuration)
-% TVM_OBJTOBOUNDARY 
+% TVM_OBJTOBOUNDARY
 %   TVM_OBJTOBOUNDARY(configuration)
-%   
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2015, DCCN
+%   Copyright (C) Tim van Mourik, 2015-2016, DCCN
 %
-%   configuration.SubjectDirectory
-%
+% Input:
+%   i_SubjectDirectory
+%   i_ObjFile
+% Output:
+%   o_BoundaryFile
 
 %% Parse configuration
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 objectFile              = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ObjFile'));
     %no default
 boundaryFile            = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_BoundaryFile'));
     %no default
     
-definitions = tvm_definitions();
+% definitions = tvm_definitions();
 
 %%
 numberOfFiles = length(objectFile);

@@ -1,16 +1,22 @@
 function tvm_resampleVolume(configuration)
-% TVM_DOWNSAMPLEVOLUME(configuration)
+% TVM_RESAMPLEVOLUME(configuration)
+%   TVM_RESAMPLEVOLUME(configuration)
+%   @todo Add description
+%   
 %
-% INPUT
-%	The nifti-image that you want to resample
-%	The voxelsize (x, y and z) that you want to resample to
+%   Copyright (C) Tim van Mourik, 2014-2015, DCCN
 %
-%   Copyright (C) Tim van Mourik, 2015, DCCN
-
+% Input:
+%   i_SubjectDirectory
+%   i_ReferenceVolume
+%   i_VoxelSize
+% Output:
+%   o_OutputVolume
+%
 
 %% Parse configuration
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 referenceFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
 voxelSize               = tvm_getOption(configuration, 'i_VoxelSize');

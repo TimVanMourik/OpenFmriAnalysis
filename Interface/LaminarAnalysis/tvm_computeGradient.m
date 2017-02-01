@@ -1,32 +1,36 @@
 function tvm_computeGradient(configuration)
-% TVM_COMPUTECURVATURE 
-%   TVM_COMPUTECURVATURE(configuration)
-%   
+% TVM_COMPUTEGRADIENT
+%   TVM_COMPUTEGRADIENT(configuration)
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+%   Copyright (C) Tim van Mourik, 2014-2016, DCCN
 %
-%   configuration.i_SubjectDirectory
-%   configuration.i_White
-%   configuration.i_Pial
-%   configuration.i_Order
-%   configuration.o_WhiteGradient
-%   configuration.o_PialGradient
+% Input:
+%   i_SubjectDirectory
+%   i_White
+%   i_Pial
+%   i_Normalise
+%   i_Order
+% Output:
+%   o_WhiteGradient
+%   o_PialGradient
+
 
 %% Parse configuration
 subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 white               = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_White'));
     %no default
 pial                = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Pial'));
     %no default
+normalise           = tvm_getOption(configuration, 'i_Normalise', false);
+    %no normalisation
+order               = tvm_getOption(configuration, 'i_Order', 10);
+    % order: 10
 whiteGradient     	= fullfile(subjectDirectory, tvm_getOption(configuration, 'o_WhiteGradient'));
     %no default
 pialGradient      	= fullfile(subjectDirectory, tvm_getOption(configuration, 'o_PialGradient'));
     %no default
-normalise           = tvm_getOption(configuration, 'i_Normalise', false);
-    %no default
-order               = tvm_getOption(configuration, 'i_Order', 10);
-    % 10
     
 %%
 %white matter surface

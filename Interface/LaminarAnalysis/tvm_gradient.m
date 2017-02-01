@@ -1,23 +1,24 @@
 function tvm_gradient(configuration)
-% TVM_COMPUTECURVATURE 
-%   TVM_COMPUTECURVATURE(configuration)
-%   
+% TVM_GRADIENT
+%   TVM_GRADIENT(configuration)
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+%   Copyright (C) Tim van Mourik, 2015-2016, DCCN
 %
-%   configuration.i_SubjectDirectory
-%   configuration.i_Potential
-%   configuration.i_Normalise
-%   configuration.i_Order
-%   configuration.o_Gradient
+% Input:
+%   i_SubjectDirectory
+%   i_Potential
+%   i_Normalise
+% Output:
+%   o_Gradient
 
 %% Parse configuration
 subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 potentialFile     	= fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Potential'));
     %no default
 normalise           = tvm_getOption(configuration, 'i_Normalise', false);
-    % default is a standard centred diifference
+    % by default, no normalisation
 gradientFile     	= fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Gradient'));
     %no default
     

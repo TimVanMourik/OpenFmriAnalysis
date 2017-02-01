@@ -1,28 +1,43 @@
 function tvm_useBbregister(configuration)
-% TVM_REGISTERVOLUMES 
-%   TVM_REGISTERVOLUMES(configuration)
+% TVM_USEBBREGISTER(configuration)
+%   TVM_USEBBREGISTER(configuration)
+%   @todo Add description
 %   
 %
 %   Copyright (C) Tim van Mourik, 2014, DCCN
 %
+% Input:
+%   i_SubjectDirectory
+%   i_RegistrationVolume
+%   i_FreeSurferFolder
+%   i_SpmInitialisation
+%   i_FslInitialisation
+%   i_Contrast
+%   i_DegreesOfFreedom
+%   i_InititialMatrix
+% Output:
+%   o_Boundaries
+%   o_RegisterDat
+%   o_CoregistrationMatrix
+%
 
 %% Parse configuration
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 referenceFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_RegistrationVolume'));
     %no default
 freeSurferName          = tvm_getOption(configuration, 'i_FreeSurferFolder', 'FreeSurfer');
     %[subjectDirectory, 'FreeSurfer']
 spmInitialisation       = tvm_getOption(configuration, 'i_SpmInitialisation', false);
-    %no default
+    % default: false
 fslInitialisation       = tvm_getOption(configuration, 'i_FslInitialisation', true);
-    %no default
+    % default: true
 contrast                = tvm_getOption(configuration, 'i_Contrast', 'T2');
-    %no default
+    % default: T2 contrast
 degreesOfFreedom    	= tvm_getOption(configuration, 'i_DegreesOfFreedom', 6);
-    %no default
+    % default: 6 DoF, translation and rotation
 initialisationMatrix    = tvm_getOption(configuration, 'i_InititialMatrix', '');
-    %no default
+    % default: empty
 boundariesFile          = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
     %no default
 registerDatFile       	= fullfile(subjectDirectory, tvm_getOption(configuration, 'o_RegisterDat'));
@@ -30,7 +45,8 @@ registerDatFile       	= fullfile(subjectDirectory, tvm_getOption(configuration,
 coregistrationFile      = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_CoregistrationMatrix'));
     %no default
     
-definitions = tvm_definitions();    
+% definitions = tvm_definitions();
+
 %%
 freeSurferFolder = fullfile(subjectDirectory, freeSurferName);
 if fslInitialisation

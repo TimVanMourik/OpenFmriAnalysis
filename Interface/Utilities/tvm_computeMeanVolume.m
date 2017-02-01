@@ -1,19 +1,22 @@
 function tvm_computeMeanVolume(configuration)
-% TVM_REALIGNFUNCTIONALS
-%   TVM_REALIGNFUNCTIONALS(configuration)
+% TVM_COMPUTEMEANVOLUME
+%   TVM_COMPUTEMEANVOLUME(configuration)
+%   @todo Add description
 %   
 %
 %   Copyright (C) Tim van Mourik, 2014, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.NiftiDirectory
-%   configuration.RealignmentDirectory
-%   configuration.MeanFunctional
+% Input:
+%   i_SubjectDirectory
+%   i_SourceDirectory
+% Output:
+%   o_MeanFile
+%
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
-niftiFolder =           fullfile(subjectDirectory, tvm_getOption(configuration, 'i_NiftiDirectory'));
+    % default: current working directory
+niftiFolder =           fullfile(subjectDirectory, tvm_getOption(configuration, 'i_SourceDirectory'));
     %no default
 meanName =              fullfile(subjectDirectory, tvm_getOption(configuration, 'o_MeanFile', 'MeanFunctional.nii'));
     %'MeanFunctional.nii'

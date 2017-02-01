@@ -1,24 +1,30 @@
 function tvm_recursiveBoundaryRegistration(configuration, registrationConfiguration)
-% TVM_RECURSIVEBOUNDARYREGISTRATION 
+% TVM_RECURSIVEBOUNDARYREGISTRATION
 %   TVM_RECURSIVEBOUNDARYREGISTRATION(configuration)
+%   @todo Add description
 %   
-%   Copyright (C) Tim van Mourik, 2014, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.FunctionalDirectory
-%   configuration.SmoothingDirectory
-%   configuration.SmoothingKernel
+%   Copyright (C) Tim van Mourik, 2014-2016, DCCN
+%
+% Input:
+%   i_SubjectDirectory
+%   i_ReferenceVolume
+%   i_Boundaries
+%   i_Mask
+% Output:
+%   o_Boundaries
+%
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 referenceFile =             fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
 boundariesFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Boundaries'));
     %no default
-registeredBoundaries =   	fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
-    %no default
 maskFile =                  tvm_getOption(configuration, 'i_Mask', '');
+    % default: empty
+registeredBoundaries =   	fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
     %no default
     
 definitions = tvm_definitions();

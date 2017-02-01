@@ -1,14 +1,23 @@
 function tvm_matrixToRegisterDat(configuration)
-% TVM_MATRIXTOREGISTERDAT 
+% TVM_MATRIXTOREGISTERDAT
 %   TVM_MATRIXTOREGISTERDAT(configuration)
+%   @todo Add description
 %   
 %
 %   Copyright (C) Tim van Mourik, 2014, DCCN
 %
+% Input:
+%   i_SubjectDirectory
+%   i_ReferenceVolume
+%   i_MoveVolume
+%   i_CoregistrationMatrix
+% Output:
+%   o_RegisterDat
+%
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 referenceFile =         fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
 moveFile =              fullfile(subjectDirectory, tvm_getOption(configuration, 'i_MoveVolume'));
@@ -18,7 +27,7 @@ coregistrationFile =    fullfile(subjectDirectory, tvm_getOption(configuration, 
 registerDatFile =      	fullfile(subjectDirectory, tvm_getOption(configuration, 'o_RegisterDat'));
     %no default
     
-definitions = tvm_definitions();    
+% definitions = tvm_definitions();    
 
 %%
 load(coregistrationFile, 'coregistrationMatrix');

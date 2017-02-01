@@ -1,18 +1,21 @@
 function tvm_unionVolumes(configuration)
 % TVM_UNIONVOLUMES
 %   TVM_UNIONVOLUMES(configuration)
+%   @todo Add description
 %   
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+%   Copyright (C) Tim van Mourik, 2014-2015, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.Input
-%   configuration.IntersectionVolumes
-%   configuration.Output
+% Input:
+%   i_SubjectDirectory
+%   i_InputVolumes
+% Output:
+%   o_OutputVolume
+%
 
 %% Parse configuration
-subjectDirectory =    	tvm_getOption(configuration, 'i_SubjectDirectory');
-    %no default
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+    % default: current working directory
 volumeFiles =           tvm_getOption(configuration, 'i_InputVolumes');
     %no default
 outputFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'o_OutputVolume'));

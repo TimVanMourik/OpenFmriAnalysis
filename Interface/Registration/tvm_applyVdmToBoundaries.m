@@ -1,14 +1,24 @@
 function tvm_applyVdmToBoundaries(configuration)
-% TVM_
-%   TVM_(configuration)
+% TVM_APPLYVDMTOBOUNDARIES
+%   TVM_APPLYVDMTOBOUNDARIES(configuration)
+%   @todo Add description
 %   
 %
 %   Copyright (C) Tim van Mourik, 2015, DCCN
 %
+% Input:
+%   i_SubjectDirectory
+%   i_Boundaries
+%   i_VoxelDisplacementMap
+%   i_TransformationFunction
+%   i_DistortionDimenions
+% Output:
+%   o_Boundaries
+%
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 boundariesFiles =       fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Boundaries'));
     %no default
 voxelDisplacementFile = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_VoxelDisplacementMap'));

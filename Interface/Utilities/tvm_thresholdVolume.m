@@ -1,20 +1,23 @@
 function tvm_thresholdVolume(configuration)
 % TVM_THRESHOLDVOLUME
 %   TVM_THRESHOLDVOLUME(configuration)
+%   @todo Add description
 %   
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+%   Copyright (C) Tim van Mourik, 2014-2015, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.Design
-%   configuration.GlmOutput
-%   configuration.ResidualSumOfSquares
-%   configuration.TMap
-%   configuration.Contrast
+% Input:
+%   i_SubjectDirectory
+%   i_Volume
+%   i_Threshold
+% Output:
+%   o_ThresholdedVolume
+%
+
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 volumeFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Volume'));
     %no default
 threshold =             tvm_getOption(configuration, 'i_Threshold', 1.96);

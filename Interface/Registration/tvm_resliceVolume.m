@@ -1,31 +1,35 @@
 function tvm_resliceVolume(configuration)
-% TVM_RESLICEVOLUME
+% TVM_RESLICEVOLUME(configuration)
 %   TVM_RESLICEVOLUME(configuration)
+%   @todo Add description
 %   
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+%   Copyright (C) Tim van Mourik, 2014-2015, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.LabelFiles
-%   configuration.Hemisphere
-%   configuration.VolumeFiles
-%   configuration.ReferenceVolume
-%   configuration.Boundaries
+% Input:
+%   i_SubjectDirectory
+%   i_ReferenceVolume
+%   i_CoregistrationMatrix
+%   i_MoveVolumes
+%   i_InterpolationMethod
+%   i_InverseRegistration
+% Output:
+%   o_OutputVolumes
 %
 
 %% Parse configuration
 subjectDirectory 	= tvm_getOption(configuration, 'i_SubjectDirectory');
-    %no default
+    % default: current working directory
 referenceVolumeFile = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
 coregistrationFile  = tvm_getOption(configuration, 'i_CoregistrationMatrix', []);
-    %no default
+    % default: empty
 moveFiles           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_MoveVolumes'));
     %no default
 interpolationMethod = tvm_getOption(configuration, 'i_InterpolationMethod', false);
-    %no default
+    % default: false
 inverseRegistration = tvm_getOption(configuration, 'i_InverseRegistration', false);
-    %no default
+    % default: false
 volumeFiles         = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_OutputVolumes'));
     %no default
     

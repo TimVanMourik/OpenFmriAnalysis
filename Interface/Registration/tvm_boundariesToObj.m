@@ -1,20 +1,22 @@
 function tvm_boundariesToObj(configuration)
-% TVM_BOUNDARIESTOOBJ 
+% TVM_BOUNDARIESTOOBJ
 %   TVM_BOUNDARIESTOOBJ(configuration)
+%   @todo Add description
 %   
 %
 %   Copyright (C) Tim van Mourik, 2014, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.Boundaries
-%   configuration.SurfaceWhite
-%   configuration.SurfacePial
-%   configuration.ObjWhite
-%   configuration.ObjPial
+% Input:
+%   i_SubjectDirectory
+%   i_Boundaries
+% Output:
+%   o_ObjWhite
+%   o_ObjPial
+%
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 boundariesFile =        fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Boundaries'));
     %no default
 objWhite =              fullfile(subjectDirectory, tvm_getOption(configuration, 'o_ObjWhite'));

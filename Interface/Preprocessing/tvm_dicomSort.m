@@ -6,21 +6,24 @@ function tvm_dicomSort(configuration)
 %   with a PatientsName_ProtocolName_SeriesNumber_InstanceNumber naming convention
 %   (unix only).
 %
-%   Copyright (C) 2011, Marcel Zwiers, DCCN
-%   Adapted by Tim van Mourik, 2014, DCCN
+%   Copyright (C) 2011, Marcel Zwiers, DCCN, Tim van Mourik, 2014, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.MoveOption
-%       -'move'
-%       -'link'
+%   Copyright (C) Tim van Mourik, 2015-2016, DCCN
+%
+% Input:
+%   i_SubjectDirectory
+%   i_MoveOption
+% Output:
+%   o_Curvature
+%
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 moveOption =        tvm_getOption(configuration, 'i_MoveOption', 'move');
     %move
     %link
-dicomDirectory =    fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DicomDirectory'));
+dicomDirectory =    fullfile(subjectDirectory, tvm_getOption(configuration, 'i_SourceDirectory'));
     %no default
     
 definitions = tvm_definitions();

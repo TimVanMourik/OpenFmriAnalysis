@@ -1,18 +1,22 @@
 function tvm_intersectVolumes(configuration)
 % TVM_INTERSECTVOLUMES
 %   TVM_INTERSECTVOLUMES(configuration)
+%   @todo Add description
 %   
 %
 %   Copyright (C) Tim van Mourik, 2014, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.Input
-%   configuration.IntersectionVolumes
-%   configuration.Output
+% Input:
+%   i_SubjectDirectory
+%   i_InputVolumes
+%   i_IntersectionVolumes
+% Output:
+%   o_OutputVolumes
+%
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', '.');
-    %no default
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+    % default: current working directory
 volumeFiles =          	fullfile(subjectDirectory, tvm_getOption(configuration, 'i_InputVolumes'));
     %no default
 intersectionFiles =    	fullfile(subjectDirectory, tvm_getOption(configuration, 'i_IntersectionVolumes'));

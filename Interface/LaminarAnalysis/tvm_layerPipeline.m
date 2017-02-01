@@ -1,8 +1,16 @@
 function tvm_layerPipeline(configuration)
-% TVM_LAYERPIPELINE 
+% TVM_LAYERPIPELINE
 %   TVM_LAYERPIPELINE(configuration)
-%   
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+%   Wrapper around all layering functions
+%   @todo Expand description
+%
+%   Copyright (C) Tim van Mourik, 2014-2016, DCCN
+%
+% Input:
+%   i_SubjectDirectory
+%   ...
+% Output:
+%   ...
 %
 
 %%

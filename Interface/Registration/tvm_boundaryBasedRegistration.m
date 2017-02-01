@@ -1,29 +1,36 @@
 function tvm_boundaryBasedRegistration(configuration, registrationConfiguration)
-% TVM_BOUNDARYBASEDREGISTRATION 
-%   TVM_BOUNDARYBASEDREGISTRATION(configuration)
+% TVM_BOUNDARYBASEDREGISTRATION
+%   TVM_BOUNDARYBASEDREGISTRATION(configuration, registrationConfiguration)
+%   @todo Add description
 %   
-%   configuration.SubjectDirectory
-%   configuration.FunctionalDirectory
-%   configuration.SmoothingDirectory
-%   configuration.SmoothingKernel
 %
 %   Copyright (C) Tim van Mourik, 2014, DCCN
+%
+% Input:
+%   i_SubjectDirectory
+%   i_ReferenceVolume
+%   i_Mask
+%   i_CoregistrationMatrix
+%   i_Boundaries
+% Output:
+%   o_CoregistrationMatrix
+%   o_Boundaries
 %
 
 %% Parse configuration
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 referenceFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
+maskFile                = tvm_getOption(configuration, 'i_Mask', '');
+    % default: empty
 coregistrationFileIn    = tvm_getOption(configuration, 'i_CoregistrationMatrix', []);
-    %no default
+    % default: empty
 boundariesFileIn        = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Boundaries'));
     %no default
 coregistrationFileOut   = tvm_getOption(configuration, 'o_CoregistrationMatrix', []);
-    %no default
+    % default: empty
 boundariesFileOut       = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
-    %no default
-maskFile                = tvm_getOption(configuration, 'i_Mask', '');
     %no default
 
 definitions = tvm_definitions();

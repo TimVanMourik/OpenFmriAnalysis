@@ -1,27 +1,30 @@
 function tvm_makeLevelSet(configuration)
-% TVM_MAKELEVELSET 
+% TVM_MAKELEVELSET
 %   TVM_MAKELEVELSET(configuration)
 %   The level set is a volume that for each voxel gives the distance from
 %   the centre of the voxel to the nearest point at from the input
 %   boundaries.
+%   @todo Expand description
 %
+%   Copyright (C) Tim van Mourik, 2014-2016, DCCN
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
-%
-%   configuration.SubjectDirectory
-%   configuration.Boundaries
-%   configuration.ReferenceVolume
-%   configuration.ObjWhite
-%   configuration.ObjPial
-%   configuration.SdfWhite
-%   configuration.SdfPial
-%   configuration.White
-%   configuration.Pial
-%
+% Input:
+%   i_SubjectDirectory
+%   i_ReferenceVolume
+%   i_ObjWhite
+%   i_ObjPial
+%   i_Matrix
+%   i_UpsampleFactor
+% Output:
+%   o_SdfWhite
+%   o_SdfPial
+%   o_White
+%   o_Pial
+
 
 %% Parse configuration
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 referenceFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
 objWhite                = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ObjWhite'));

@@ -1,11 +1,22 @@
 function tvm_warpVolumes(configuration)
+% TVM_WARPVOLUMES(configuration)
+%   TVM_WARPVOLUMES(configuration)
+%   @todo Add description
+%   
 %
+%   Copyright (C) Tim van Mourik, 2016, DCCN
 %
-%   Copyright (C) 2016, Tim van Mourik, DCCN
+% Input:
+%   i_SubjectDirectory
+%   i_DisplacementMap
+%   i_Volume
+% Output:
+%   o_Volume
+%
 
 %% Parse configuration
 subjectDirectory =      	tvm_getOption(configuration, 'i_SubjectDirectory');
-    %no default
+    % default: current working directory
 displacementMapFile =       fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DisplacementMap'));
     %no default
 volumeIn =                  fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Volume'));

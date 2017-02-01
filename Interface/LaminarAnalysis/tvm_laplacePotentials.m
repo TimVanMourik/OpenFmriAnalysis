@@ -1,16 +1,27 @@
 function tvm_laplacePotentials(configuration)
 % TVM_LAPLACEPOTENTIALS 
 %   TVM_LAPLACEPOTENTIALS(configuration)
+%   @todo Add description
 %
-%
-%   Copyright (C) Martin Havlicek 2015, Maastricht University
+%   Copyright (C) Martin Havlicek 2015, Maastricht University, Tim van 
+%   Mourik, 2016, DCCN
+%   Original function written by Martin Havlicek, 2015
 %   Vectorised and speed-optimised by Tim van Mourik, 2016, DCCN
 %   Modified to fit this toolbox by Tim van Mourik, 2016, DCCN
+%
+% Input:
+%   i_SubjectDirectory
+%   i_White
+%   i_Pial
+%   i_B0
+%   i_B1
+% Output:
+%   o_LaplacePotential
 %
 
 %% Parse configuration
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 white                   = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_White'));
     %no default
 pial                    = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Pial'));

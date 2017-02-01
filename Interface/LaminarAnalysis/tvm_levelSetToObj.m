@@ -1,22 +1,26 @@
 function tvm_levelSetToObj(configuration)
-% TVM_LEVELSETTOOBJ 
+% TVM_LEVELSETTOOBJ
 %   TVM_LEVELSETTOOBJ(configuration)
-%   
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2015, DCCN
+%   Copyright (C) Tim van Mourik, 2015-2016, DCCN
 %
-%   configuration.SubjectDirectory
+% Input:
+%   i_SubjectDirectory
+%   i_LevelSet
+% Output:
+%   o_ObjFile
 %
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 levelSetFile            = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_LevelSet'));
     %no default
 objectFile              = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_ObjFile'));
     %no default
     
-definitions = tvm_definitions();
+% definitions = tvm_definitions();
 
 %%
 levelSetToObj(levelSetFile, objectFile);

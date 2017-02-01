@@ -1,23 +1,27 @@
 function tvm_moveNiftis(configuration)
 % TVM_MOVENIFTIS Moves niftis to destination folder
 %   TVM_MOVENIFTIS(configuration)
+%   @todo Add description
+%   
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+%   Copyright (C) Tim van Mourik, 2014-2015, DCCN
 %
-%   configuration.i_SubjectDirectory
-%   configuration.i_SourceFolder
-%   configuration.i_Characteristic
-%   configuration.o_Destination
+% Input:
+%   i_SubjectDirectory
+%   i_Characteristic
+% Output:
+%   o_OutputDirectory
+%
 
 %% Parse configuration
 subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 sourceFolder        = [subjectDirectory, tvm_getOption(configuration, 'i_SourceDirectory')];
     %no default
 characteristic      = tvm_getOption(configuration, 'i_Characteristic', []);
-    %no default
-destination         = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Destination'));
-    %no default
+    % default: empty
+destination         = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_OutputDirectory'));
+    % default: empty
     
 %%
 folders = dir(fullfile(sourceFolder, characteristic));

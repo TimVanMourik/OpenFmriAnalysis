@@ -1,4 +1,12 @@
 function [triggerTimes, rejectionWindows] = tvm_readPhysioFile(filename)
+% TVM_READPHYSIOFILE
+%   [triggerTimes, rejectionWindows] = TVM_READPHYSIOFILE(filename)
+%   Reads the physiological triggers from Siemens files or Hera preocessed 
+%   mat files
+%   @todo Expand description
+%
+%   Copyright (C) Tim van Mourik, 2015-2016, DCCN
+%
 
 [~, ~, extension] = fileparts(filename);
 

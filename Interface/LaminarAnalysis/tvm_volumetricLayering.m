@@ -1,41 +1,41 @@
 function tvm_volumetricLayering(configuration)
-% TVM_VOLUMETRICLAYERING 
+% TVM_VOLUMETRICLAYERING
 %   TVM_VOLUMETRICLAYERING(configuration)
-%   
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+%   Copyright (C) Tim van Mourik, 2014-2017, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.White
-%   configuration.Pial
-%   configuration.WhiteCurvature
-%   configuration.WhiteCurvature
-%   configuration.Levels
-%   configuration.LevelSet
-%   configuration.Layers
-%
-%
-% The levels will be the volume in between the numbers given in configuration.Levels
+% Input:
+%   i_SubjectDirectory
+%   i_White
+%   i_Pial
+%   i_Gradient
+%   i_Curvature
+%   i_Levels
+%   i_UpsampleFactor
+% Output:
+%   o_Layering
+%   o_LevelSet
 
 %% Parse configuration
 subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 white               = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_White'));
     %no default
 pial                = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Pial'));
     %no default
 gradientFile        = tvm_getOption(configuration, 'i_Gradient', '');
-    %default: ''
+    %default: empty
 curvatureFile       = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Curvature'));
     %no default
 levels              = tvm_getOption(configuration, 'i_Levels');
     %
 upsampleFactor     	= tvm_getOption(configuration, 'i_UpsampleFactor', 1);
-    %default: no shift
+    %default: unity scaling
 layerFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Layering'));
     %no default
 levelSetFile        = tvm_getOption(configuration, 'o_LevelSet', '');
-    %no default
+    %default: empty
 
 %%
 sdfIn   = spm_vol(white);

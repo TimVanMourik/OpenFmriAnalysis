@@ -1,11 +1,22 @@
 function tvm_applyDisplacementMap(configuration)
+% TVM_APPLYDISPLACEMENTMAP
+%   TVM_APPLYDISPLACEMENTMAP(configuration)
+%   @todo Add description
+%   
 %
+%   Copyright (C) Tim van Mourik, 2015, DCCN
 %
-%   Copyright (C) 2015, Tim van Mourik, DCCN
+% Input:
+%   i_SubjectDirectory
+%   i_DisplacementMap
+%   i_Boundaries
+% Output:
+%   o_Boundaries
+%
 
 %% Parse configuration
 subjectDirectory =      	tvm_getOption(configuration, 'i_SubjectDirectory');
-    %no default
+    % default: current working directory
 displacementMapFile =       fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DisplacementMap'));
     %no default
 boundariesFileIn =          fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Boundaries'));

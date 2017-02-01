@@ -1,22 +1,28 @@
 function tvm_dicomsToNifti(configuration)
-% TVM_DICOMSTONIFTI Makes niftis out of dicoms
+% TVM_DICOMSTONIFTI
 %   TVM_DICOMSTONIFTI(configuration)
+%   @todo Add description
+%   
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+%   Copyright (C) Tim van Mourik, 2014-2015, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.DicomDirectory
+% Input:
+%   i_SubjectDirectory
+%   i_SourceDirectory
+%   i_Characteristic
+% Output:
+%   ...
+%
 
-% @todo Make sure copies are removed.
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
-dicomDirectory      = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DicomDirectory'));
+    % default: current working directory
+dicomDirectory      = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_SourceDirectory'));
     %no default
 characteristic      = tvm_getOption(configuration, 'i_Characteristic', []);
     %no default
 
-definitions = tvm_definitions;
+definitions = tvm_definitions();
 %%
 if isempty(characteristic)
     folders = dir(fullfile(dicomDirectory, '*'));

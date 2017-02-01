@@ -1,14 +1,30 @@
 function tvm_volumeWithBoundariesToMovie(configuration)
-% TVM_
-%   TVM_(configuration)
+% TVM_VOLUMEWITHBOUNDARIESTOMOVIE(configuration)
+%   TVM_VOLUMEWITHBOUNDARIESTOMOVIE(configuration)
+%   @todo Add description
 %   
 %
 %   Copyright (C) Tim van Mourik, 2015, DCCN
 %
+% Input:
+%   i_SubjectDirectory
+%   i_ReferenceVolume
+%   i_Boundaries
+%   i_Axis
+%   i_FramesPerSecond
+%   i_MovieQuality
+%   i_ContourColors
+%   i_RegionOfInterest
+%   i_ColorLimits
+%   i_Rotation
+%   i_Contrast
+% Output:
+%   o_RegistrationMovie
+%
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 referenceFile =         fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
 boundariesFiles =       fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Boundaries'));
@@ -22,13 +38,13 @@ quality =               tvm_getOption(configuration, 'i_MovieQuality', 80);
 frameSize =             tvm_getOption(configuration, 'i_MovieSize', [1042, 968]);
     % 
 contourColours =        tvm_getOption(configuration, 'i_ContourColors', {'y', 'r', 'g', 'b'});
-    %no default
+    % default: yellow, red, green, blue
 roiFiles =              tvm_getOption(configuration, 'i_RegionOfInterest', []);
-    % 
+    % default: empty
 colorLimits =           tvm_getOption(configuration, 'i_ColorLimits', []);
-    % 
+    % default: empty
 rotation =              tvm_getOption(configuration, 'i_Rotation', '');
-    % ''
+    % default: empty
 contrastSetting =       tvm_getOption(configuration, 'i_Contrast', 1);
     % 1
 movieFile =             fullfile(subjectDirectory, tvm_getOption(configuration, 'o_RegistrationMovie'));

@@ -1,14 +1,28 @@
 function tvm_movieFrom4D(configuration)
-% TVM_
-%   TVM_(configuration)
+% TVM_MERGEVOLUMES
+%   TVM_MERGEVOLUMES(configuration)
+%   @todo Add description
 %   
 %
-%   Copyright (C) Tim van Mourik, 2015, DCCN
+%   Copyright (C) Tim van Mourik, 2015-2016, DCCN
 %
+% Input:
+%   i_SubjectDirectory
+%   i_VolumeFile
+%   i_Axis
+%   i_FramesPerSecond
+%   i_MovieQuality
+%   i_ColorLimits
+%   i_Slice
+%   i_Contrast
+% Output:
+%   o_Movie
+%
+
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 volumeFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_VolumeFile'));
     %no default    %no default
 iterationAxis =         tvm_getOption(configuration, 'i_Axis', 'transversal');
@@ -20,7 +34,7 @@ quality =               tvm_getOption(configuration, 'i_MovieQuality', 80);
 % frameSize =             tvm_getOption(configuration, 'i_MovieSize', [1042, 968]);
     % 
 colorLimits =           tvm_getOption(configuration, 'i_ColorLimits', []);
-    % 
+    %  default: empty
 slice =                 tvm_getOption(configuration, 'i_Slice', 1);
     % 1
 contrastSetting =       tvm_getOption(configuration, 'i_Contrast', 1);

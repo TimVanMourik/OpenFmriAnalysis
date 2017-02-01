@@ -1,23 +1,27 @@
 function tvm_mergeVolumes(configuration)
-% TVM_MERGEVOLUMES 
+% TVM_MERGEVOLUMES
 %   TVM_MERGEVOLUMES(configuration)
+%   @todo Add description
 %   
 %
 %   Copyright (C) Tim van Mourik, 2014, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.i_InputVolumes
-%   configuration.o_OutputVolumes
+% Input:
+%   i_SubjectDirectory
+%   i_InputVolumes
+% Output:
+%   o_OutputVolume
+%
 
 %% Parse configuration
-subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+    % default: current working directory
 inputVolumes        = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_InputVolumes'));
     %no default
 outputVolume        = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_OutputVolume'));
     %no default
     
-definitions = tvm_definitions();
+% definitions = tvm_definitions();
 
 %%
 unix(sprintf('fslmerge -t %s %s', outputVolume, inputVolumes));

@@ -1,26 +1,32 @@
 function tvm_retroicorBackProject(configuration)
 % TVM_RETROICORBACKPROJECT
 %   TVM_RETROICORBACKPROJECT(configuration)
+%   @todo Add description
 %   
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+%   Copyright (C) Tim van Mourik, 2016, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.Design
-%   configuration.GlmOutput
-%   configuration.ResidualSumOfSquares
-%   configuration.FMap
-%   configuration.Contrast
+% Input:
+%   i_SubjectDirectory
+%   i_DesignMatrix
+%   i_Betas
+%   i_TemplateVolume
+%   i_Resolution
+%   i_Order
+%   i_PhysioType
+% Output:
+%   o_BackProjection
+%
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 designFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
 glmFile =               fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Betas'));
     %no default
 template =              tvm_getOption(configuration, 'i_TemplateVolume', []);
-    %no default
+    % default: empty
 resolution =            tvm_getOption(configuration, 'i_Resolution');
     %no default
 order =                 tvm_getOption(configuration, 'i_Order');
