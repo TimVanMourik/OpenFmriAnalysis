@@ -3,12 +3,6 @@ function tvm_leprincePotential(configuration)
 %   TVM_LEPRINCEPOTENTIAL(configuration)
 %   @todo Add description
 %
-%   Copyright (C) Martin Havlicek 2015, Maastricht University, Tim van 
-%   Mourik, 2016, DCCN
-%   Original function written by Martin Havlicek, 2015
-%   Heavily optimised by Tim van Mourik, 2016, DCCN
-%   Modified to fit this toolbox by Tim van Mourik, 2016, DCCN
-%
 % Input:
 %   i_SubjectDirectory
 %   i_White
@@ -23,6 +17,30 @@ function tvm_leprincePotential(configuration)
 %   o_EquivolumePotential
 %   o_EquidistantPotential
 %
+
+%   Copyright (C) Martin Havlicek 2015, Maastricht University, Tim van 
+%   Mourik, 2016, DCCN
+%   Original function written by Martin Havlicek, 2015
+%   Heavily optimised by Tim van Mourik, 2016, DCCN
+%   Modified to fit this toolbox by Tim van Mourik, 2016, DCCN
+%
+% This file is part of the fmri analysis toolbox, see 
+% https://github.com/TimVanMourik/FmriAnalysis for the documentation and 
+% details.
+%
+%    This toolbox is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    This toolbox is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with the fmri analysis toolbox. If not, see 
+%    <http://www.gnu.org/licenses/>.
 
 %% Parse configuration
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
