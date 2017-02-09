@@ -63,25 +63,21 @@ niftis = fullfile(niftiFolder, niftis(:));
 realignedNiftis = spm_realign(niftis, realignmentConfiguration);
 for s = 1:numel(realignedNiftis)
     %-Save parameters as rp_*.txt files
-    %------------------------------------------------------------------
     save_parameters(realignedNiftis{s});
 
     %-Update voxel to world mapping in images header
-    %------------------------------------------------------------------
     for i=1:numel(realignedNiftis{s})
         spm_get_space([realignedNiftis{s}(i).fname ',' num2str(realignedNiftis{s}(i).n)], realignedNiftis{s}(i).mat);
     end
 end
 
-spm_reslice(realignedNiftis, realignmentConfiguration);
+spm_reslice(niftis, realignmentConfiguration);
 
 oldMeanNifti = dir(fullfile(niftiFolder, 'mean*.nii'));
 movefile(fullfile(niftiFolder, oldMeanNifti.name), meanName);
 movefile(fullfile(niftiFolder, 'r*.nii'), realignmentFolder);
 movefile(fullfile(niftiFolder, 'rp*.txt'), realignmentFolder);
 movefile(fullfile(niftiFolder, '*.mat'), realignmentFolder);
-
-
 
 end %end function
 

@@ -97,22 +97,22 @@ for stimulus = 1:numberOfStimuli
         else
             durations = zeros(size(allStimuli{stimulus}{run}));
         end
-        configuration = [];
-        configuration.Timepoints            = timePoints;
-        configuration.Stimuli               = allStimuli{stimulus}{run};
-        configuration.Durations             = durations;
-        configuration.HrfParameters         = hrfParameters;
-        configuration.TemporalDerivative    = temporalDerivative;
-        configuration.DispersionDerivative  = dispersionDerivative;
-        configuration.DeMean                = false;
-        designPerRun{stimulus, run}         = tvm_hrf(configuration)';
+        cfg = [];
+        cfg.Timepoints            = timePoints;
+        cfg.Stimuli               = allStimuli{stimulus}{run};
+        cfg.Durations             = durations;
+        cfg.HrfParameters         = hrfParameters;
+        cfg.TemporalDerivative    = temporalDerivative;
+        cfg.DispersionDerivative  = dispersionDerivative;
+        cfg.DeMean                = false;
+        designPerRun{stimulus, run}         = tvm_hrf(cfg)';
     end
 end
 
 
 n = sum([1, temporalDerivative, dispersionDerivative]);
 
-if diagonaliseElements == true
+if diagonaliseElements
     designMatrix = zeros(design.Length, numberOfStimuli * n * numberOfRuns);
     x = zeros(1,numberOfRuns);
     for i = 1:numberOfRuns
@@ -144,7 +144,12 @@ for i = 1:numberOfStimuli
     end
     regressorLabels = [regressorLabels, r];
 end
-design.RegressorLabel = [design.RegressorLabel, regressorLabels];
+
+if diagonaliseElements
+    design.RegressorLabel = [design.RegressorLabel, repmat(regressorLabels, 1, design.NumberOfPartitions)];
+else
+    design.RegressorLabel = [design.RegressorLabel, regressorLabels]; 
+end
 
 design.DesignMatrix = [design.DesignMatrix, designMatrix];
 save(designFileOut, definitions.GlmDesign);

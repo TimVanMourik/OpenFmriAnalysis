@@ -37,7 +37,7 @@ subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     % default: current working directory
 designFile          = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
-functionalFolder    = tvm_getOption(configuration, 'i_FunctionalFolder', '');
+functionalFolder    = tvm_getOption(configuration, 'i_SourceDirectory', '');
     % default: empty
 functionalFiles     = tvm_getOption(configuration, 'i_FunctionalFiles', '');
     % default: empty

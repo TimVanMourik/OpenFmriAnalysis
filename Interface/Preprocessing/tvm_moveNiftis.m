@@ -5,6 +5,7 @@ function tvm_moveNiftis(configuration)
 %
 % Input:
 %   i_SubjectDirectory
+%   i_SourceDirectory
 %   i_Characteristic
 % Output:
 %   o_OutputDirectory
@@ -33,7 +34,7 @@ function tvm_moveNiftis(configuration)
 %% Parse configuration
 subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     % default: current working directory
-sourceFolder        = [subjectDirectory, tvm_getOption(configuration, 'i_SourceDirectory')];
+sourceFolder        = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_SourceDirectory'));
     %no default
 characteristic      = tvm_getOption(configuration, 'i_Characteristic', []);
     % default: empty
