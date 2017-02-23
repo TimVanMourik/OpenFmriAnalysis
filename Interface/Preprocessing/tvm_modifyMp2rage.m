@@ -3,27 +3,49 @@ function tvm_modifyMp2rage(configuration)
 %   TVM_MODIFYMP2RAGE(configuration)
 %   From the several MP2RAGE images, one image is created. This image
 %   has the best grey-white matter contrast and has a black background
+%   @todo Expand description
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+% Input:
+%   i_SubjectDirectory
+%   i_ContrastImage
+%   i_BlackBackgroundImage
+%   i_Threshold
+% Output:
+%   o_OutputFile
 %
-%   configuration.i_SubjectDirectory
-%   configuration.i_ContrastImage
-%   configuration.i_BlackBackgroundImage
-%   configuration.i_Threshold
-%   configuration.o_Output
+
+%   Copyright (C) Tim van Mourik, 2014-2015, DCCN
+%
+% This file is part of the fmri analysis toolbox, see 
+% https://github.com/TimVanMourik/FmriAnalysis for the documentation and 
+% details.
+%
+%    This toolbox is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    This toolbox is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with the fmri analysis toolbox. If not, see 
+%    <http://www.gnu.org/licenses/>.
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %default: current directory
+    % default: current working directory
 contrastFile =          fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ContrastImage'));
-    %default: '*UNI*'
+    %no default
 backgroundFile =        fullfile(subjectDirectory, tvm_getOption(configuration, 'i_BlackBackgroundImage'));
-    %default: '*INV2*'
+    %no default
 threshold =             tvm_getOption(configuration, 'i_Threshold', 1.2);
     %default = 1.2
     %this is the background threshold: everything under mean * threshold of
     %the inv2-image gets nulled in the uni-image
-outputFileName =        fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Output', 'MP2RAGE.nii'));
+outputFileName =        fullfile(subjectDirectory, tvm_getOption(configuration, 'o_OutputFile', 'MP2RAGE.nii'));
     %default: 'MP2RAGE.nii'   
 
 %%

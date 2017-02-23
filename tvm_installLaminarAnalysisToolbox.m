@@ -30,6 +30,7 @@ if core
     addpath(fullfile(rootDirectory, 'Core'));
     addpath(fullfile(rootDirectory, 'Core/BoundaryRegistration'));
     addpath(fullfile(rootDirectory, 'Core/Curvature'));
+    addpath(fullfile(rootDirectory, 'External'));
 end
 if interface
     addpath(fullfile(rootDirectory, 'Interface'));

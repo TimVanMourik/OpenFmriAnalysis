@@ -1,5 +1,5 @@
 function currentContrast = tvm_getContrastVector(contrast, designMatrix, regressorLabels)
-
+% @todo: is designMatrix really necessary as input?
 if isnumeric(contrast) %1s, 0s and -1s
     if length(contrast) < size(designMatrix, 2)
         currentContrast =[contrast, zeros(1, size(designMatrix, 2) - length(contrast))];

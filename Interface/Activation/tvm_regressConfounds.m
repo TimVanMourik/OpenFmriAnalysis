@@ -1,31 +1,49 @@
 function tvm_regressConfounds(configuration)
 % TVM_REGRESSCONFOUNDS
 %   TVM_REGRESSCONFOUNDS(configuration)
-%   
+%   @todo Add description
 %
+% Input:
+%   i_SubjectDirectory
+%   i_DesignMatrix
+%   i_FunctionalFolder
+%   i_FunctionalFiles
+%   i_Confounds
+% Output:
+%   o_FilteredFolder
+
 %   Copyright (C) Tim van Mourik, 2016, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.Design
-%   configuration.ReferenceVolume
-%   configuration.FunctionalFolder
-%   configuration.Mask
-%   configuration.GlmOutput
-%   configuration.ResidualSumOfSquares
-
+% This file is part of the fmri analysis toolbox, see 
+% https://github.com/TimVanMourik/FmriAnalysis for the documentation and 
+% details.
+%
+%    This toolbox is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    This toolbox is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with the fmri analysis toolbox. If not, see 
+%    <http://www.gnu.org/licenses/>.
 
 %% Parse configuration
 subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 designFile          = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
-functionalFolder    = tvm_getOption(configuration, 'i_FunctionalFolder', '');
-    %no default
+functionalFolder    = tvm_getOption(configuration, 'i_SourceDirectory', '');
+    % default: empty
 functionalFiles     = tvm_getOption(configuration, 'i_FunctionalFiles', '');
-    %no default
+    % default: empty
 confounds           = tvm_getOption(configuration, 'i_Confounds');
     %no default
-filteredFolder      = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_FilteredFolder'));
+filteredFolder      = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_OutputDirectory'));
     %no default
 
 definitions = tvm_definitions();  

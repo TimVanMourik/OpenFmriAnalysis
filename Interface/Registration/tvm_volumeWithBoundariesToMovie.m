@@ -1,14 +1,47 @@
 function tvm_volumeWithBoundariesToMovie(configuration)
-% TVM_
-%   TVM_(configuration)
-%   
+% TVM_VOLUMEWITHBOUNDARIESTOMOVIE(configuration)
+%   TVM_VOLUMEWITHBOUNDARIESTOMOVIE(configuration)
+%   @todo Add description
 %
+% Input:
+%   i_SubjectDirectory
+%   i_ReferenceVolume
+%   i_Boundaries
+%   i_Axis
+%   i_FramesPerSecond
+%   i_MovieQuality
+%   i_ContourColors
+%   i_RegionOfInterest
+%   i_ColorLimits
+%   i_Rotation
+%   i_Contrast
+% Output:
+%   o_RegistrationMovie
+%
+
 %   Copyright (C) Tim van Mourik, 2015, DCCN
 %
+% This file is part of the fmri analysis toolbox, see 
+% https://github.com/TimVanMourik/FmriAnalysis for the documentation and 
+% details.
+%
+%    This toolbox is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    This toolbox is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with the fmri analysis toolbox. If not, see 
+%    <http://www.gnu.org/licenses/>.
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 referenceFile =         fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
 boundariesFiles =       fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Boundaries'));
@@ -22,13 +55,13 @@ quality =               tvm_getOption(configuration, 'i_MovieQuality', 80);
 frameSize =             tvm_getOption(configuration, 'i_MovieSize', [1042, 968]);
     % 
 contourColours =        tvm_getOption(configuration, 'i_ContourColors', {'y', 'r', 'g', 'b'});
-    %no default
+    % default: yellow, red, green, blue
 roiFiles =              tvm_getOption(configuration, 'i_RegionOfInterest', []);
-    % 
+    % default: empty
 colorLimits =           tvm_getOption(configuration, 'i_ColorLimits', []);
-    % 
+    % default: empty
 rotation =              tvm_getOption(configuration, 'i_Rotation', '');
-    % ''
+    % default: empty
 contrastSetting =       tvm_getOption(configuration, 'i_Contrast', 1);
     % 1
 movieFile =             fullfile(subjectDirectory, tvm_getOption(configuration, 'o_RegistrationMovie'));

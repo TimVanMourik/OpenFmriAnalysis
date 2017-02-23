@@ -1,28 +1,60 @@
 function tvm_useBbregister(configuration)
-% TVM_REGISTERVOLUMES 
-%   TVM_REGISTERVOLUMES(configuration)
-%   
+% TVM_USEBBREGISTER(configuration)
+%   TVM_USEBBREGISTER(configuration)
+%   @todo Add description
 %
+% Input:
+%   i_SubjectDirectory
+%   i_RegistrationVolume
+%   i_FreeSurferFolder
+%   i_SpmInitialisation
+%   i_FslInitialisation
+%   i_Contrast
+%   i_DegreesOfFreedom
+%   i_InititialMatrix
+% Output:
+%   o_Boundaries
+%   o_RegisterDat
+%   o_CoregistrationMatrix
+%
+
 %   Copyright (C) Tim van Mourik, 2014, DCCN
 %
+% This file is part of the fmri analysis toolbox, see 
+% https://github.com/TimVanMourik/FmriAnalysis for the documentation and 
+% details.
+%
+%    This toolbox is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    This toolbox is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with the fmri analysis toolbox. If not, see 
+%    <http://www.gnu.org/licenses/>.
 
 %% Parse configuration
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 referenceFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_RegistrationVolume'));
     %no default
 freeSurferName          = tvm_getOption(configuration, 'i_FreeSurferFolder', 'FreeSurfer');
     %[subjectDirectory, 'FreeSurfer']
 spmInitialisation       = tvm_getOption(configuration, 'i_SpmInitialisation', false);
-    %no default
+    % default: false
 fslInitialisation       = tvm_getOption(configuration, 'i_FslInitialisation', true);
-    %no default
+    % default: true
 contrast                = tvm_getOption(configuration, 'i_Contrast', 'T2');
-    %no default
+    % default: T2 contrast
 degreesOfFreedom    	= tvm_getOption(configuration, 'i_DegreesOfFreedom', 6);
-    %no default
+    % default: 6 DoF, translation and rotation
 initialisationMatrix    = tvm_getOption(configuration, 'i_InititialMatrix', '');
-    %no default
+    % default: empty
 boundariesFile          = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
     %no default
 registerDatFile       	= fullfile(subjectDirectory, tvm_getOption(configuration, 'o_RegisterDat'));
@@ -30,7 +62,8 @@ registerDatFile       	= fullfile(subjectDirectory, tvm_getOption(configuration,
 coregistrationFile      = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_CoregistrationMatrix'));
     %no default
     
-definitions = tvm_definitions();    
+% definitions = tvm_definitions();
+
 %%
 freeSurferFolder = fullfile(subjectDirectory, freeSurferName);
 if fslInitialisation

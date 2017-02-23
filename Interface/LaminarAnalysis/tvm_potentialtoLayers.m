@@ -1,35 +1,45 @@
-function tvm_volumetricLayering(configuration)
-% TVM_VOLUMETRICLAYERING 
-%   TVM_VOLUMETRICLAYERING(configuration)
-%   
+function tvm_potentialtoLayers(configuration)
+% TVM_POTENTIALTOLAYERS
+%   TVM_POTENTIALTOLAYERS(configuration)
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+% Input:
+%   i_SubjectDirectory
+%   i_White
+%   i_Pial
+%   i_Potential
+%   i_Levels
+% Output:
+%   o_Layering
 %
-%   configuration.SubjectDirectory
-%   configuration.White
-%   configuration.Pial
-%   configuration.WhiteCurvature
-%   configuration.WhiteCurvature
-%   configuration.Levels
-%   configuration.LevelSet
-%   configuration.Layers
+
+%   Copyright (C) Tim van Mourik, 2016-2017, DCCN
 %
+% This file is part of the fmri analysis toolbox, see 
+% https://github.com/TimVanMourik/FmriAnalysis for the documentation and 
+% details.
 %
-% The levels will be the volume in between the numbers given in configuration.Levels
+%    This toolbox is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    This toolbox is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with the fmri analysis toolbox. If not, see 
+%    <http://www.gnu.org/licenses/>.
 
 %% Parse configuration
 subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 white               = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_White'));
     %no default
 pial                = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Pial'));
     %no default
-% whiteNormals        = tvm_getOption(configuration, 'i_WhiteNormals', '');
-    %default: ''
-    %when there is no curvature input, equidistant sampling will be used.
-% pialNormals         = tvm_getOption(configuration, 'i_PialNormals', '');
-    %default: ''
-    %when there is no curvature input, equidistant sampling will be used.
 potentialFile       = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Potential'));
     %no default
 levels              = tvm_getOption(configuration, 'i_Levels', 0:1/3:1);

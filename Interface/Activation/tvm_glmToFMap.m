@@ -1,29 +1,50 @@
 function tvm_glmToFMap(configuration)
-% TVM_GLMTOTMAP
-%   TVM_GLMTOTMAP(configuration)
-%   
+% TVM_GLMTOFMAP
+%   TVM_GLMTOFMAP(configuration)
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+% Input:
+%   i_SubjectDirectory
+%   i_DesignMatrix
+%   i_Betas
+%   i_ResidualSumOfSquares
+%   i_Contrast
+% Output:
+%   o_FMap
 %
-%   configuration.SubjectDirectory
-%   configuration.Design
-%   configuration.GlmOutput
-%   configuration.ResidualSumOfSquares
-%   configuration.FMap
-%   configuration.Contrast
+
+%   Copyright (C) Tim van Mourik, 2016-2017, DCCN
+%
+% This file is part of the fmri analysis toolbox, see 
+% https://github.com/TimVanMourik/FmriAnalysis for the documentation and 
+% details.
+%
+%    This toolbox is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    This toolbox is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with the fmri analysis toolbox. If not, see 
+%    <http://www.gnu.org/licenses/>.
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+    % default: current working directory
+designFile              = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
-designFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
+glmFile                 = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Betas'));
     %no default
-glmFile =               fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Betas'));
+resDevFile              = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ResidualSumOfSquares'));
     %no default
-resDevFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ResidualSumOfSquares'));
+contrasts               = tvm_getOption(configuration, 'i_Contrast');
     %no default
-contrasts =              tvm_getOption(configuration, 'i_Contrast');
-    %no default
-fMapFiles =              fullfile(subjectDirectory, tvm_getOption(configuration, 'o_FMap'));
+fMapFiles               = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_FMap'));
     %no default
     
 definitions = tvm_definitions();

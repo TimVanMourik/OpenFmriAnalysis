@@ -1,16 +1,39 @@
 function tvm_resampleVolume(configuration)
-% TVM_DOWNSAMPLEVOLUME(configuration)
+% TVM_RESAMPLEVOLUME(configuration)
+%   TVM_RESAMPLEVOLUME(configuration)
+%   @todo Add description
 %
-% INPUT
-%	The nifti-image that you want to resample
-%	The voxelsize (x, y and z) that you want to resample to
+% Input:
+%   i_SubjectDirectory
+%   i_ReferenceVolume
+%   i_VoxelSize
+% Output:
+%   o_OutputVolume
 %
-%   Copyright (C) Tim van Mourik, 2015, DCCN
 
+%   Copyright (C) Tim van Mourik, 2014-2015, DCCN
+%
+% This file is part of the fmri analysis toolbox, see 
+% https://github.com/TimVanMourik/FmriAnalysis for the documentation and 
+% details.
+%
+%    This toolbox is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    This toolbox is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with the fmri analysis toolbox. If not, see 
+%    <http://www.gnu.org/licenses/>.
 
 %% Parse configuration
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 referenceFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
 voxelSize               = tvm_getOption(configuration, 'i_VoxelSize');

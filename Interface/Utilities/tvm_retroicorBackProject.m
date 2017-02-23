@@ -1,26 +1,49 @@
 function tvm_retroicorBackProject(configuration)
 % TVM_RETROICORBACKPROJECT
 %   TVM_RETROICORBACKPROJECT(configuration)
-%   
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+% Input:
+%   i_SubjectDirectory
+%   i_DesignMatrix
+%   i_Betas
+%   i_TemplateVolume
+%   i_Resolution
+%   i_Order
+%   i_PhysioType
+% Output:
+%   o_BackProjection
 %
-%   configuration.SubjectDirectory
-%   configuration.Design
-%   configuration.GlmOutput
-%   configuration.ResidualSumOfSquares
-%   configuration.FMap
-%   configuration.Contrast
+
+%   Copyright (C) Tim van Mourik, 2016, DCCN
+%
+% This file is part of the fmri analysis toolbox, see 
+% https://github.com/TimVanMourik/FmriAnalysis for the documentation and 
+% details.
+%
+%    This toolbox is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    This toolbox is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with the fmri analysis toolbox. If not, see 
+%    <http://www.gnu.org/licenses/>.
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 designFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
 glmFile =               fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Betas'));
     %no default
 template =              tvm_getOption(configuration, 'i_TemplateVolume', []);
-    %no default
+    % default: empty
 resolution =            tvm_getOption(configuration, 'i_Resolution');
     %no default
 order =                 tvm_getOption(configuration, 'i_Order');

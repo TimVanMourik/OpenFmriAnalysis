@@ -1,30 +1,54 @@
 function tvm_filterFunctionals(configuration)
-% TVM_SMOOTHFUNCTIONALS 
-%   TVM_SMOOTHFUNCTIONALS(configuration)
-%   
+% TVM_FILTERFUNCTIONALS
+%   TVM_FILTERFUNCTIONALS(configuration)
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+% Input:
+%   i_SubjectDirectory
+%   i_SourceDirectory
+%   i_LowPass
+%   i_HighPass
+%   i_TR
+%   i_Qsub
+% Output:
+%   o_OutputDirectory
 %
-%   configuration.SubjectDirectory
-%   configuration.FunctionalDirectory
-%   configuration.SmoothingDirectory
-%   configuration.SmoothingKernel
+
+%   Copyright (C) Tim van Mourik, 2014-2015, DCCN
+%
+% This file is part of the fmri analysis toolbox, see 
+% https://github.com/TimVanMourik/FmriAnalysis for the documentation and 
+% details.
+%
+%    This toolbox is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    This toolbox is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with the fmri analysis toolbox. If not, see 
+%    <http://www.gnu.org/licenses/>.
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
-functionalDirectory =   fullfile(subjectDirectory, tvm_getOption(configuration, 'i_FunctionalDirectory'));
+    % default: current working directory
+functionalDirectory =   fullfile(subjectDirectory, tvm_getOption(configuration, 'i_SourceDirectory'));
     %no default
 lowerCutOff =           tvm_getOption(configuration, 'i_LowPass', []);
-    %no default
+    % default: empty
 higherCutOff =          tvm_getOption(configuration, 'i_HighPass', []);
-    % []
+    % default: empty
 tr =                    tvm_getOption(configuration, 'i_TR', 1);
-    % []
+    % default: 1 second
 useQsub =               tvm_getOption(configuration, 'i_Qsub', true);
-    % []
-smoothingDirectory =    fullfile(subjectDirectory, tvm_getOption(configuration, 'o_FilterDirectory'));
-    % []
+    % default: no parallellisation
+smoothingDirectory =    fullfile(subjectDirectory, tvm_getOption(configuration, 'o_OutputDirectory'));
+    %no default
     
 %%
 if isempty(lowerCutOff)

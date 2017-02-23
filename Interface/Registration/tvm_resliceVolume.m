@@ -1,31 +1,52 @@
 function tvm_resliceVolume(configuration)
-% TVM_RESLICEVOLUME
+% TVM_RESLICEVOLUME(configuration)
 %   TVM_RESLICEVOLUME(configuration)
-%   
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+% Input:
+%   i_SubjectDirectory
+%   i_ReferenceVolume
+%   i_CoregistrationMatrix
+%   i_MoveVolumes
+%   i_InterpolationMethod
+%   i_InverseRegistration
+% Output:
+%   o_OutputVolumes
 %
-%   configuration.SubjectDirectory
-%   configuration.LabelFiles
-%   configuration.Hemisphere
-%   configuration.VolumeFiles
-%   configuration.ReferenceVolume
-%   configuration.Boundaries
+
+%   Copyright (C) Tim van Mourik, 2014-2015, DCCN
 %
+% This file is part of the fmri analysis toolbox, see 
+% https://github.com/TimVanMourik/FmriAnalysis for the documentation and 
+% details.
+%
+%    This toolbox is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    This toolbox is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with the fmri analysis toolbox. If not, see 
+%    <http://www.gnu.org/licenses/>.
 
 %% Parse configuration
 subjectDirectory 	= tvm_getOption(configuration, 'i_SubjectDirectory');
-    %no default
+    % default: current working directory
 referenceVolumeFile = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
 coregistrationFile  = tvm_getOption(configuration, 'i_CoregistrationMatrix', []);
-    %no default
+    % default: empty
 moveFiles           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_MoveVolumes'));
     %no default
 interpolationMethod = tvm_getOption(configuration, 'i_InterpolationMethod', false);
-    %no default
+    % default: false
 inverseRegistration = tvm_getOption(configuration, 'i_InverseRegistration', false);
-    %no default
+    % default: false
 volumeFiles         = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_OutputVolumes'));
     %no default
     

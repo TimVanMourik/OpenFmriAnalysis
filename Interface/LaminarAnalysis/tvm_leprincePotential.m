@@ -1,16 +1,50 @@
 function tvm_leprincePotential(configuration)
-% TVM_LEPRINCEPOTENTIAL 
+% TVM_LEPRINCEPOTENTIAL
 %   TVM_LEPRINCEPOTENTIAL(configuration)
+%   @todo Add description
 %
+% Input:
+%   i_SubjectDirectory
+%   i_White
+%   i_Pial
+%   i_Potential
+%   i_Gradient
+%   i_Curvature
+%   i_B0
+%   i_B1
+%   i_Epsilon
+% Output:
+%   o_EquivolumePotential
+%   o_EquidistantPotential
 %
-%   Copyright (C) Martin Havlicek 2015, Maastricht University
+
+%   Copyright (C) Martin Havlicek 2015, Maastricht University, Tim van 
+%   Mourik, 2016, DCCN
+%   Original function written by Martin Havlicek, 2015
 %   Heavily optimised by Tim van Mourik, 2016, DCCN
 %   Modified to fit this toolbox by Tim van Mourik, 2016, DCCN
 %
+% This file is part of the fmri analysis toolbox, see 
+% https://github.com/TimVanMourik/FmriAnalysis for the documentation and 
+% details.
+%
+%    This toolbox is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    This toolbox is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with the fmri analysis toolbox. If not, see 
+%    <http://www.gnu.org/licenses/>.
 
 %% Parse configuration
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 white                   = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_White'));
     %no default
 pial                    = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Pial'));
@@ -22,15 +56,15 @@ gradientFile            = fullfile(subjectDirectory, tvm_getOption(configuration
 curvatureFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Curvature'));
     %no default
 b0                      = tvm_getOption(configuration, 'i_B0', 0);
-    %no default
+    %default: 0
 b1                      = tvm_getOption(configuration, 'i_B1', 1);
-    %no default
+    %default: 1
 epsilon                 = tvm_getOption(configuration, 'i_Epsilon', 0);
-    %no default
+    %default: 0
 layeringEVFile          = tvm_getOption(configuration, 'o_EquivolumePotential', '');
-    %no default
+    %default: empty
 layeringEDFile          = tvm_getOption(configuration, 'o_EquidistantPotential', '');
-    %no default
+    %default: empty
     
 %% Load data
 whiteLevelSet = spm_vol(white);

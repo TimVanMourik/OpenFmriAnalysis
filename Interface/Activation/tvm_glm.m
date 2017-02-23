@@ -1,37 +1,59 @@
 function tvm_glm(configuration)
 % TVM_GLM
 %   TVM_GLM(configuration)
-%   
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+% Input:
+%   i_SubjectDirectory
+%   i_DesignMatrix
+%   i_ReferenceVolume
+%   i_SourceDirectory
+%   i_FunctionalFiles
+%   i_Mask
+%   i_FunctionalSelection
+% Output:
+%   o_Betas
+%   o_ResidualSumOfSquares
+
+%   Copyright (C) Tim van Mourik, 2014-2017, DCCN
 %
-%   configuration.SubjectDirectory
-%   configuration.Design
-%   configuration.ReferenceVolume
-%   configuration.FunctionalFolder
-%   configuration.Mask
-%   configuration.GlmOutput
-%   configuration.ResidualSumOfSquares
+% This file is part of the fmri analysis toolbox, see 
+% https://github.com/TimVanMourik/FmriAnalysis for the documentation and 
+% details.
+%
+%    This toolbox is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    This toolbox is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with the fmri analysis toolbox. If not, see 
+%    <http://www.gnu.org/licenses/>.
 
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+subjectDirectory            = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+    % default: current working directory
+designFile                  = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
-designFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
+referenceVolumeFile         = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
-referenceVolumeFile =   fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
-    %no default
-functionalFolder        = tvm_getOption(configuration, 'i_SourceDirectory', '');
-    %no default
-functionalFiles         = tvm_getOption(configuration, 'i_FunctionalFiles', '');
-    % ''
-roiMask =               tvm_getOption(configuration, 'i_Mask', []);
+functionalFolder            = tvm_getOption(configuration, 'i_SourceDirectory', '');
+    % default: empty
+functionalFiles             = tvm_getOption(configuration, 'i_FunctionalFiles', '');
+    % default: empty
+roiMask                     = tvm_getOption(configuration, 'i_Mask', []);
     %default: empty
-functionalIndices  =    tvm_getOption(configuration, 'i_FunctionalSelection', []);
+functionalIndices           = tvm_getOption(configuration, 'i_FunctionalSelection', []);
+    % default: empty
+glmFile                     = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Betas'));
     %no default
-glmFile =               fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Betas'));
-    %no default
-resVarFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'o_ResidualSumOfSquares'));
+resVarFile                  = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_ResidualSumOfSquares'));
     %no default
 if ~isempty(roiMask)
     roiMask = fullfile(subjectDirectory, roiMask);

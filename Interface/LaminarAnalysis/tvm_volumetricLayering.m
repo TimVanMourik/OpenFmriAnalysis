@@ -1,41 +1,60 @@
 function tvm_volumetricLayering(configuration)
-% TVM_VOLUMETRICLAYERING 
+% TVM_VOLUMETRICLAYERING
 %   TVM_VOLUMETRICLAYERING(configuration)
-%   
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+% Input:
+%   i_SubjectDirectory
+%   i_White
+%   i_Pial
+%   i_Gradient
+%   i_Curvature
+%   i_Levels
+%   i_UpsampleFactor
+% Output:
+%   o_Layering
+%   o_LevelSet
 %
-%   configuration.SubjectDirectory
-%   configuration.White
-%   configuration.Pial
-%   configuration.WhiteCurvature
-%   configuration.WhiteCurvature
-%   configuration.Levels
-%   configuration.LevelSet
-%   configuration.Layers
+
+%   Copyright (C) Tim van Mourik, 2014-2017, DCCN
 %
+% This file is part of the fmri analysis toolbox, see 
+% https://github.com/TimVanMourik/FmriAnalysis for the documentation and 
+% details.
 %
-% The levels will be the volume in between the numbers given in configuration.Levels
+%    This toolbox is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    This toolbox is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with the fmri analysis toolbox. If not, see 
+%    <http://www.gnu.org/licenses/>.
 
 %% Parse configuration
 subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 white               = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_White'));
     %no default
 pial                = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Pial'));
     %no default
 gradientFile        = tvm_getOption(configuration, 'i_Gradient', '');
-    %default: ''
+    %default: empty
 curvatureFile       = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Curvature'));
     %no default
 levels              = tvm_getOption(configuration, 'i_Levels');
     %
 upsampleFactor     	= tvm_getOption(configuration, 'i_UpsampleFactor', 1);
-    %default: no shift
+    %default: unity scaling
 layerFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Layering'));
     %no default
 levelSetFile        = tvm_getOption(configuration, 'o_LevelSet', '');
-    %no default
+    %default: empty
 
 %%
 sdfIn   = spm_vol(white);
@@ -92,12 +111,6 @@ for lamina = numberOfLaminae:-1:2
     laminae.volume(:, :, :, lamina) = laminae.volume(:, :, :, lamina) - laminae.volume(:, :, :, lamina - 1);
 end
 laminae.volume = cat(4, laminae.volume, 1 - sum(laminae.volume, 4));
-
-% if gradientVolumes
-%     laminae.gradient = tvm_partialVolumeGradient(levelSet(:, :, :, 2:end - 1) / nthroot(abs(det(oldMatrix)), 3), 'gradient', gradient);
-% %     laminae.gradient = bsxfun(@minus, laminae.gradient, mean(mean(mean(laminae.gradient, 1), 2), 3));
-%     laminae.volume = cat(4, laminae.volume, laminae.gradient);
-% end
 
 % set all edges to zero: the curvature is not defined at the edges and
 % hence the layer distribution is undefined.

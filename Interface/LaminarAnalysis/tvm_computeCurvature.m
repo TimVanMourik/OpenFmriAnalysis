@@ -1,28 +1,50 @@
 function tvm_computeCurvature(configuration)
-% TVM_COMPUTECURVATURE 
+% TVM_COMPUTECURVATURE
 %   TVM_COMPUTECURVATURE(configuration)
-%   
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2014, DCCN
+% Input:
+%   i_SubjectDirectory
+%   i_Potential
+%   i_White
+%   i_Pial
+%   i_Order
+% Output:
+%   o_Curvature
 %
-%   configuration.SubjectDirectory
-%   configuration.White
-%   configuration.Pial
-%   configuration.WhiteCurvature
-%   configuration.PialCurvature
+
+%   Copyright (C) Tim van Mourik, 2015-2016, DCCN
+%
+% This file is part of the fmri analysis toolbox, see 
+% https://github.com/TimVanMourik/FmriAnalysis for the documentation and 
+% details.
+%
+%    This toolbox is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    This toolbox is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with the fmri analysis toolbox. If not, see 
+%    <http://www.gnu.org/licenses/>.
 
 %% Parse configuration
-subjectDirectory    = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+    % default: current working directory
+potential               = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Potential'));
     %no default
-potential           = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Potential'));
-    %no default
-curvatureFile       = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Curvature'));
-    %no default
-order               = tvm_getOption(configuration, 'i_Order', 2);
-    % 2
 white                   = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_White'));
     %no default
 pial                    = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Pial'));
+    %no default
+order                   = tvm_getOption(configuration, 'i_Order', 2);
+    % default: 2
+curvatureFile           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Curvature'));
     %no default
 
 %%

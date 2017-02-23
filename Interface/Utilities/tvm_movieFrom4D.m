@@ -1,14 +1,45 @@
 function tvm_movieFrom4D(configuration)
-% TVM_
-%   TVM_(configuration)
-%   
+% TVM_MERGEVOLUMES
+%   TVM_MERGEVOLUMES(configuration)
+%   @todo Add description
 %
-%   Copyright (C) Tim van Mourik, 2015, DCCN
+% Input:
+%   i_SubjectDirectory
+%   i_VolumeFile
+%   i_Axis
+%   i_FramesPerSecond
+%   i_MovieQuality
+%   i_ColorLimits
+%   i_Slice
+%   i_Contrast
+% Output:
+%   o_Movie
 %
+
+%   Copyright (C) Tim van Mourik, 2015-2016, DCCN
+%
+% This file is part of the fmri analysis toolbox, see 
+% https://github.com/TimVanMourik/FmriAnalysis for the documentation and 
+% details.
+%
+%    This toolbox is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    This toolbox is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with the fmri analysis toolbox. If not, see 
+%    <http://www.gnu.org/licenses/>.
+
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 volumeFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_VolumeFile'));
     %no default    %no default
 iterationAxis =         tvm_getOption(configuration, 'i_Axis', 'transversal');
@@ -20,7 +51,7 @@ quality =               tvm_getOption(configuration, 'i_MovieQuality', 80);
 % frameSize =             tvm_getOption(configuration, 'i_MovieSize', [1042, 968]);
     % 
 colorLimits =           tvm_getOption(configuration, 'i_ColorLimits', []);
-    % 
+    %  default: empty
 slice =                 tvm_getOption(configuration, 'i_Slice', 1);
     % 1
 contrastSetting =       tvm_getOption(configuration, 'i_Contrast', 1);

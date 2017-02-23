@@ -1,19 +1,48 @@
 function tvm_applyVdmToBoundaries(configuration)
-% TVM_
-%   TVM_(configuration)
-%   
+% TVM_APPLYVDMTOBOUNDARIES
+%   TVM_APPLYVDMTOBOUNDARIES(configuration)
+%   @todo Add description
 %
+% Input:
+%   i_SubjectDirectory
+%   i_Boundaries
+%   i_VoxelDisplacementMap
+%   i_TransformationFunction
+%   i_DistortionDimenions
+% Output:
+%   o_Boundaries
+%
+
 %   Copyright (C) Tim van Mourik, 2015, DCCN
 %
+% This file is part of the fmri analysis toolbox, see 
+% https://github.com/TimVanMourik/FmriAnalysis for the documentation and 
+% details.
+%
+%    This toolbox is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    This toolbox is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with the fmri analysis toolbox. If not, see 
+%    <http://www.gnu.org/licenses/>.
 
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
-    %no default
+    % default: current working directory
 boundariesFiles =       fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Boundaries'));
     %no default
 voxelDisplacementFile = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_VoxelDisplacementMap'));
     %no default
-multiplication =        tvm_getOption(configuration, 'i_Mutiplication');
+transformfunction =        tvm_getOption(configuration, 'i_TransformationFunction', @(x)plus(0, x));
+    % @todo find a more elegant null function
+distortionDimension =        tvm_getOption(configuration, 'i_DistortionDimenions');
     %no default
 boundariesFilesOutput = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
     %no default
@@ -33,7 +62,7 @@ for i = 1:length(wSurface)
     shift = cumsum(~insideVolume);
     wSurface{i} = wSurface{i}(insideVolume, :);
     pSurface{i} = pSurface{i}(insideVolume, :);
-    displacement{i}(insideVolume, 2) = tvm_sampleVoxels(voxelDisplacement.volume, wSurface{i}(:, 1:3)) * multiplication;
+    displacement{i}(insideVolume, distortionDimension) = transformfunction(tvm_sampleVoxels(voxelDisplacement.volume, wSurface{i}(:, 1:3)));
     map = [1:length(shift)]';
     wSurface{i} = wSurface{i} + displacement{i}(insideVolume, :);
     pSurface{i} = pSurface{i} + displacement{i}(insideVolume, :);

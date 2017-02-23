@@ -1,14 +1,16 @@
-This is the ReadMe file of the Laminar Analysis toolbox
-(C) Tim van Mourik 2013-2015
+This is the ReadMe file of the Laminar Analysis toolbox. Many of the functions for general fMRI preprocessing are wrappers for existing well-established neuroimaging tools. The wrappers should be seen as a consistent MATLAB command line interface to these functions, not as a reimplementation.
+A large part of these functions are written for my own convenience. Another substantial part is new method development (recursive boundary registration, laminar analysis)
+
+Copyright (C) 2013-2017, Tim van Mourik, Donders Institute for Brain, Cognition and Behaviour, Radboud University Nijmegen, The Netherlands DCCN
 
 Before you start:
 -Run the MATLAB function tvm_installLaminarAnalysisToolbox.m
  
 -SPM needs to be in your MATLAB path
--FieldTrip needs to be in your MATLAB path (only if ou want to the use qsub functions, cluster distribution)
--dcm2nii needs to be in the .profile
+-FieldTrip needs to be in your MATLAB path (only if you want to the use qsub functions, cluster distribution)
+-dcm2nii needs to be in the .profile (only if you actually want to convert dicoms to niftis)
 -FreeSurfer needs to be installed and the setup needs to be in the .profile
--to your .bashrc, add:
+-[probably only at the Donders Institute] to your .bashrc, add:
 	export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
 
 	
@@ -20,7 +22,7 @@ Before you start:
 -tvm_makeLevelSet, crashes badly when OBJ file is not a proper OBJ file in general
 
 -MINOR:
--tvm_dicomsToNifti, make sure copies are  when function is rerun.
+-tvm_dicomsToNifti, make sure copies are removed when function is rerun.
 -tvm_constructTemporalDesignMatrix (line 63), check if the correct hrf parameters are loaded in
 
 @TODO
@@ -29,3 +31,7 @@ Before you start:
 -tvm_dicomsToNifti (line 22) make display optional
 -tvm_(registration), add inflation of mask parameter
 -tvm_volumeToLabel (toTemporaryNames) check if file exists
+
+
+
+
