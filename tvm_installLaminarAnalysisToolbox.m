@@ -31,6 +31,7 @@ if core
     addpath(fullfile(rootDirectory, 'Core/BoundaryRegistration'));
     addpath(fullfile(rootDirectory, 'Core/Curvature'));
     addpath(fullfile(rootDirectory, 'External'));
+    addpath(fullfile(rootDirectory, 'External/NifTI'));
 end
 if interface
     addpath(fullfile(rootDirectory, 'Interface'));

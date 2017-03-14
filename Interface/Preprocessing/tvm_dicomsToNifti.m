@@ -36,6 +36,8 @@ subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd()
     % default: current working directory
 dicomDirectory      = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_SourceDirectory'));
     %no default
+niftiDirectory      = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_SourceDirectory'));
+    %no default
 characteristic      = tvm_getOption(configuration, 'i_Characteristic', []);
     %no default
 
@@ -51,6 +53,7 @@ for folder = {folders.name}
     if ~strcmp(folder{1}(1), '.')
 % @todo check if folder contains .nii
 % @todo make display of output optional
+% @todo make this work for all definitions.DicomFileTypes
         % g, gzip images: no
         % r, reorient images: no
         % x, reorient and crop images: no
@@ -58,28 +61,6 @@ for folder = {folders.name}
         unix(['dcm2nii -g n -r n -x n -c n ' fullfile(dicomDirectory, folder{1}) '/*.IMA;']);
 
         currentFolder = char(folder);
-        %For the MP2RAGE we've got a special treatment, as the file type
-        %need to appear in the file name.
-        mp2rage = definitions.MP2RAGE;
-        allFiles = [];
-        for i = 1:length(mp2rage)
-            if ~isempty(strfind(currentFolder, mp2rage{i}))
-                fileTypes = definitions.DicomFileTypes;
-                for j = 1:length(fileTypes)
-%                     currentFiles = dir([dicomDirectory currentFolder '/' fileTypes{j}]);
-                    currentFiles = dir(fullfile(dicomDirectory, currentFolder, ['*' fileTypes{j}]));
-                    allFiles = [allFiles; {currentFiles.name}]; %#ok<AGROW>
-                end   
-                testFile = char(allFiles(1));
-                info = dicominfo(fullfile(dicomDirectory, currentFolder, testFile));
-                newName = info.SeriesDescription;
-                movefile(fullfile(dicomDirectory, currentFolder), fullfile(dicomDirectory, newName));
-                
-            end                
-%         extract subsequence in string
-%         check with dicominfo the .SeriesDescription field
-%         add to nifi file name the mp2rage type
-         end
     end
 end
 
