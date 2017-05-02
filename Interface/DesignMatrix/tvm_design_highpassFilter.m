@@ -47,7 +47,7 @@ definitions = tvm_definitions();
 
 %%
 load(designFileIn, definitions.GlmDesign);
-numberOfVolumes = zeros(1, design.NumberOfPartitions);
+numberOfVolumes = zeros(design.NumberOfPartitions, 1);
 for i = 1:design.NumberOfPartitions
     numberOfVolumes(i) = length(design.Partitions{i});
 end
