@@ -62,16 +62,16 @@ end
 definitions = tvm_definitions();  
     
 %%
-referenceVolume = spm_vol(referenceVolumeFile);
-referenceVolume.dt = [16, 0];
+referenceVolume(1) = spm_vol(referenceVolumeFile);
+referenceVolume(1).dt = [16, 0];
 load(designFile, definitions.GlmDesign);
 design = eval(definitions.GlmDesign);
 
 numberOfRegressors = size(design.DesignMatrix, 2);
-gmlOutput = zeros([referenceVolume.dim, numberOfRegressors]);
-residualSumOfSquares = zeros(referenceVolume.dim);
-numberOfVoxels = prod(referenceVolume.dim);
-voxelsPerSlice = numberOfVoxels / referenceVolume.dim(3);
+gmlOutput = zeros([referenceVolume(1).dim, numberOfRegressors]);
+residualSumOfSquares = zeros(referenceVolume(1).dim);
+numberOfVoxels = prod(referenceVolume(1).dim);
+voxelsPerSlice = numberOfVoxels / referenceVolume(1).dim(3);
 
 if ~isempty(functionalFolder)
     if functionalFolder(end) ~= filesep()
@@ -92,7 +92,7 @@ allVolumes = spm_vol(allVolumes(functionalIndices));
 allVolumes = vertcat(allVolumes{:});
 
 if isempty(roiMask)
-    mask = true(referenceVolume.dim);
+    mask = true(referenceVolume(1).dim);
 else
     %double negation to make sure the mask is binary.
     mask = ~~spm_read_vols(spm_vol(roiMask));
@@ -101,24 +101,24 @@ end
 % This is done per slice, otherwise you're loading in ALL functional data 
 % at once. Computers don't like.
 pseudoInverse = pinv(design.DesignMatrix);
-for slice = 1:referenceVolume.dim(3)
+for slice = 1:referenceVolume(1).dim(3)
     indexRange = voxelsPerSlice * (slice - 1) + (1:voxelsPerSlice);
     indexRange = indexRange(mask(indexRange) == true);
-    [x, y, z] = ind2sub(referenceVolume.dim, indexRange);
+    [x, y, z] = ind2sub(referenceVolume(1).dim, indexRange);
     
     sliceTimeValues = spm_get_data(allVolumes, [x; y; z]);
 
     betas = pseudoInverse * sliceTimeValues;
     indices = repmat(indexRange, [numberOfRegressors, 1]);
-    indices = bsxfun(@plus, indices, ((1:numberOfRegressors) - 1)' * prod(referenceVolume.dim));
+    indices = bsxfun(@plus, indices, ((1:numberOfRegressors) - 1)' * prod(referenceVolume(1).dim));
     gmlOutput(indices) = betas(:);
     residualSumOfSquares(indexRange) = sum((sliceTimeValues - design.DesignMatrix * betas) .^ 2);
 end
 
-tvm_write4D(referenceVolume, gmlOutput, glmFile);
+tvm_write4D(referenceVolume(1), gmlOutput, glmFile);
 
-referenceVolume.fname = resVarFile;
-spm_write_vol(referenceVolume, residualSumOfSquares);
+referenceVolume(1).fname = resVarFile;
+spm_write_vol(referenceVolume(1), residualSumOfSquares);
 
 end %end function
 
