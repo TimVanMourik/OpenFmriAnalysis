@@ -46,11 +46,13 @@ definitions = tvm_definitions();
 load(designFileIn, definitions.GlmDesign);
 
 designMatrix = zeros(design.Length, length([deletions{:}]));
-regressorLabels = cell(1, length([deletions{:}]));
-for column = 1:length(design.Partitions)
-    designMatrix(sub2ind(size(designMatrix), deletions{column}, 1:length(deletions{column}))) = 1;
-    regressorLabels{column} = 'Deleted';
+regressorLabels = repmat({'Deleted'}, [1, length([deletions{:}])]);
+for run = 1:length(design.Partitions)
+    rows = design.Partitions{run}(deletions{run});
+    columns = length([deletions{1:(run-1)}]) + (1:length(deletions{run}));
+    designMatrix(sub2ind(size(designMatrix), rows, columns)) = 1;
 end
+
 design.DesignMatrix = [design.DesignMatrix, designMatrix];
 design.RegressorLabel = [design.RegressorLabel, regressorLabels];
 save(designFileOut, definitions.GlmDesign);
