@@ -39,6 +39,7 @@ if interface
     addpath(fullfile(rootDirectory, 'Interface/DesignMatrix'));
     addpath(fullfile(rootDirectory, 'Interface/LaminarAnalysis'));
     addpath(fullfile(rootDirectory, 'Interface/Preprocessing'));
+    addpath(fullfile(rootDirectory, 'Interface/Publishing'));
     addpath(fullfile(rootDirectory, 'Interface/Registration'));
     addpath(fullfile(rootDirectory, 'Interface/Utilities'));
 end
