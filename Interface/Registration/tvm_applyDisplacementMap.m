@@ -32,23 +32,37 @@ function tvm_applyDisplacementMap(configuration)
 %    <http://www.gnu.org/licenses/>.
 
 %% Parse configuration
-subjectDirectory =      	tvm_getOption(configuration, 'i_SubjectDirectory');
+subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory');
     % default: current working directory
-displacementMapFile =       fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DisplacementMap'));
+displacementMapFile     = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DisplacementMap'));
     %no default
-boundariesFileIn =          fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Boundaries'));
+boundariesFileIn        = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Boundaries'));
     %no default
-boundariesFileOut =         fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
+multiplication         = tvm_getOption(configuration, 'i_Multiplication', 1);
+    %no default
+voxelUnits              = tvm_getOption(configuration, 'i_VoxelUnits', false);
+    %no default
+offset                  = tvm_getOption(configuration, 'i_Offset', [0, 0, 0]);
+    %no default
+boundariesFileOut       = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
     %no default
     
 definitions = tvm_definitions();
+
 %%
 load(boundariesFileIn, definitions.WhiteMatterSurface, definitions.PialSurface, definitions.FaceData);
 % wSurface = eval(definitions.WhiteMatterSurface);
 % pSurface = eval(definitions.PialSurface);
 % faceData = eval(definitions.FaceData);
 
-fieldMap = spm_read_vols(spm_vol(displacementMapFile));
+displacement = load_nifti(displacementMapFile);
+%afni places the displacement in the 5th instead of 4th dimension
+displacement.vol = squeeze(displacement.vol);
+if voxelUnits
+    dimensions = [1, 1, 1];
+else
+    dimensions = displacement.pixdim(2:4);
+end
 
 %%
 configuration.InterpolationMethod = 'Trilinear';
@@ -57,8 +71,8 @@ pTemp = cell(size(pSurface));
 for hemisphere = 1:length(wSurface)
     for i = 1:3
         %todo, what to do with Nans?
-        wTemp{hemisphere}(:, i) = wSurface{hemisphere}(:, i) + tvm_sampleVoxels(fieldMap(:, :, :, i), wSurface{hemisphere}(:, 1:3), configuration);
-        pTemp{hemisphere}(:, i) = pSurface{hemisphere}(:, i) + tvm_sampleVoxels(fieldMap(:, :, :, i), pSurface{hemisphere}(:, 1:3), configuration);
+        wTemp{hemisphere}(:, i) = wSurface{hemisphere}(:, i) + multiplication / dimensions(i) * tvm_sampleVoxels(displacement.vol(:, :, :, i), bsxfun(@plus, wSurface{hemisphere}(:, 1:3), offset), configuration);
+        pTemp{hemisphere}(:, i) = pSurface{hemisphere}(:, i) + multiplication / dimensions(i) * tvm_sampleVoxels(displacement.vol(:, :, :, i), bsxfun(@plus, pSurface{hemisphere}(:, 1:3), offset), configuration);
     end
 end
 

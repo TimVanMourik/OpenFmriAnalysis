@@ -41,6 +41,12 @@ boundariesFile =            fullfile(subjectDirectory, tvm_getOption(configurati
     %no default
 maskFile =                  tvm_getOption(configuration, 'i_Mask', '');
     % default: empty
+multipleLoops         	= tvm_getOption(registrationConfiguration, 'MultipleLoops',     false);
+    % false
+useQsub                 = tvm_getOption(registrationConfiguration, 'qsub',              false);
+    % false
+timeRequirement         = tvm_getOption(registrationConfiguration, 'TimeRequirement',   1200);
+    % 800
 registeredBoundaries =   	fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
     %no default
     
@@ -66,8 +72,47 @@ for hemisphere = 1:2
     [~, selectedVerticesP] = selectVertices(pSurface{hemisphere}, mask);
 %     selectedVertices = intersect(selectedVerticesW, selectedVerticesP);
     selectedVertices = selectedVerticesW & selectedVerticesP;
+    
+    if size(wSurface{hemisphere}, 2) == 3
+        wSurface{hemisphere} = [wSurface{hemisphere}, ones(size(wSurface{hemisphere}, 1), 1)];
+        pSurface{hemisphere} = [pSurface{hemisphere}, ones(size(pSurface{hemisphere}, 1), 1)];
+    end
 
-    [wSurface{hemisphere}(selectedVertices, :), pSurface{hemisphere}(selectedVertices, :), transformStack{hemisphere}] = tvm_wrapperRecursiveRegistration(wSurface{hemisphere}(selectedVertices, :), pSurface{hemisphere}(selectedVertices, :), referenceVolume, registrationConfiguration);  
+    if multipleLoops
+        dimensions = {...
+            [1, 2, 3]; ...
+            [1, 3, 2]; ...
+            [2, 1, 3]; ...
+            [2, 3, 1]; ...
+            [3, 1, 2]; ...
+            [3, 2, 1]};
+    else
+        dimensions = {[1, 2, 3]};
+    end
+    %memory copies of the data. One for each node on the cluster.
+    whiteMatterBoundary = cell(length(dimensions), 1);
+    pialBoundary        = cell(length(dimensions), 1);
+    volumeData          = cell(length(dimensions), 1);
+    cfg                 = cell(length(dimensions), 1);
+
+    whiteMatterBoundary(:)  = wSurface(hemisphere);
+    pialBoundary(:)         = pSurface(hemisphere);
+    volumeData(:)           = {referenceVolume};
+    cfg(:)                  = {registrationConfiguration};
+
+    if useQsub
+        memoryRequirement = length(dimensions) * (numel(wSurface{hemisphere}) + numel(pSurface{hemisphere}) + numel(referenceVolume)) * 8 * 2;
+        %timeRequirement = ?; @TODO: make a nice estimation function
+        [w, p, transformStack] = qsubcellfun(@tvm_recursiveRegistration, whiteMatterBoundary, pialBoundary, volumeData, dimensions, cfg, 'UniformOutput', false, 'memreq', memoryRequirement, 'timreq', timeRequirement);
+    else
+        [w, p, transformStack] =     cellfun(@tvm_recursiveRegistration, whiteMatterBoundary, pialBoundary, volumeData, dimensions, cfg, 'UniformOutput', false);
+    end
+    w = reshape([w{:}], [size(wSurface{hemisphere}, 1), size(wSurface{hemisphere}, 2), length(dimensions)]);
+    p = reshape([p{:}], [size(pSurface{hemisphere}, 1), size(pSurface{hemisphere}, 2), length(dimensions)]);
+    
+    wSurface{hemisphere}(selectedVertices, :) = median(w, 3);
+    pSurface{hemisphere}(selectedVertices, :) = median(p, 3);
+    transformStack{hemisphere} = transformStack;
 end
 
 % eval(tvm_changeVariableNames(definitions.WhiteMatterSurface, wSurface));

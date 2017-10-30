@@ -34,6 +34,8 @@ subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd
     % default: current working directory
 designFileIn            = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
+closeFigure             = tvm_getOption(configuration, 'i_Close', true);
+    %no default
 imageFile               = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Image'));
     %no default
   
@@ -43,10 +45,14 @@ definitions = tvm_definitions();
 load(designFileIn, definitions.GlmDesign);
 
 %% Save picture
-figure('units', 'normalized', 'outerposition', [0, 0, 1, 1]);
+f = figure('units', 'normalized', 'outerposition', [0, 0, 1, 1]);
 imagesc(design.DesignMatrix);
 %todo: incorporate the design matrix labels
 saveas(gca, imageFile);
+
+if closeFigure
+    close(f);
+end
 
 end %end function
 

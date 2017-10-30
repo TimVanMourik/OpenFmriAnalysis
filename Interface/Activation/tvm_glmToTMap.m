@@ -68,7 +68,7 @@ betaValues = spm_vol(glmFile);
 betaValues = spm_read_vols(betaValues);
 residualSumOfSquares = spm_vol(resDevFile);
 residualSumOfSquares.volume = spm_read_vols(residualSumOfSquares);
-    
+
 numberOfContrasts = length(contrasts);
 for i = 1:numberOfContrasts
     currentContrast = tvm_getContrastVector(contrasts{i}, designMatrix, design.RegressorLabel);

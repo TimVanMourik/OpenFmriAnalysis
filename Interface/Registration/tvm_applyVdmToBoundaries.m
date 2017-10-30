@@ -34,17 +34,17 @@ function tvm_applyVdmToBoundaries(configuration)
 %    <http://www.gnu.org/licenses/>.
 
 %% Parse configuration
-subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
+subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     % default: current working directory
-boundariesFiles =       fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Boundaries'));
+boundariesFiles         = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Boundaries'));
     %no default
-voxelDisplacementFile = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_VoxelDisplacementMap'));
+voxelDisplacementFile   = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_VoxelDisplacementMap'));
     %no default
-transformfunction =        tvm_getOption(configuration, 'i_TransformationFunction', @(x)plus(0, x));
-    % @todo find a more elegant null function
-distortionDimension =        tvm_getOption(configuration, 'i_DistortionDimenions');
+multiplication          = tvm_getOption(configuration, 'i_Multiplication', 1);
+    % 
+distortionDimension     = tvm_getOption(configuration, 'i_DistortionDimension');
     %no default
-boundariesFilesOutput = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
+boundariesFilesOutput   = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
     %no default
     
 %%
@@ -62,7 +62,7 @@ for i = 1:length(wSurface)
     shift = cumsum(~insideVolume);
     wSurface{i} = wSurface{i}(insideVolume, :);
     pSurface{i} = pSurface{i}(insideVolume, :);
-    displacement{i}(insideVolume, distortionDimension) = transformfunction(tvm_sampleVoxels(voxelDisplacement.volume, wSurface{i}(:, 1:3)));
+    displacement{i}(insideVolume, distortionDimension) = tvm_sampleVoxels(voxelDisplacement.volume * multiplication, wSurface{i}(:, 1:3));
     map = [1:length(shift)]';
     wSurface{i} = wSurface{i} + displacement{i}(insideVolume, :);
     pSurface{i} = pSurface{i} + displacement{i}(insideVolume, :);

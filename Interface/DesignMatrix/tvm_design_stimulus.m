@@ -67,11 +67,26 @@ numberOfStimuli = size(stimulusFiles, 2);
 allStimuli = cell(numberOfStimuli, 1);
 allDurations = cell(numberOfStimuli, 1);
 for i = 1:numberOfStimuli
-    load(fullfile(subjectDirectory, stimulusFiles{i}), definitions.Stimulus, definitions.Duration);
-    stimulusOnset = eval(definitions.Stimulus);
-    stimulusDuration = eval(definitions.Duration);
-    allStimuli{i} = stimulusOnset;
-    allDurations{i} = stimulusDuration;
+    if iscell(stimulusFiles{i})
+        for j = 1:length(stimulusFiles{i})
+            load(fullfile(subjectDirectory, stimulusFiles{i}{j}), definitions.Stimulus, definitions.Duration);
+            stimulusOnset = eval(definitions.Stimulus);
+            stimulusDuration = eval(definitions.Duration);
+            if isempty(allStimuli{i})
+                allStimuli{i} = stimulusOnset;
+                allDurations{i} = stimulusDuration;
+            else
+                allStimuli{i}   = cellfun(@horzcat, allStimuli{i}, stimulusOnset, 'UniformOutput', false);
+                allDurations{i} = cellfun(@horzcat, allDurations{i}, stimulusDuration, 'UniformOutput', false);
+            end
+        end
+    else
+        load(fullfile(subjectDirectory, stimulusFiles{i}), definitions.Stimulus, definitions.Duration);
+        stimulusOnset = eval(definitions.Stimulus);
+        stimulusDuration = eval(definitions.Duration);
+        allStimuli{i} = stimulusOnset;
+        allDurations{i} = stimulusDuration;
+    end
 end
 
 if isempty(hrfParameters)

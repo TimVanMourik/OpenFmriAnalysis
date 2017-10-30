@@ -1,101 +1,78 @@
 
 %% Node Files
-toolboxLocation = '/home/mrphys/timvmou/MATLAB/Toolboxes/LaminarAnalysis';
+toolboxLocation = '/home/mrphys/timvmou/MATLAB/Toolboxes/OpenFmriAnalysis';
 cd(fullfile(toolboxLocation, 'Interface'));
-saveLocation = fullfile(toolboxLocation, 'External/Porcupine/Nodes');
+saveLocation = fullfile(toolboxLocation, 'External/Porcupine');
 
 %
+categoryName = 'TvM';
 directories = dir();
+directories = directories([directories(:).isdir]);
 directories = directories(3:end);
-files = cell(0);
+
 nF = 1;
+nodes = [];
 for i = 1:length(directories)
     filenames = dir(fullfile(directories(i).name, 'tvm_*'));
     for j = 1:length(filenames)
-        inputFields  = cell(0);
-        outputFields = cell(0);
-        nI = 1;
-        nO = 1;
         
         file = fullfile(directories(i).name, filenames(j).name);
         f = fopen(file);
+        numberOfPorts = 0;
+        ports = [];
         while true
             line = fgetl(f);
             if strfind(line, '%') ~= 1
                 break;
             elseif strfind(line, '%   i_') == 1
-                inputFields(nI) = {line(5:end)};
-                nI = nI + 1;
+                numberOfPorts = numberOfPorts + 1;
+                ports(numberOfPorts).input = true;
+                ports(numberOfPorts).output = true;
+                ports(numberOfPorts).visible = true;
+                ports(numberOfPorts).editable = true;
+                ports(numberOfPorts).name = line(5:end);
+                code = [];
+                code.language = categoryName;
+                code.argument.name = line(5:end);
+                ports(numberOfPorts).code = {code};
+                
             elseif strfind(line, '%   o_') == 1
-                outputFields(nO) = {line(5:end)};
-                nO = nO + 1;
+                numberOfPorts = numberOfPorts + 1;
+                ports(numberOfPorts).input = false;
+                ports(numberOfPorts).output = true;
+                ports(numberOfPorts).visible = true;
+                ports(numberOfPorts).editable = true;
+                ports(numberOfPorts).name = line(5:end);
+                code = [];
+                code.language = categoryName;
+                code.argument.name = line(5:end);
+                ports(numberOfPorts).code = {code};
             end
+                
         end
         fclose(f);
+        title = [];
+        title.web_url = ['https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/', directories(i).name];
+        title.name = filenames(j).name(1:end - 2);
+        title.code = [];
+        code = [];
+        code.language = categoryName;
+        code.comment  = '';
+        code.argument.name = filenames(j).name(1:end - 2);
+        title.code = {code};
+        nodes(nF).category = {categoryName, directories(i).name};
+        nodes(nF).title = title;
+        nodes(nF).ports = ports;
         
-        tvm_createXmlNode({'TVM', directories(i).name}, filenames(j).name, inputFields, outputFields, saveLocation);
-        files(nF) = {filenames(j).name};
         nF = nF + 1;
     end
 end
 
-%% Resource File
-saveLocation = fullfile(toolboxLocation, 'External/Porcupine/');
-
-docNode = com.mathworks.xml.XMLUtils.createDocument('RCC');
-docRoot = docNode.getDocumentElement();
-
-%
-currentNode = docNode.createElement('qresource');
-currentNode.setAttribute('prefix', '/');
-
-fileNode = docNode.createElement('file');
-fileNode.setAttribute('alias', 'node_schema.xsd');
-fileNode.appendChild(docNode.createTextNode('node.xsd'));
-currentNode.appendChild(fileNode);
-
-fileNode = docNode.createElement('file');
-fileNode.setAttribute('alias', 'datatype_schema.xsd');
-fileNode.appendChild(docNode.createTextNode('datatype.xsd'));
-currentNode.appendChild(fileNode);
-
-docRoot.appendChild(currentNode);
-
-%
-currentNode = docNode.createElement('qresource');
-currentNode.setAttribute('prefix', '/Images');
-
-fileNode = docNode.createElement('file');
-fileNode.setAttribute('alias', 'RepeatingBrains.png');
-fileNode.appendChild(docNode.createTextNode('Images/RepeatingBrains.png'));
-currentNode.appendChild(fileNode);
-docRoot.appendChild(currentNode);
-
-%
-directory = 'Dictionaries/tvm_nodes';
-currentNode = docNode.createElement('qresource');
-currentNode.setAttribute('prefix', directory);
-
-for i = 1:length(files)
-    fileNode = docNode.createElement('file');
-    fileNode.setAttribute('alias', sprintf('node_%02d.xml', i - 1));
-    
-    [~, file, ~] = fileparts(files{i});
-    fileNode.appendChild(docNode.createTextNode(fullfile(directory, [file, '.node'])));
-    currentNode.appendChild(fileNode);
-end
-docRoot.appendChild(currentNode);
-
-xmlFileName = fullfile(saveLocation, 'resourcesTvM.qrc');
-xmlwrite(xmlFileName, docNode);
-type(xmlFileName);
-
-
-
-
-
-
-
+%%
+f = fopen(fullfile(saveLocation, 'tvm.JSON'), 'w');
+options.ParseLogical = true;
+fwrite(f, savejson('nodes', nodes, options));
+fclose(f);
 
 
 

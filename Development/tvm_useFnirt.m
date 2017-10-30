@@ -19,7 +19,7 @@ fieldMap =              fullfile(subjectDirectory, tvm_getOption(configuration, 
     %no default
       
 %%
-unixCommand = sprintf('FSLOUTPUTTYPE=NIFTI; fnirt --ref=%s --in=%s --fout=%s --iout=%s', referenceFile, moveFile, fieldMap, warpedimage);
+unixCommand = sprintf('export FSLOUTPUTTYPE=NIFTI; fnirt --ref=%s --in=%s --fout=%s --iout=%s', referenceFile, moveFile, fieldMap, warpedimage);
 unix(unixCommand);
 
 end %end function
