@@ -43,6 +43,8 @@ minSize                 = tvm_getOption(configuration, 'i_MinimumVoxels', 10);
     % default: empty
 minVertices             = tvm_getOption(configuration, 'i_MinimumVertices', 500);
     % default: empty
+alphaLevel              = tvm_getOption(configuration, 'i_NeighbourSmoothing', 0.5);
+    % default: empty
 maskFile                = tvm_getOption(configuration, 'i_Mask', '');
     % default: empty
 boundariesFileOut       = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
@@ -95,7 +97,6 @@ root.vertexIndices  = true(size(registereSurfaceW, 1), 1);
 cfg                 = [];
 cfg.MinVertices     = minVertices;
 cfg.MinSize         = minSize;
-alphaLevel = 0.5;
 
 %find neighbours in mesh
 root            = divideMesh(root, cfg, registereSurfaceW);
