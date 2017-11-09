@@ -31,6 +31,11 @@ switch contrastMethod
         contrast = findContrastAverage(arrayW, arrayP, voxelgrid);
     case 'gradient'
         contrast = findContrastGradient(arrayW, arrayP, voxelgrid);
+    case 'informed'
+        wm = 1800;
+        gm = 950;
+        contrast = findContrastInformed(arrayW, arrayP, voxelgrid, wm, gm);
+        
 %     case 'GreveFischl' %not implemented yet! But fairly similar to gradient
 %         contrast = findGradient(arrayW, arrayP, voxelgrid);
 %     otherwise
@@ -84,6 +89,8 @@ contrast = (white - grey) ./ (grey + white);
 contrast(abs(contrast) > 1 | contrast ~= contrast) = 0;
 
 end %end function
+
+
 function contrast = findContrastAverage(array1, array2, voxelgrid)
 %FINDCONTRASTAVERAGE This function computes the contrast on both sides of the grey matter - white matter
 %boundary given two arrays. It is to be used as a contrast detection for white-
@@ -155,6 +162,8 @@ contrast(abs(contrast) > 1 | contrast ~= contrast | grey < 1 | white < 1) = 0;
 
 
 end % end functions
+
+
 function contrast = findContrastFixedDistance(array1, array2, voxelgrid, d)
 %FINDCONTRASTFIXEDDISTANCE This function computes the contrast on both
 %sides of the grey matter - white matter boundary given two arrays. It is
@@ -191,136 +200,43 @@ contrast = (white - grey) ./ (grey + white);
 contrast(abs(contrast) > 1) = 0;
 
 end %end function
-% function contrast = findContrastLocalExtrema(array1, array2, voxelgrid)
-% %This function computes the contrast on both sides of the grey matter - white matter
-% %boundary given two arrays. It is to be used as a contrast detection for white-
-% %grey matter contrast
-% %   The computation method is local extrema sampling: it takes the maximum
-% %   value in the white matter and the minimum value in the grey matter and
-% %   computes the contrast using these values.
-% %   The first array needs to be the inner mesh, the second array should be the
-% %   outer mesh. The third input is the voxel grid for which the meshes are
-% %   given. The fourth is a boolean that determines if the contrast needs to 
-% %   be reversed. 
-% 
-% normals = findNormals(array1, array2);
-% thickness = findThickness(array1, array2);
-% 
-% if size(arrayW, 2) == 4
-%     %homogeneous coordinates
-%     homogeneousCoordinates = 4;
-% else
-%     %inhomogeneous coordinates
-%     homogeneousCoordinates = 3;
-% end
-% length = size(array1, 1);
-% numberOfSteps = 5;
-% %Samples until 70 percent of the grey matter
-% stepSize = 1 / numberOfSteps * 0.7;
-% stepsWhite = zeros(length, homogeneousCoordinates, numberOfSteps);
-% pixelsWhite = zeros(length, numberOfSteps);
-% stepsGrey = zeros(length, homogeneousCoordinates, numberOfSteps);
-% pixelsGrey = zeros(length, numberOfSteps);
-% grey = zeros(length, 1);
-% white = zeros(length, 1);
-% 
-% %distance = zeros(length, numberOfCoordinates);
-% %replicates the thickness three times for all spatial coordinates
-% thickness = repmat(thickness, 1, homogeneousCoordinates);
-% distance = normals .* thickness * stepSize;
-% 
-% for j = 1:numberOfSteps
-%     %The white matter is supposed to be along the negative vertex normal
-%     stepsWhite(:, :, j) = array1(:, :) - distance(:, :) * j;
-%     %The grey matter is supposed to be along the vertex normal
-%     stepsGrey(:, :, j)  = array1(:, :) + distance(:, :) * j;
-% 
-%     pixelsWhite(:, j) = tvm_sampleVoxels(voxelgrid, stepsWhite(:, 1, j), stepsWhite(:, 2, j), stepsWhite(:, 3, j));
-%     pixelsGrey(:, j)  = tvm_sampleVoxels(voxelgrid, stepsGrey(:, 1, j),  stepsGrey(:, 2, j) , stepsGrey(:, 3, j));
-% end
-% 
-% %find the local extrema
-% for i = 1:length
-%     grey(i) = min(pixelsGrey(i, :));
-%     white(i) = max(pixelsWhite(i, :));
-% end
-% 
-% %computes the contrast
+
+
+function contrast = findContrastInformed(array1, array2, voxelgrid, wm, gm, d)
+%FINDCONTRASTFIXEDDISTANCE This function computes the contrast on both
+%sides of the grey matter - white matter boundary given two arrays. It is
+%to be used as a contrast detection for white-grey matter contrast
+%   The computation method is fixed distance sampling: computing the
+%   contrast by means of sampling at a fixed distance from the grey matter
+%   The first array needs to be the inner mesh, the second array should be the
+%   outer mesh. The third input is the voxel grid for which the meshes are
+%   given. The fourth is a boolean that determines if the contrast needs to 
+%   be reversed. The fifth input is a scalar value that determines the distance 
+%   from the boundary.
+
+if nargin < 6
+    d = 0.3;
+end
+
+normals = findNormals(array1, array2);
+
+%The white matter is supposed to be along the negative vertex normal
+whitepixels = array1 - d * normals;
+%The grey matter is supposed to be along the vertex normal
+greypixels = array1 + d * normals;
+
+%determine the contrast
+
+white = tvm_sampleVoxels(voxelgrid, whitepixels(:, 1:3));
+grey  = tvm_sampleVoxels(voxelgrid, greypixels(:, 1:3));
+    
+%computes the contrast
 % contrast = (white - grey) ./ (grey + white);
-% 
-% %If there have been divisions by zero, contrasts can be +-Inf. The pixels
-% %have zero contrast so are set to zero. 
-% contrast(abs(contrast) > 1) = 0;
-% 
-% end %end function
-% function contrast = findContrastMedian(array1, array2, voxelgrid)
-% %FINDGRADIENT This function computes the contrast on both sides of the
-% %boundary given two arrays. It is to be used as a contrast detection for
-% %white-grey matter contrast
-% %   G = FINDGRADIENT(INNERBOUNDARY, OUTERBOUNDARY, VOXELGRID)
-% %
-% %
-% %   G = FINDGRADIENT(INNERBOUNDARY, OUTERBOUNDARY, VOXELGRID, REVERSECONTRAST)
-% 
-% if nargin < 3
-%     error('TVM:findGradient:NoInputs',['No input arguments specified. ' ...
-%             'There should be at least three input arguments.'])
-% end
-% 
-% %computes the normals and the thickness
-% normals = findNormals(array1, array2);
-% thickness = findThickness(array1, array2);
-% 
-% if size(arrayW, 2) == 4
-%     %homogeneous coordinates
-%     homogeneousCoordinates = 4;
-% else
-%     %inhomogeneous coordinates
-%     homogeneousCoordinates = 3;
-% end
-% 
-% length = size(array1, 1);
-% numberOfSteps = 5;
-% %Samples until 70 percent of the grey matter
-% stepSize = 1 / numberOfSteps * 0.7;
-% stepsWhite = zeros(length, homogeneousCoordinates, numberOfSteps);
-% pixelsWhite = zeros(length, numberOfSteps);
-% stepsGrey = zeros(length, homogeneousCoordinates, numberOfSteps);
-% pixelsGrey = zeros(length, numberOfSteps);
-% grey = zeros(length, 1);
-% white = zeros(length, 1);
-% 
-% %replicates the thickness three times for all spatial coordinates
-% thickness = repmat(thickness, 1, 3);
-% distance = normals .* thickness * stepSize;
-% 
-% for j = 1:numberOfSteps
-%     %The white matter is supposed to be along the negative vertex normal
-%     stepsWhite(:, :, j) = array1(:, :) - distance(:, :) * j;
-%     %The grey matter is supposed to be along the vertex normal
-%     stepsGrey(:, :, j)  = array1(:, :) + distance(:, :) * j;
-% 
-%     pixelsWhite(:, j) = tvm_sampleVoxels(voxelgrid, stepsWhite(:, 1, j), stepsWhite(:, 2, j), stepsWhite(:, 3, j));
-%     pixelsGrey(:, j)  = tvm_sampleVoxels(voxelgrid, stepsGrey(:, 1, j),  stepsGrey(:, 2, j) , stepsGrey(:, 3, j));
-% 
-% end
-% 
-% %find the local extrema
-% for i = 1:length
-%     grey(i) = median(pixelsGrey(i, :));
-%     white(i) = median(pixelsWhite(i, :));
-% end
-% 
-% %computes the contrast
-% contrast = (white - grey) ./ (grey + white);
-% 
-% %If there have been divisions by zero, contrasts can be +-Inf. The pixels
-% %have zero contrast so are set to zero. 
-% contrast(abs(contrast) > 1) = 0;
-% 
-% end %end function
+contrast = -(white - wm) .^ 2 - (grey - gm) .^ 2;
 
 
+%If there have been divisions by zero, contrasts can be +-Inf. The pixels
+%have zero contrast so are set to zero. 
+contrast(abs(contrast) > 1) = 0;
 
-
-
+end %end function

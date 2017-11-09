@@ -43,6 +43,8 @@ minSize                 = tvm_getOption(configuration, 'i_MinimumVoxels', 10);
     % default: empty
 minVertices             = tvm_getOption(configuration, 'i_MinimumVertices', 500);
     % default: empty
+cuboidelements          = tvm_getOption(configuration, 'i_CuboidElements', true);
+    % default: empty
 alphaLevel              = tvm_getOption(configuration, 'i_NeighbourSmoothing', 0.5);
     % default: empty
 maskFile                = tvm_getOption(configuration, 'i_Mask', '');
@@ -92,7 +94,9 @@ dimensions = referenceVolume.dim; % .* sqrt(sum(referenceVolume.mat(1:3, 1:3) .^
 
 %divide the mesh
 root                = [];
-root.anchorPoints   = [zeros(1, 3); dimensions];
+root.anchorPoints   = [min([registereSurfaceW; registereSurfaceP]) - 2 * eps(); ...
+                       max([registereSurfaceW; registereSurfaceP]) + 2 * eps()];
+root.anchorPoints   = root.anchorPoints(:, 1:3);
 root.vertexIndices  = true(size(registereSurfaceW, 1), 1);
 cfg                 = [];
 cfg.MinVertices     = minVertices;
@@ -102,45 +106,64 @@ cfg.MinSize         = minSize;
 root            = divideMesh(root, cfg, registereSurfaceW);
 [root, anchors] = addNeighbourStructure(root);
 
-for level = 1:floor(log2(max(dimensions) / minSize)) - 1 %per level, as smoothing is per level
+for level = 0:floor(log2(max(dimensions) / minSize)) - 1 %per level, as smoothing is per level
     elementsCurrentLevel = elementsLevelN(root, level);
     if isempty(elementsCurrentLevel)
         break;
     end
-    [neighbourList, relevantAnchors] = neighbourStructure(elementsCurrentLevel, anchors);
+    [neighbourList, relevantAnchors] = neighbourStructure(elementsCurrentLevel, anchors, cuboidelements);
     deformationVectors = cell(size(relevantAnchors));
+    %compute
     for i = 1:length(elementsCurrentLevel)
+        % transformation for the whole
         w = registereSurfaceW(elementsCurrentLevel(i).vertexIndices, :);
         p = registereSurfaceP(elementsCurrentLevel(i).vertexIndices, :);
-        %the next line is the bottleneck of the entire script
+        % % % the next line is the bottleneck of the entire script
         elementsCurrentLevel(i).transformation = optimalTransformation(w, p, referenceVolume.volume, registrationConfiguration);
+        % % %
         for j = 1:length(elementsCurrentLevel(i).anchorIndices)
             index = find(relevantAnchors == elementsCurrentLevel(i).anchorIndices(j));
-            deformationVectors{index} = [deformationVectors{index}; anchors(elementsCurrentLevel(i).anchorIndices(j), :) * elementsCurrentLevel(i).transformation - anchors(elementsCurrentLevel(i).anchorIndices(j), :)];
+            deformationVectors{index} = [deformationVectors{index}; anchors(elementsCurrentLevel(i).anchorIndices(j), :) * (elementsCurrentLevel(i).transformation - eye(4))];
+        end
+        
+        % transformation for the cuboid elements
+        if cuboidelements
+            for k = 1:length(elementsCurrentLevel(i).cuboids)
+
+                w = registereSurfaceW(elementsCurrentLevel(i).cuboids(k).vertexIndices, :);
+                p = registereSurfaceP(elementsCurrentLevel(i).cuboids(k).vertexIndices, :);
+                % % % the next line is the bottleneck of the entire script
+                elementsCurrentLevel(i).cuboids(k).transformation = optimalTransformation(w, p, referenceVolume.volume, registrationConfiguration);
+                % % %
+                for j = 1:length(elementsCurrentLevel(i).cuboids(k).anchorIndices)
+                    index = find(relevantAnchors == elementsCurrentLevel(i).cuboids(k).anchorIndices(j));
+                    deformationVectors{index} = [deformationVectors{index}; anchors(elementsCurrentLevel(i).cuboids(k).anchorIndices(j), :) * (elementsCurrentLevel(i).cuboids(k).transformation - eye(4))];
+                end
+            end     
         end
     end
     
     %smooth anchor points
-    meanDeformation = cellfun(@mean, deformationVectors, num2cell(ones(size(deformationVectors))), 'UniformOutput', false);
+    medianDeformation = cellfun(@median, deformationVectors, num2cell(ones(size(deformationVectors))), 'UniformOutput', false);
     for i = 1:length(relevantAnchors)
-        neighbourVector = mean(vertcat(meanDeformation{cell2mat(cellfun(@find, cellfun(@eq, repmat({relevantAnchors}, size(neighbourList{i})), num2cell(neighbourList{i}), 'UniformOutput', false), 'UniformOutput', false))}));
-        deformationVectors{i} = alphaLevel * meanDeformation{i} + (1 - alphaLevel) * mean(neighbourVector);
+        neighbourVector = mean(vertcat(medianDeformation{cell2mat(cellfun(@find, cellfun(@eq, repmat({relevantAnchors}, size(neighbourList{i})), num2cell(neighbourList{i}), 'UniformOutput', false), 'UniformOutput', false))}));
+        %overwrite with the median
+        deformationVectors{i} = (1 - alphaLevel) * medianDeformation{i} + alphaLevel * neighbourVector;
     end
     anchors(relevantAnchors, :) = anchors(relevantAnchors, :) + cat(1, deformationVectors{:});
-
+    
     %deform mesh
     for i = 1:length(elementsCurrentLevel)
         currentAnchors = anchors(elementsCurrentLevel(i).anchorIndices, :);
         deformations = cat(1, deformationVectors{cell2mat(cellfun(@find, cellfun(@eq, repmat({relevantAnchors}, size(elementsCurrentLevel(i).anchorIndices)), num2cell(elementsCurrentLevel(i).anchorIndices), 'UniformOutput', false), 'UniformOutput', false))});
         centreOfMass = mean(currentAnchors, 1);
         T = eye(4);
-        T(:, 4) = centreOfMass;
-        currentAnchors = currentAnchors / T';        
-        M = currentAnchors \ deformations;        
-        dw = registereSurfaceW(elementsCurrentLevel(i).vertexIndices, :) / T' * M;
-        dp = registereSurfaceP(elementsCurrentLevel(i).vertexIndices, :) / T' * M;
-        registereSurfaceW(elementsCurrentLevel(i).vertexIndices, 1:3) = registereSurfaceW(elementsCurrentLevel(i).vertexIndices, 1:3) + dw(:, 1:3);
-        registereSurfaceP(elementsCurrentLevel(i).vertexIndices, 1:3) = registereSurfaceP(elementsCurrentLevel(i).vertexIndices, 1:3) + dp(:, 1:3);
+        T(4, :) = centreOfMass;
+        transformedAnchors = currentAnchors / T;
+        M = transformedAnchors \ deformations;
+%         M = currentAnchors \ deformations + eye(4);
+        registereSurfaceW(elementsCurrentLevel(i).vertexIndices, :) = registereSurfaceW(elementsCurrentLevel(i).vertexIndices, :) + registereSurfaceW(elementsCurrentLevel(i).vertexIndices, :) / T * M;
+        registereSurfaceP(elementsCurrentLevel(i).vertexIndices, :) = registereSurfaceP(elementsCurrentLevel(i).vertexIndices, :) + registereSurfaceP(elementsCurrentLevel(i).vertexIndices, :) / T * M;
     end    
 end
 
@@ -156,7 +179,7 @@ save(boundariesFileOut, definitions.WhiteMatterSurface, definitions.PialSurface,
 end %end function
 
 
-function [neighbourList, relevantAnchors] = neighbourStructure(elements, anchors)
+function [neighbourList, relevantAnchors] = neighbourStructure(elements, anchors, withCuboids)
 
 neighbourList = cell(length(anchors), 1);
 for i = 1:length(elements)
@@ -168,6 +191,19 @@ for i = 1:length(elements)
     neighbourList{elements(i).anchorIndices(6)} = [neighbourList{elements(i).anchorIndices(6)}, elements(i).anchorIndices(2), elements(i).anchorIndices(5), elements(i).anchorIndices(8)];
     neighbourList{elements(i).anchorIndices(7)} = [neighbourList{elements(i).anchorIndices(7)}, elements(i).anchorIndices(3), elements(i).anchorIndices(5), elements(i).anchorIndices(8)];
     neighbourList{elements(i).anchorIndices(8)} = [neighbourList{elements(i).anchorIndices(8)}, elements(i).anchorIndices(4), elements(i).anchorIndices(6), elements(i).anchorIndices(7)];
+
+    if withCuboids
+        for j = 1:length(elements(i).cuboids)
+            neighbourList{elements(i).cuboids(j).anchorIndices(1)} = [neighbourList{elements(i).cuboids(j).anchorIndices(1)}, elements(i).cuboids(j).anchorIndices(2), elements(i).cuboids(j).anchorIndices(3), elements(i).cuboids(j).anchorIndices(5)];
+            neighbourList{elements(i).cuboids(j).anchorIndices(2)} = [neighbourList{elements(i).cuboids(j).anchorIndices(2)}, elements(i).cuboids(j).anchorIndices(1), elements(i).cuboids(j).anchorIndices(4), elements(i).cuboids(j).anchorIndices(6)];
+            neighbourList{elements(i).cuboids(j).anchorIndices(3)} = [neighbourList{elements(i).cuboids(j).anchorIndices(3)}, elements(i).cuboids(j).anchorIndices(1), elements(i).cuboids(j).anchorIndices(4), elements(i).cuboids(j).anchorIndices(7)];
+            neighbourList{elements(i).cuboids(j).anchorIndices(4)} = [neighbourList{elements(i).cuboids(j).anchorIndices(4)}, elements(i).cuboids(j).anchorIndices(2), elements(i).cuboids(j).anchorIndices(3), elements(i).cuboids(j).anchorIndices(8)];
+            neighbourList{elements(i).cuboids(j).anchorIndices(5)} = [neighbourList{elements(i).cuboids(j).anchorIndices(5)}, elements(i).cuboids(j).anchorIndices(1), elements(i).cuboids(j).anchorIndices(6), elements(i).cuboids(j).anchorIndices(7)];
+            neighbourList{elements(i).cuboids(j).anchorIndices(6)} = [neighbourList{elements(i).cuboids(j).anchorIndices(6)}, elements(i).cuboids(j).anchorIndices(2), elements(i).cuboids(j).anchorIndices(5), elements(i).cuboids(j).anchorIndices(8)];
+            neighbourList{elements(i).cuboids(j).anchorIndices(7)} = [neighbourList{elements(i).cuboids(j).anchorIndices(7)}, elements(i).cuboids(j).anchorIndices(3), elements(i).cuboids(j).anchorIndices(5), elements(i).cuboids(j).anchorIndices(8)];
+            neighbourList{elements(i).cuboids(j).anchorIndices(8)} = [neighbourList{elements(i).cuboids(j).anchorIndices(8)}, elements(i).cuboids(j).anchorIndices(4), elements(i).cuboids(j).anchorIndices(6), elements(i).cuboids(j).anchorIndices(7)];
+        end
+    end
 end
 
 relevantAnchors = find(~cellfun(@isempty, neighbourList));
@@ -184,7 +220,55 @@ anchorPoints = cellfun(@colon, ...
                        num2cell((root.anchorPoints(2, :) - root.anchorPoints(1, :)) / 2), ...
                        num2cell( root.anchorPoints(2, :)), ...
                        'UniformOutput', false);
-                   
+
+%%
+root.cuboids = [];
+for d = 1:3    
+    boxSize = [1, 1, 1];
+    boxSize(d) = 2;    
+    [xi, yi, zi] = meshgrid(1:boxSize(1), 1:boxSize(2), 1:boxSize(3));
+    cuboidAnchors = cellfun(@(a)a([1,3]), anchorPoints, 'UniformOutput', false);
+    cuboidAnchors{d} = anchorPoints{d};
+    boundaries = permute(cat(3, ...
+        [cuboidAnchors{1}(xi(:)); ...
+        cuboidAnchors{1}(xi(:) + 1)], ...
+        [cuboidAnchors{2}(yi(:)); ...
+        cuboidAnchors{2}(yi(:) + 1)], ...
+        [cuboidAnchors{3}(zi(:)); ...
+        cuboidAnchors{3}(zi(:) + 1)]), [1, 3, 2]);
+    newBoxDimensions = boundaries(2, :, 1) - boundaries(1, :, 1);
+
+    xi = sum(bsxfun(@gt, coordinates(root.vertexIndices, 1), cuboidAnchors{1}), 2);
+    yi = sum(bsxfun(@gt, coordinates(root.vertexIndices, 2), cuboidAnchors{2}), 2);
+    zi = sum(bsxfun(@gt, coordinates(root.vertexIndices, 3), cuboidAnchors{3}), 2);
+    
+    ind = sub2ind(boxSize([2, 1, 3]), yi, xi, zi);
+    categories = cellfun(@find, ...
+                    cellfun(@eq, ...
+                        repmat({ind}, [1, prod(boxSize)]), ...
+                        num2cell(1:prod(boxSize)), ...
+                        'UniformOutput', false), ...
+                    'UniformOutput', false);
+
+    validCategories = cellfun(@length, categories) >= cfg.MinVertices;
+    categories = categories(validCategories);
+    boxBoundaries = boundaries(:, :, validCategories);
+    if isempty(categories)
+        root.cuboids = [];
+        continue;
+    end
+    categories = cellfun(@(a,b) a(b), repmat({find(root.vertexIndices)}, size(categories)), categories, 'UniformOutput', false);
+    newVertices = repmat({false(size(root.vertexIndices))}, size(categories));
+    newVertices = cellfun(@(a,b)(ismember(1:length(a), b)), newVertices, categories, 'UniformOutput', false);
+    cuboidAnchors = {num2cell(boxBoundaries, [1,2])};
+
+    cuboids = cell(size(categories));
+    cuboids = cellfun(@setfield, cuboids, repmat({'vertexIndices'}, size(categories)), newVertices);
+    cuboids = cellfun(@setfield, num2cell(cuboids), repmat({'anchorPoints'}, size(categories)), squeeze(cuboidAnchors{:})', 'UniformOutput', false);
+    root.cuboids = [root.cuboids, cuboids{:}];
+end     
+                  
+%%              
 [xi, yi, zi] = meshgrid([1, 2], [1, 2], [1, 2]);
 boundaries = permute(cat(3, ...
     [anchorPoints{1}(xi(:)); ...
@@ -204,7 +288,7 @@ yi = sum(bsxfun(@gt, coordinates(root.vertexIndices, 2), anchorPoints{2}), 2);
 zi = sum(bsxfun(@gt, coordinates(root.vertexIndices, 3), anchorPoints{3}), 2);
 boxSize = [2, 2, 2];
 
-ind = sub2ind(boxSize, yi, xi, zi);
+ind = sub2ind(boxSize([2, 1, 3]), yi, xi, zi);
 categories = cellfun(@find, ...
                 cellfun(@eq, ...
                     repmat({ind}, [1, prod(boxSize)]), ...
@@ -222,14 +306,15 @@ end
 categories = cellfun(@(a,b) a(b), repmat({find(root.vertexIndices)}, size(categories)), categories, 'UniformOutput', false);
 newVertices = repmat({false(size(root.vertexIndices))}, size(categories));
 newVertices = cellfun(@(a,b)(ismember(1:length(a), b)), newVertices, categories, 'UniformOutput', false);
-anchorPoints = {num2cell(boundaries, [1,2])};
+newAnchorPoints = {num2cell(boundaries, [1,2])};
 
 children = cell(size(categories));
 children = cellfun(@setfield, children, repmat({'vertexIndices'}, size(categories)), newVertices);
-children = cellfun(@setfield, num2cell(children), repmat({'anchorPoints'}, size(categories)), squeeze(anchorPoints{:})');
+children = cellfun(@setfield, num2cell(children), repmat({'anchorPoints'}, size(categories)), squeeze(newAnchorPoints{:})');
 
 root.children = children;
 root.children = cellfun(@divideMesh, num2cell(root.children), repmat({cfg}, size(categories)), repmat({coordinates}, size(categories)), 'UniformOutput', false);
+
 
 end %end function
 
@@ -242,6 +327,11 @@ for i = 1:length(elements)
     boundingBox = toBoundingBox(elements(i).anchorPoints(1, :), elements(i).anchorPoints(2, :));
     elements(i).boundingBox = boundingBox;
     anchorPoints = cat(1, anchorPoints, boundingBox);
+    for j = 1:length(elements(i).cuboids)
+        boundingBox = toBoundingBox(elements(i).cuboids(j).anchorPoints(1, :), elements(i).cuboids(j).anchorPoints(2, :));
+        elements(i).cuboids(j).boundingBox = boundingBox;
+        anchorPoints = cat(1, anchorPoints, boundingBox);
+    end
 end
 anchorPoints = unique(anchorPoints, 'rows');
 root = addAnchors(root, anchorPoints);
@@ -253,6 +343,11 @@ end %end function
 function root = addAnchors(root, anchorPoints)
 
 [~, root.anchorIndices] = ismember(toBoundingBox(root.anchorPoints(1, :), root.anchorPoints(2, :)), anchorPoints, 'rows');
+if ~isempty(root.cuboids)
+    for i = 1:length(root.cuboids)
+        [~, root.cuboids(i).anchorIndices] = ismember(toBoundingBox(root.cuboids(i).anchorPoints(1, :), root.cuboids(i).anchorPoints(2, :)), anchorPoints, 'rows');
+    end
+end
 if ~isempty(root.children);    
     root.children = cellfun(@addAnchors, root.children, repmat({anchorPoints}, size(root.children)), 'UniformOutput', false);
 end

@@ -58,6 +58,8 @@ mode =                  tvm_getOption(configuration, 'Mode', 'rst');
     % 'rst'
 tolerance =           	tvm_getOption(configuration, 'TolX', 1e-4);
     % '1e-4'
+bounded =           	tvm_getOption(configuration, 'Clamp', []);
+    % '1e-4'
 
 contrastConfiguration = configuration;
 
@@ -66,12 +68,26 @@ contrastConfiguration = configuration;
 %contrast needs to be optimised and a zero when the variable does not
 %change.
 modeSettings = parseMode(mode);
-%finds the intial values that are required by fminsearch.
+
+% the intial values that are required by fminsearch.
 registrationParameters = [0, 0, 0, 1, 1, 1, 0, 0, 0];
 initialValues = registrationParameters(modeSettings);
-
-%finds the minimum contrast
 t = fminsearch(@(transformation)tvm_contrastAverage(transformation, arrayW, arrayP, voxelGrid, modeSettings, contrastConfiguration), initialValues, optimset('Display', 'off', 'TolX', tolerance));
+
+if ~isempty(bounded)
+    %translation, rotation
+    maxT = t;
+    maxValues = initialValues + bounded;    
+    zeroDefaults = ~initialValues;
+    maxT(zeroDefaults) = min([abs(maxT(zeroDefaults)); maxValues(zeroDefaults)]) .* sign(maxT(zeroDefaults));
+    
+    %scaling
+    oneDefaults = ~zeroDefaults;
+    maxT(oneDefaults) = min([max([maxT(oneDefaults); 1 ./ maxT(oneDefaults)]); maxValues(oneDefaults)]);
+    maxT(oneDefaults & t(oneDefaults) < 1) = 1 ./ maxT(oneDefaults & t(oneDefaults) < 1);    
+    t = maxT;
+end
+
 %the output obtained from fminsearch needs to be transformed in the required output
 
 registrationParameters(modeSettings) = t;

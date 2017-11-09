@@ -32,20 +32,13 @@ switch optimisationMethod
         c = -sum(tanh(Mv * (contrastValues - Q0)));
     case 'sum'
         c = -Mv * sum(contrastValues);
-    case 'sumOfSquares'
-        % SOME people think this is a good idea. It isn't
-        c = -Mv * sum(contrastValues .^ 2);
+    case 'count'
+        c = sum(contrastValues > 0);
     case 'centred'
         contrasts = contrastValues;
         [~, indices] = sort(contrasts);
         indices = indices(round(length(contrasts) * 0.10):round(length(contrasts) * 0.9));
         c = -sum(tanh(Mv * contrasts(indices)));
-    case 'both'
-        c = -Mv * sum(contrastValues);
-        contrastValuesPial = findContrast(transformMesh(arrayP, [rx, ry, rz], [sx, sy, sz], [tx, ty, tz], pivot), ...
-                                          transformMesh(arrayW, [rx, ry, rz], [sx, sy, sz], [tx, ty, tz], pivot), ...
-                                          voxelGrid, contrastConfiguration);
-        c = c -Mv * sum(contrastValuesPial);
     otherwise
         Q0 = 0;
         c = -sum(tanh(Mv * (contrastValues - Q0)));
