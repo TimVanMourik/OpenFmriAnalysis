@@ -45,6 +45,8 @@ minVertices             = tvm_getOption(configuration, 'i_MinimumVertices', 500)
     % default: empty
 cuboidelements          = tvm_getOption(configuration, 'i_CuboidElements', true);
     % default: empty
+addTetrahedraStructure  = tvm_getOption(configuration, 'i_Tetrahedra', false);
+    % default: empty
 alphaLevel              = tvm_getOption(configuration, 'i_NeighbourSmoothing', 0.5);
     % default: empty
 maskFile                = tvm_getOption(configuration, 'i_Mask', '');
@@ -113,9 +115,19 @@ minSize = max(1, minSize);
 voxelCoordinates    = [x(:), y(:), z(:), ones(numberOfVertices, 1)];
 %find neighbours in mesh
 root            = divideMesh(root, registereSurfaceW, voxelCoordinates, max(1, minSize));
-[root, anchors] = addNeighbourStructure(root, registereSurfaceW, voxelCoordinates);
+[root, anchors] = addNeighbourStructure(root);
 
+if addTetrahedraStructure
+    root = addTetrahedra(root, registereSurfaceW, voxelCoordinates);    
+    tetrahedra = [5, 1, 2, 3; ...
+                  6, 5, 2, 3; ...
+                  6, 7, 5, 3; ...
+                  6, 4, 7, 3; ...
+                  6, 2, 4, 3; ...
+                  6, 8, 7, 4];
+end
 
+%%
 for level = 0:floor(log2(max(dimensions) / minSize)) - 1 %per level, as smoothing is per level
     elementsCurrentLevel = elementsLevelN(root, level);
     if isempty(elementsCurrentLevel)
@@ -170,41 +182,50 @@ for level = 0:floor(log2(max(dimensions) / minSize)) - 1 %per level, as smoothin
     end
     anchors(relevantAnchors, :) = anchors(relevantAnchors, :) + cat(1, deformationVectorsSmoothed{:});
     
-    tetrahedra = [5, 1, 2, 3; ...
-              6, 5, 2, 3; ...
-              6, 7, 5, 3; ...
-              6, 4, 7, 3; ...
-              6, 2, 4, 3; ...
-              6, 8, 7, 4];
     %deform mesh
     for i = 1:length(elementsCurrentLevel)
-        currentAnchors = anchors(elementsCurrentLevel(i).anchorIndices, :);
-        deformations = cat(1, deformationVectorsSmoothed{cell2mat(cellfun(@find, cellfun(@eq, repmat({relevantAnchors}, size(elementsCurrentLevel(i).anchorIndices)), num2cell(elementsCurrentLevel(i).anchorIndices), 'UniformOutput', false), 'UniformOutput', false))});
-        centreOfMass = mean(currentAnchors, 1);
-        T = eye(4);
-        T(4, :) = centreOfMass;
-        transformedAnchors = currentAnchors / T;
-        M = transformedAnchors \ deformations;
-%         M = currentAnchors \ deformations + eye(4);
-        registereSurfaceW(elementsCurrentLevel(i).vertexIndices, :) = registereSurfaceW(elementsCurrentLevel(i).vertexIndices, :) + registereSurfaceW(elementsCurrentLevel(i).vertexIndices, :) / T * M;
-        registereSurfaceP(elementsCurrentLevel(i).vertexIndices, :) = registereSurfaceP(elementsCurrentLevel(i).vertexIndices, :) + registereSurfaceP(elementsCurrentLevel(i).vertexIndices, :) / T * M;
-       
-        voxelCoordinates(elementsCurrentLevel(i).voxelIndices, :) = voxelCoordinates(elementsCurrentLevel(i).voxelIndices, :) + voxelCoordinates(elementsCurrentLevel(i).voxelIndices, :) / T * M;
+        if addTetrahedraStructure
+            for j = 1:6
+                currentAnchors = anchors(elementsCurrentLevel(i).anchorIndices(tetrahedra(j, :)), :);
+                deformations = cat(1, deformationVectorsSmoothed{cell2mat(cellfun(@find, cellfun(@eq, repmat({relevantAnchors}, size(elementsCurrentLevel(i).anchorIndices(tetrahedra(j, :)))), num2cell(elementsCurrentLevel(i).anchorIndices(tetrahedra(j, :))), 'UniformOutput', false), 'UniformOutput', false))});
+                centreOfMass = mean(currentAnchors, 1);
+                T = eye(4);
+                T(4, :) = centreOfMass;
+                transformedAnchors = currentAnchors / T;
+                M = transformedAnchors \ deformations;
+                
+                % voxel coordinates
+                currentCoordinates = voxelCoordinates(elementsCurrentLevel(i).voxelIndices, :);            
+                currentCoordinates = currentCoordinates(elementsCurrentLevel(i).voxelTetrahedra(:, j), :) + currentCoordinates(elementsCurrentLevel(i).voxelTetrahedra(:, j), :) / T * M;
+                f = find(elementsCurrentLevel(i).voxelIndices);            
+                voxelCoordinates(f(elementsCurrentLevel(i).voxelTetrahedra(:, j)), :)  = currentCoordinates;
+                
+                % white matter surface coordinates
+                currentCoordinates = registereSurfaceW(elementsCurrentLevel(i).vertexIndices, :);            
+                currentCoordinates = currentCoordinates(elementsCurrentLevel(i).vertexTetrahedra(:, j), :) + currentCoordinates(elementsCurrentLevel(i).vertexTetrahedra(:, j), :) / T * M;
+                f = find(elementsCurrentLevel(i).vertexIndices);            
+                registereSurfaceW(f(elementsCurrentLevel(i).vertexTetrahedra(:, j)), :)  = currentCoordinates;
 
-%         for j = 1:6
-%             currentAnchors = anchors(elementsCurrentLevel(i).anchorIndices(tetrahedra(j, :)), :);
-%             deformations = cat(1, deformationVectorsSmoothed{cell2mat(cellfun(@find, cellfun(@eq, repmat({relevantAnchors}, size(elementsCurrentLevel(i).anchorIndices(tetrahedra(j, :)))), num2cell(elementsCurrentLevel(i).anchorIndices(tetrahedra(j, :))), 'UniformOutput', false), 'UniformOutput', false))});
-%             centreOfMass = mean(currentAnchors, 1);
-%             T = eye(4);
-%             T(4, :) = centreOfMass;
-%             transformedAnchors = currentAnchors / T;
-%             M = transformedAnchors \ deformations;
-%             c = voxelCoordinates(elementsCurrentLevel(i).voxelIndices, :);            
-%             a = c(root.voxelTetrahedra(:, j), :) + c(root.voxelTetrahedra(:, j), :) / T * M;
-%             f = find(elementsCurrentLevel(i).voxelIndices);            
-%             voxelCoordinates(f(root.voxelTetrahedra(:, j)), :)  = a;
-%         end
-    end    
+                % pial surface coordinates   
+                currentCoordinates = registereSurfaceP(elementsCurrentLevel(i).vertexIndices, :);            
+                currentCoordinates = currentCoordinates(elementsCurrentLevel(i).vertexTetrahedra(:, j), :) + currentCoordinates(elementsCurrentLevel(i).vertexTetrahedra(:, j), :) / T * M;
+                f = find(elementsCurrentLevel(i).vertexIndices);            
+                registereSurfaceP(f(elementsCurrentLevel(i).vertexTetrahedra(:, j)), :)  = currentCoordinates;
+            end
+        else
+            currentAnchors = anchors(elementsCurrentLevel(i).anchorIndices, :);
+            deformations = cat(1, deformationVectorsSmoothed{cell2mat(cellfun(@find, cellfun(@eq, repmat({relevantAnchors}, size(elementsCurrentLevel(i).anchorIndices)), num2cell(elementsCurrentLevel(i).anchorIndices), 'UniformOutput', false), 'UniformOutput', false))});
+            centreOfMass = mean(currentAnchors, 1);
+            T = eye(4);
+            T(4, :) = centreOfMass;
+            transformedAnchors = currentAnchors / T;
+            M = transformedAnchors \ deformations;
+%             M = currentAnchors \ deformations + eye(4);
+            registereSurfaceW(elementsCurrentLevel(i).vertexIndices, :) = registereSurfaceW(elementsCurrentLevel(i).vertexIndices, :) + registereSurfaceW(elementsCurrentLevel(i).vertexIndices, :) / T * M;
+            registereSurfaceP(elementsCurrentLevel(i).vertexIndices, :) = registereSurfaceP(elementsCurrentLevel(i).vertexIndices, :) + registereSurfaceP(elementsCurrentLevel(i).vertexIndices, :) / T * M;
+            voxelCoordinates(elementsCurrentLevel(i).voxelIndices, :) = voxelCoordinates(elementsCurrentLevel(i).voxelIndices, :) + voxelCoordinates(elementsCurrentLevel(i).voxelIndices, :) / T * M;
+        end
+    end
 end
 
 %% Saving output
@@ -359,16 +380,7 @@ function root = divideMesh(root, coordinates, voxels, minSize)
                         'UniformOutput', false), ...
                     'UniformOutput', false);
 
-
     %%
-    % validCategories = cellfun(@length, categories) >= cfg.MinVertices;
-    % categories = categories(validCategories);
-    % categoriesv = categoriesv(validCategories);
-    % boundaries = boundaries(:, :, validCategories);
-    % if any(categories)
-    %     root.children = {};
-    %     return;
-    % end
     categories = cellfun(@(a,b) a(b), repmat({find(root.vertexIndices)}, size(categories)), categories, 'UniformOutput', false);
     categoriesv = cellfun(@(a,b) a(b), repmat({find(root.voxelIndices)}, size(categoriesv)), categoriesv, 'UniformOutput', false);
     newVertices = repmat({false(size(root.vertexIndices))}, size(categories));
@@ -391,7 +403,7 @@ function root = divideMesh(root, coordinates, voxels, minSize)
 end %end function
 
 
-function [root, anchorPoints] = addNeighbourStructure(root, coordinates, voxels)
+function [root, anchorPoints] = addNeighbourStructure(root)
 
 elements = allElements(root);
 anchorPoints = [];
@@ -409,9 +421,7 @@ anchorPoints = unique(anchorPoints, 'rows');
 root = addAnchors(root);
 anchorPoints = [anchorPoints, ones(size(anchorPoints, 1), 1)];
 
-    function root = addAnchors(root)
-
-    root = addTetrahedra(root, coordinates, voxels);
+    function root = addAnchors(root)        
     [~, root.anchorIndices] = ismember(toBoundingBox(root.anchorPoints(1, :), root.anchorPoints(2, :)), anchorPoints, 'rows');
 
     if ~isempty(root.cuboids)
@@ -422,57 +432,62 @@ anchorPoints = [anchorPoints, ones(size(anchorPoints, 1), 1)];
     if ~isempty(root.children);    
         root.children = cellfun(@addAnchors, root.children, 'UniformOutput', false);
     end
-
     end %end function
-
 end %end function
 
 
 function root = addTetrahedra(root, coordinates, voxels)
 
-boundingBox = toBoundingBox(root.anchorPoints(1, :), root.anchorPoints(2, :));
+root = recursivelyAddTetrahedra(root);
 
-%Check which vertices are inside tetrahedra
-tetrahedra = [5, 1, 2, 3; ...
-              6, 5, 2, 3; ...
-              6, 7, 5, 3; ...
-              6, 4, 7, 3; ...
-              6, 2, 4, 3; ...
-              6, 8, 7, 4];
-          
-tetrahedra = permute(reshape(boundingBox(tetrahedra, :), [6, 4, 3]), [2, 3, 1]);
-tetrahedra = cat(2, tetrahedra, ones(4, 1, 6));    
-elementCoordinates = coordinates(root.vertexIndices, :);
-elementVoxels = voxels(root.voxelIndices, :);
-root.vertexTetrahedra = false(size(elementCoordinates, 1), 6);
-root.voxelTetrahedra = false(size(elementVoxels, 1), 6);
-% for j = 1:6
-% %%     add vertices
-%     d0 = cat(3, repmat(cat(3, tetrahedra(1, :, j), tetrahedra(2, :, j), tetrahedra(3, :, j), tetrahedra(4, :, j)), [size(elementCoordinates, 1), 1, 1]));
-%     d1 = cat(3, elementCoordinates, repmat(cat(3, tetrahedra(2, :, j), tetrahedra(3, :, j), tetrahedra(4, :, j)), [size(elementCoordinates, 1), 1, 1]));
-%     d2 = cat(3, repmat(tetrahedra(1, :, j), [size(elementCoordinates, 1), 1, 1]), elementCoordinates, repmat(cat(3, tetrahedra(3, :, j), tetrahedra(4, :, j)), [size(elementCoordinates, 1), 1, 1]));
-%     d3 = cat(3, repmat(cat(3, tetrahedra(1, :, j), tetrahedra(2, :, j)), [size(elementCoordinates, 1), 1, 1]), elementCoordinates, repmat(tetrahedra(4, :, j), [size(elementCoordinates, 1), 1, 1]));
-%     d4 = cat(3, repmat(cat(3, tetrahedra(1, :, j), tetrahedra(2, :, j), tetrahedra(3, :, j)), [size(elementCoordinates, 1), 1, 1]), elementCoordinates);        
-%     D = cat(4, d0, d1, d2, d3, d4);
-%     detD = sign(squeeze(cellfun(@det, num2cell(permute(D, [2, 3, 1, 4]), [1, 2]))));
-%     root.vertexTetrahedra(:, j) = all(bsxfun(@eq, detD(:, 1), detD(:, 2:end)), 2);
-% 
-% %%     add voxels
-%     d0 = cat(3, repmat(cat(3, tetrahedra(1, :, j), tetrahedra(2, :, j), tetrahedra(3, :, j), tetrahedra(4, :, j)), [size(elementVoxels, 1), 1, 1]));
-%     d1 = cat(3, elementVoxels, repmat(cat(3, tetrahedra(2, :, j), tetrahedra(3, :, j), tetrahedra(4, :, j)), [size(elementVoxels, 1), 1, 1]));
-%     d2 = cat(3, repmat(tetrahedra(1, :, j), [size(elementVoxels, 1), 1, 1]), elementVoxels, repmat(cat(3, tetrahedra(3, :, j), tetrahedra(4, :, j)), [size(elementVoxels, 1), 1, 1]));
-%     d3 = cat(3, repmat(cat(3, tetrahedra(1, :, j), tetrahedra(2, :, j)), [size(elementVoxels, 1), 1, 1]), elementVoxels, repmat(tetrahedra(4, :, j), [size(elementVoxels, 1), 1, 1]));
-%     d4 = cat(3, repmat(cat(3, tetrahedra(1, :, j), tetrahedra(2, :, j), tetrahedra(3, :, j)), [size(elementVoxels, 1), 1, 1]), elementVoxels);        
-%     D = cat(4, d0, d1, d2, d3, d4);
-%     detD = sign(squeeze(cellfun(@det, num2cell(permute(D, [2, 3, 1, 4]), [1, 2]))));
-%     root.voxelTetrahedra(:, j) = all(bsxfun(@eq, detD(:, 1), detD(:, 2:end)), 2);
-% end
+    function root = recursivelyAddTetrahedra(root)
+    boundingBox = toBoundingBox(root.anchorPoints(1, :), root.anchorPoints(2, :));
 
+    %Check which vertices are inside tetrahedra
+    tetrahedra = [5, 1, 2, 3; ...
+                  6, 5, 2, 3; ...
+                  6, 7, 5, 3; ...
+                  6, 4, 7, 3; ...
+                  6, 2, 4, 3; ...
+                  6, 8, 7, 4];
+
+    tetrahedra = permute(reshape(boundingBox(tetrahedra, :), [6, 4, 3]), [2, 3, 1]);
+    tetrahedra = cat(2, tetrahedra, ones(4, 1, 6));    
+    elementCoordinates = coordinates(root.vertexIndices, :);
+    elementVoxels = voxels(root.voxelIndices, :);
+    root.vertexTetrahedra = false(size(elementCoordinates, 1), 6);
+    root.voxelTetrahedra = false(size(elementVoxels, 1), 6);
+    for j = 1:6
+    %     add vertices
+        d0 = cat(3, repmat(cat(3, tetrahedra(1, :, j), tetrahedra(2, :, j), tetrahedra(3, :, j), tetrahedra(4, :, j)), [size(elementCoordinates, 1), 1, 1]));
+        d1 = cat(3, elementCoordinates, repmat(cat(3, tetrahedra(2, :, j), tetrahedra(3, :, j), tetrahedra(4, :, j)), [size(elementCoordinates, 1), 1, 1]));
+        d2 = cat(3, repmat(tetrahedra(1, :, j), [size(elementCoordinates, 1), 1, 1]), elementCoordinates, repmat(cat(3, tetrahedra(3, :, j), tetrahedra(4, :, j)), [size(elementCoordinates, 1), 1, 1]));
+        d3 = cat(3, repmat(cat(3, tetrahedra(1, :, j), tetrahedra(2, :, j)), [size(elementCoordinates, 1), 1, 1]), elementCoordinates, repmat(tetrahedra(4, :, j), [size(elementCoordinates, 1), 1, 1]));
+        d4 = cat(3, repmat(cat(3, tetrahedra(1, :, j), tetrahedra(2, :, j), tetrahedra(3, :, j)), [size(elementCoordinates, 1), 1, 1]), elementCoordinates);        
+        D = cat(4, d0, d1, d2, d3, d4);
+        detD = sign(squeeze(cellfun(@det, num2cell(permute(D, [2, 3, 1, 4]), [1, 2]))));
+        root.vertexTetrahedra(:, j) = all(bsxfun(@eq, detD(:, 1), detD(:, 2:end)), 2);
+
+    %     add voxels
+        d0 = cat(3, repmat(cat(3, tetrahedra(1, :, j), tetrahedra(2, :, j), tetrahedra(3, :, j), tetrahedra(4, :, j)), [size(elementVoxels, 1), 1, 1]));
+        d1 = cat(3, elementVoxels, repmat(cat(3, tetrahedra(2, :, j), tetrahedra(3, :, j), tetrahedra(4, :, j)), [size(elementVoxels, 1), 1, 1]));
+        d2 = cat(3, repmat(tetrahedra(1, :, j), [size(elementVoxels, 1), 1, 1]), elementVoxels, repmat(cat(3, tetrahedra(3, :, j), tetrahedra(4, :, j)), [size(elementVoxels, 1), 1, 1]));
+        d3 = cat(3, repmat(cat(3, tetrahedra(1, :, j), tetrahedra(2, :, j)), [size(elementVoxels, 1), 1, 1]), elementVoxels, repmat(tetrahedra(4, :, j), [size(elementVoxels, 1), 1, 1]));
+        d4 = cat(3, repmat(cat(3, tetrahedra(1, :, j), tetrahedra(2, :, j), tetrahedra(3, :, j)), [size(elementVoxels, 1), 1, 1]), elementVoxels);        
+        D = cat(4, d0, d1, d2, d3, d4);
+        detD = sign(squeeze(cellfun(@det, num2cell(permute(D, [2, 3, 1, 4]), [1, 2]))));
+        root.voxelTetrahedra(:, j) = all(bsxfun(@eq, detD(:, 1), detD(:, 2:end)), 2);
+    end
+        
+    if ~isempty(root.children);    
+        root.children = cellfun(@recursivelyAddTetrahedra, root.children, 'UniformOutput', false);
+    end
+
+    end %end function
 end %end function
 
 
 function boundingBox = toBoundingBox(lowerCorner, upperCorner)
-
 boundingBox = [ ...
     lowerCorner(1), lowerCorner(2), lowerCorner(3); ... %1
     lowerCorner(1), lowerCorner(2), upperCorner(3); ... %2
@@ -482,12 +497,10 @@ boundingBox = [ ...
     upperCorner(1), lowerCorner(2), upperCorner(3); ... %6
     upperCorner(1), upperCorner(2), lowerCorner(3); ... %7
     upperCorner(1), upperCorner(2), upperCorner(3)];    %8
-
 end %end function
 
 
 function elements = allElements(root)
-
 if isempty(root.children)
     elements = root;
     return;
