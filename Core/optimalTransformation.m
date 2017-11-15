@@ -84,7 +84,10 @@ if ~isempty(bounded)
     %scaling
     oneDefaults = ~zeroDefaults;
     maxT(oneDefaults) = min([max([maxT(oneDefaults); 1 ./ maxT(oneDefaults)]); maxValues(oneDefaults)]);
-    maxT(oneDefaults & t(oneDefaults) < 1) = 1 ./ maxT(oneDefaults & t(oneDefaults) < 1);    
+    maxT(oneDefaults & t(oneDefaults) < 1) = 1 ./ maxT(oneDefaults & t(oneDefaults) < 1); 
+    if any(maxT(oneDefaults) < 0)
+        maxT = initialValues;
+    end
     t = maxT;
 end
 
