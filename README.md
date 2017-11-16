@@ -1,7 +1,6 @@
-This is the ReadMe file of the OpenFmriAnalysis toolbox. Many of the functions for general fMRI preprocessing are wrappers for existing well-established neuroimaging tools. The wrappers should be seen as a consistent MATLAB command line interface to these functions, not as a reimplementation.
+# OpenFmriAnalysis toolbox. 
+Many of the functions for general fMRI preprocessing are wrappers for existing well-established neuroimaging tools. The wrappers should be seen as a consistent MATLAB command line interface to these functions, not as a reimplementation.
 A large part of these functions are written for my own convenience. A substantial part is new method development, mainly regarding laminar analysis.
-
-Copyright (C) 2013-2017, Tim van Mourik, Donders Institute for Brain, Cognition and Behaviour, Radboud University Nijmegen, The Netherlands DCCN
 
 Before you start:
 - Run the MATLAB function tvm_installLaminarAnalysisToolbox.m
@@ -21,3 +20,6 @@ cfg.o_OutputFile = ...;
 tvm_someFunction(cfg);
 ```
 Fields that represent input files and parameters start with an `i_`, output fields start with an `o_`. Most functions have the option of a `i_SubjectDirectory`, being the root directory to which the input and output files are relative. It defaults to the current working directory. All interface functions are added to the Graphical User Interface [Porcupine](https://github.com/TimVanMourik/Porcupine).
+
+
+Copyright (C) 2013-2017, Tim van Mourik, Donders Institute for Brain, Cognition and Behaviour, Radboud University Nijmegen, The Netherlands DCCN
