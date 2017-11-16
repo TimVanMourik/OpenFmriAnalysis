@@ -247,7 +247,7 @@ neighbours = [2, 3, 5;
           
 for i = 1:length(elements)
     for k = 1:size(neighbours, 1)
-        neighbourList{elements(k).anchorIndices(k)} = [neighbourList{elements(i).anchorIndices(k)}, elements(i).anchorIndices(neighbours(k, 1)), elements(i).anchorIndices(neighbours(k, 2)), elements(i).anchorIndices(neighbours(k, 3))];
+        neighbourList{elements(i).anchorIndices(k)} = [neighbourList{elements(i).anchorIndices(k)}, elements(i).anchorIndices(neighbours(k, 1)), elements(i).anchorIndices(neighbours(k, 2)), elements(i).anchorIndices(neighbours(k, 3))];
     end
 
     if withCuboids
