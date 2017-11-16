@@ -12,5 +12,12 @@ Before you start:
   - At some point with some MATLAB versions, the following line needed to be added to your .bashrc:
     - `export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH`
 
-	
-
+All functions that are part of the main pipeline can be found in the [Interface](https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface) section of the toolbox and all adhere to the same structure. Every function takes a single configuration structure as input. It does not generate output to the MATLAB workspace, but instead writes output to designated files as listed in the configuration. As an example:
+```
+cfg = [];
+cfg.i_SubjectDirectory = ...;
+cfg.i_ReferenceVolume = ...;
+cfg.o_OutputFile = ...;
+tvm_someFunction(cfg);
+```
+Fields that represent input files and parameters start with an `i_`, output fields start with an `o_`. Most functions have the option of a `i_SubjectDirectory`, being the root directory to which the input and output files are relative. It defaults to the current working directory. All interface functions are added to the Graphical User Interface [Porcupine](https://github.com/TimVanMourik/Porcupine).
