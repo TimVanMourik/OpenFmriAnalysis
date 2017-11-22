@@ -40,7 +40,7 @@ boundariesFiles         = fullfile(subjectDirectory, tvm_getOption(configuration
     %no default
 voxelDisplacementFile   = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_VoxelDisplacementMap'));
     %no default
-multiplication          = tvm_getOption(configuration, 'i_Multiplication', 1);
+transformation          = tvm_getOption(configuration, 'i_TransformationFunction', @(x)x);
     % 
 distortionDimension     = tvm_getOption(configuration, 'i_DistortionDimension');
     %no default
@@ -62,7 +62,7 @@ for i = 1:length(wSurface)
     shift = cumsum(~insideVolume);
     wSurface{i} = wSurface{i}(insideVolume, :);
     pSurface{i} = pSurface{i}(insideVolume, :);
-    displacement{i}(insideVolume, distortionDimension) = tvm_sampleVoxels(voxelDisplacement.volume * multiplication, wSurface{i}(:, 1:3));
+    displacement{i}(insideVolume, distortionDimension) = tvm_sampleVoxels(transformation(voxelDisplacement.volume), wSurface{i}(:, 1:3));
     map = [1:length(shift)]';
     wSurface{i} = wSurface{i} + displacement{i}(insideVolume, :);
     pSurface{i} = pSurface{i} + displacement{i}(insideVolume, :);
