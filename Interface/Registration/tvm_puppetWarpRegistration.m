@@ -114,11 +114,18 @@ root.voxelIndices   = find(boundingBox);
 minSize             = max(1, minSize);
 voxelCoordinates    = [x(:), y(:), z(:), ones(numberOfVertices, 1)];
 %find neighbours in mesh
-root            = divideMesh(root, registereSurfaceW, voxelCoordinates, minSize);
-[root, anchors] = addNeighbourStructure(root);
+root                = divideMesh(root, registereSurfaceW, voxelCoordinates, minSize);
+[root, anchors]     = addNeighbourStructure(root);
+
+if ~isempty(displacementMap)
+    displacementMap = fullfile(subjectDirectory, displacementMap);
+    withDisplacementMap = true;
+else
+    withDisplacementMap = false;
+end
 
 if addTetrahedraStructure
-    root = addTetrahedra(root, registereSurfaceW, voxelCoordinates);    
+    root = addTetrahedra(root, registereSurfaceW, voxelCoordinates, withDisplacementMap);    
     tetrahedra = [5, 1, 2, 3; ...
                   6, 5, 2, 3; ...
                   6, 7, 5, 3; ...
@@ -196,7 +203,9 @@ for level = 0:floor(log2(max(dimensions) / minSize)) - 1 %per level, as smoothin
                 % pial surface coordinates
                 registereSurfaceP(elementsCurrentLevel(i).vertexIndices(elementsCurrentLevel(i).vertexTetrahedra(:, j)), :) = registereSurfaceP(elementsCurrentLevel(i).vertexIndices(elementsCurrentLevel(i).vertexTetrahedra(:, j)), :) + registereSurfaceP(elementsCurrentLevel(i).vertexIndices(elementsCurrentLevel(i).vertexTetrahedra(:, j)), :) / T * M;
                  % voxel coordinates
-                voxelCoordinates(elementsCurrentLevel(i).voxelIndices(elementsCurrentLevel(i).voxelTetrahedra(:, j)), :) = voxelCoordinates(elementsCurrentLevel(i).voxelIndices(elementsCurrentLevel(i).voxelTetrahedra(:, j)), :) + voxelCoordinates(elementsCurrentLevel(i).voxelIndices(elementsCurrentLevel(i).voxelTetrahedra(:, j)), :) / T * M;
+                 if withDisplacementMap
+                    voxelCoordinates(elementsCurrentLevel(i).voxelIndices(elementsCurrentLevel(i).voxelTetrahedra(:, j)), :) = voxelCoordinates(elementsCurrentLevel(i).voxelIndices(elementsCurrentLevel(i).voxelTetrahedra(:, j)), :) + voxelCoordinates(elementsCurrentLevel(i).voxelIndices(elementsCurrentLevel(i).voxelTetrahedra(:, j)), :) / T * M;
+                 end
             end
         else
             currentAnchors = anchors(elementsCurrentLevel(i).anchorIndices, :);
@@ -211,7 +220,9 @@ for level = 0:floor(log2(max(dimensions) / minSize)) - 1 %per level, as smoothin
             % pial surface coordinates
             registereSurfaceP(elementsCurrentLevel(i).vertexIndices, :) = registereSurfaceP(elementsCurrentLevel(i).vertexIndices, :) + registereSurfaceP(elementsCurrentLevel(i).vertexIndices, :) / T * M;
             % voxel coordinates
-            voxelCoordinates(elementsCurrentLevel(i).voxelIndices, :) = voxelCoordinates(elementsCurrentLevel(i).voxelIndices, :) + voxelCoordinates(elementsCurrentLevel(i).voxelIndices, :) / T * M;
+            if withDisplacementMap
+                voxelCoordinates(elementsCurrentLevel(i).voxelIndices, :) = voxelCoordinates(elementsCurrentLevel(i).voxelIndices, :) + voxelCoordinates(elementsCurrentLevel(i).voxelIndices, :) / T * M;
+            end
         end
     end
 end
@@ -225,9 +236,9 @@ wSurface{2}(w2, :) = registereSurfaceW(end - sum(w2) + 1:end, :);
 pSurface{2}(w2, :) = registereSurfaceP(end - sum(w2) + 1:end, :);
 save(boundariesFileOut, definitions.WhiteMatterSurface, definitions.PialSurface, definitions.FaceData);
 
-if ~isempty(displacementMap)
+if withDisplacementMap
     referenceVolume.dt = [64, 0];
-    tvm_write4D(referenceVolume, reshape([x(:), y(:), z(:)] - voxelCoordinates(:, 1:3), [dimensions, 3]), fullfile(subjectDirectory, displacementMap));
+    tvm_write4D(referenceVolume, reshape([x(:), y(:), z(:)] - voxelCoordinates(:, 1:3), [dimensions, 3]), displacementMap);
 end
 
 end %end function
@@ -357,6 +368,7 @@ root = addAnchors(root);
 anchorPoints = [anchorPoints, ones(size(anchorPoints, 1), 1)];
 
     function root = addAnchors(root)
+        %This is a MAJOR bottleneck and could be done waaaay smarter!
     [~, root.anchorIndices] = ismember(toBoundingBox(root.anchorPoints(1, :), root.anchorPoints(2, :)), anchorPoints, 'rows');
 
     if ~isempty(root.cuboids)
@@ -371,7 +383,7 @@ anchorPoints = [anchorPoints, ones(size(anchorPoints, 1), 1)];
 end %end function
 
 
-function root = addTetrahedra(root, coordinates, voxels)
+function root = addTetrahedra(root, coordinates, voxels, withVoxels)
 root = recursivelyAddTetrahedra(root);
 
     function root = recursivelyAddTetrahedra(root)
@@ -402,13 +414,15 @@ root = recursivelyAddTetrahedra(root);
         root.vertexTetrahedra(:, j) = all(bsxfun(@eq, detD(:, 1), detD(:, 2:end)), 2);
 
 %         add voxels
-        d0 = cat(3, repmat(cat(3, tetrahedra(1, :, j), tetrahedra(2, :, j), tetrahedra(3, :, j), tetrahedra(4, :, j)), [size(elementVoxels, 1), 1, 1]));
-        d1 = cat(3, elementVoxels, repmat(cat(3, tetrahedra(2, :, j), tetrahedra(3, :, j), tetrahedra(4, :, j)), [size(elementVoxels, 1), 1, 1]));
-        d2 = cat(3, repmat(tetrahedra(1, :, j), [size(elementVoxels, 1), 1, 1]), elementVoxels, repmat(cat(3, tetrahedra(3, :, j), tetrahedra(4, :, j)), [size(elementVoxels, 1), 1, 1]));
-        d3 = cat(3, repmat(cat(3, tetrahedra(1, :, j), tetrahedra(2, :, j)), [size(elementVoxels, 1), 1, 1]), elementVoxels, repmat(tetrahedra(4, :, j), [size(elementVoxels, 1), 1, 1]));
-        d4 = cat(3, repmat(cat(3, tetrahedra(1, :, j), tetrahedra(2, :, j), tetrahedra(3, :, j)), [size(elementVoxels, 1), 1, 1]), elementVoxels);        
-        detD = sign(permute(cellfun(@det, num2cell(permute(cat(4, d0, d1, d2, d3, d4), [2, 3, 1, 4]), [1, 2])), [3, 4, 1, 2]));
-        root.voxelTetrahedra(:, j) = all(bsxfun(@eq, detD(:, 1), detD(:, 2:end)), 2);
+        if withVoxels
+            d0 = cat(3, repmat(cat(3, tetrahedra(1, :, j), tetrahedra(2, :, j), tetrahedra(3, :, j), tetrahedra(4, :, j)), [size(elementVoxels, 1), 1, 1]));
+            d1 = cat(3, elementVoxels, repmat(cat(3, tetrahedra(2, :, j), tetrahedra(3, :, j), tetrahedra(4, :, j)), [size(elementVoxels, 1), 1, 1]));
+            d2 = cat(3, repmat(tetrahedra(1, :, j), [size(elementVoxels, 1), 1, 1]), elementVoxels, repmat(cat(3, tetrahedra(3, :, j), tetrahedra(4, :, j)), [size(elementVoxels, 1), 1, 1]));
+            d3 = cat(3, repmat(cat(3, tetrahedra(1, :, j), tetrahedra(2, :, j)), [size(elementVoxels, 1), 1, 1]), elementVoxels, repmat(tetrahedra(4, :, j), [size(elementVoxels, 1), 1, 1]));
+            d4 = cat(3, repmat(cat(3, tetrahedra(1, :, j), tetrahedra(2, :, j), tetrahedra(3, :, j)), [size(elementVoxels, 1), 1, 1]), elementVoxels);        
+            detD = sign(permute(cellfun(@det, num2cell(permute(cat(4, d0, d1, d2, d3, d4), [2, 3, 1, 4]), [1, 2])), [3, 4, 1, 2]));
+            root.voxelTetrahedra(:, j) = all(bsxfun(@eq, detD(:, 1), detD(:, 2:end)), 2);
+        end
     end
     
     clear('d0', 'd1', 'd2', 'd3', 'd4', 'detD', 'boundingBox', 'tetrahedra', 'elementCoordinates', 'elementVoxels');
