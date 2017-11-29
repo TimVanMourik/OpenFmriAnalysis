@@ -95,7 +95,7 @@ save(boundariesFileOut, definitions.WhiteMatterSurface, definitions.PialSurface,
 
 if ~isempty(coregistrationFileOut)
     if ~isempty(coregistrationFileIn)
-        load(fullfile(subjectDirectory, coregistrationFileIn), definitions.CoregistrationMatrix, definitions.RegistrationParameters);
+        load(fullfile(subjectDirectory, coregistrationFileIn));
         
 %         coregistrationMatrix = eval(definitions.CoregistrationMatrix);
 %         registrationParameters = eval(definitions.RegistrationParameters);
