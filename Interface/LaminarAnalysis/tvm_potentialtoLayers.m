@@ -1,4 +1,4 @@
-function tvm_potentialtoLayers(configuration)
+function tvm_potentialToLayers(configuration)
 % TVM_POTENTIALTOLAYERS
 %   TVM_POTENTIALTOLAYERS(configuration)
 %   @todo Add description
