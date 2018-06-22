@@ -2,8 +2,8 @@
 Many of the functions for general fMRI preprocessing are wrappers for existing well-established neuroimaging tools. The wrappers should be seen as a consistent MATLAB command line interface to these functions, not as a reimplementation.
 A large part of these functions are written for my own convenience. A substantial part is new method development, mainly regarding laminar analysis.
 
-Before you start:
-- Run the MATLAB function tvm_installLaminarAnalysisToolbox.m
+## Installation
+- From this project root, run `tvm_installLaminarAnalysisToolbox.m` in MATLAB
 - SPM needs to be in your MATLAB path (used throughout the toolbox)
 - FreeSurfer and dcm2nii are used sporadically.
   - dcm2nii needs to be in the .profile if you want to convert dicoms to niftis
