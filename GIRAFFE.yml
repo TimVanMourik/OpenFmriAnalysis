@@ -4,3 +4,4 @@ tools:
     files:
       - GIRAFFE/porcupipeline.pork
     nodes:
+      - GIRAFFE/tvm_nodes.json
