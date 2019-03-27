@@ -22,6 +22,11 @@ import nipype.pipeline as pe
 
 
 
+
+
+
+
+
 #Create a workflow to connect all those nodes
 analysisflow = nipype.Workflow('MyWorkflow')
 analysisflow.connect(tvm_design_empty, "o_DesignMatrix", tvm_design_stimulus, "i_DesignMatrix")
@@ -42,6 +47,13 @@ analysisflow.connect(tvm_glm, "o_Betas", tvm_glmToFMap, "i_Betas")
 analysisflow.connect(tvm_glm, "o_ResidualSumOfSquares", tvm_glmToTMap, "i_ResidualSumOfSquares")
 analysisflow.connect(tvm_glm, "o_Betas", tvm_retroicorBackProject, "i_Betas")
 analysisflow.connect(tvm_retroicorBackProject, "o_BackProjection", tvm_movieFrom4D, "i_VolumeFile")
+analysisflow.connect(tvm_realignFunctionals, "o_MeanFunctional", tvm_useBbregister, "i_RegistrationVolume")
+analysisflow.connect(tvm_reconAll, "o_FreeSurferFolder", tvm_useBbregister, "i_FreeSurferFolder")
+analysisflow.connect(tvm_useBbregister, "o_Boundaries", tvm_recursiveBoundaryRegistration, "i_Boundaries")
+analysisflow.connect(tvm_useBbregister, "o_Boundaries", tvm_volumeWithBoundariesToMovie, "i_Boundaries")
+analysisflow.connect(tvm_useBbregister, "i_RegistrationVolume", tvm_volumeWithBoundariesToMovie, "i_ReferenceVolume")
+analysisflow.connect(tvm_recursiveBoundaryRegistration, "i_ReferenceVolume", tvm_volumeWithBoundariesToMovie_1, "i_ReferenceVolume")
+analysisflow.connect(tvm_recursiveBoundaryRegistration, "o_Boundaries", tvm_volumeWithBoundariesToMovie_1, "i_Boundaries")
 
 #Run the workflow
 plugin = 'MultiProc' #adjust your desired plugin here
