@@ -27,6 +27,17 @@ import nipype.pipeline as pe
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 #Create a workflow to connect all those nodes
 analysisflow = nipype.Workflow('MyWorkflow')
 analysisflow.connect(tvm_design_empty, "o_DesignMatrix", tvm_design_stimulus, "i_DesignMatrix")
@@ -54,6 +65,22 @@ analysisflow.connect(tvm_useBbregister, "o_Boundaries", tvm_volumeWithBoundaries
 analysisflow.connect(tvm_useBbregister, "i_RegistrationVolume", tvm_volumeWithBoundariesToMovie, "i_ReferenceVolume")
 analysisflow.connect(tvm_recursiveBoundaryRegistration, "i_ReferenceVolume", tvm_volumeWithBoundariesToMovie_1, "i_ReferenceVolume")
 analysisflow.connect(tvm_recursiveBoundaryRegistration, "o_Boundaries", tvm_volumeWithBoundariesToMovie_1, "i_Boundaries")
+analysisflow.connect(tvm_recursiveBoundaryRegistration, "o_DisplacementMap", tvm_boundariesToObj, "i_Boundaries")
+analysisflow.connect(tvm_boundariesToObj, "o_ObjWhite", tvm_makeLevelSet, "i_ObjWhite")
+analysisflow.connect(tvm_boundariesToObj, "o_ObjPial", tvm_makeLevelSet, "i_ObjPial")
+analysisflow.connect(tvm_makeLevelSet, "o_White", tvm_laplacePotentials, "i_White")
+analysisflow.connect(tvm_makeLevelSet, "o_Pial", tvm_laplacePotentials, "i_Pial")
+analysisflow.connect(tvm_laplacePotentials, "o_LaplacePotential", tvm_gradient, "i_Potential")
+analysisflow.connect(tvm_gradient, "o_Gradient", tvm_computeDivergence, "i_VectorField")
+analysisflow.connect(tvm_computeDivergence, "o_Divergence", tvm_volumetricLayering, "i_Curvature")
+analysisflow.connect(tvm_gradient, "o_Gradient", tvm_volumetricLayering, "i_Gradient")
+analysisflow.connect(tvm_laplacePotentials, "i_Pial", tvm_volumetricLayering, "i_Pial")
+analysisflow.connect(tvm_laplacePotentials, "i_White", tvm_volumetricLayering, "i_White")
+analysisflow.connect(tvm_volumetricLayering, "o_LevelSet", tvm_levelSetToObj, "i_LevelSet")
+analysisflow.connect(tvm_levelSetToObj, "o_ObjFile", tvm_objToBoundary, "i_ObjFile")
+analysisflow.connect(tvm_objToBoundary, "o_BoundaryFile", tvm_volumeWithBoundariesToMovie_2, "i_Boundaries")
+analysisflow.connect(tvm_volumetricLayering, "o_Layering", tvm_roiToDesignMatrix, "i_Layers")
+analysisflow.connect(tvm_roiToDesignMatrix, "o_DesignMatrix", tvm_designMatrixToTimeCourse, "i_DesignMatrix")
 
 #Run the workflow
 plugin = 'MultiProc' #adjust your desired plugin here
