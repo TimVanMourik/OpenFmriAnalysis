@@ -16,6 +16,12 @@ import nipype.pipeline as pe
 
 
 
+
+
+
+
+
+
 #Create a workflow to connect all those nodes
 analysisflow = nipype.Workflow('MyWorkflow')
 analysisflow.connect(tvm_design_empty, "o_DesignMatrix", tvm_design_stimulus, "i_DesignMatrix")
@@ -26,6 +32,16 @@ analysisflow.connect(tvm_design_motionRegression, "o_DesignMatrix", tvm_design_r
 analysisflow.connect(tvm_design_retroicor, "o_DesignMatrix", tvm_design_retroicor_1, "i_DesignMatrix")
 analysisflow.connect(tvm_design_retroicor_1, "o_DesignMatrix", tvm_regressConfounds, "i_DesignMatrix")
 analysisflow.connect(tvm_realignFunctionals, "o_OutputDirectory", tvm_regressConfounds, "i_FunctionalFolder")
+analysisflow.connect(tvm_regressConfounds, "o_FilteredFolder", tvm_smoothFunctionals, "i_SourceDirectory")
+analysisflow.connect(tvm_smoothFunctionals, "o_OutputDirectory", tvm_glm, "i_FunctionalFiles")
+analysisflow.connect(tvm_glm, "o_Betas", tvm_glmToTMap, "i_Betas")
+analysisflow.connect(tvm_design_retroicor_1, "o_DesignMatrix", tvm_retroicorBackProject, "i_DesignMatrix")
+analysisflow.connect(tvm_glm, "i_DesignMatrix", tvm_glmToFMap, "i_DesignMatrix")
+analysisflow.connect(tvm_glm, "o_ResidualSumOfSquares", tvm_glmToFMap, "i_ResidualSumOfSquares")
+analysisflow.connect(tvm_glm, "o_Betas", tvm_glmToFMap, "i_Betas")
+analysisflow.connect(tvm_glm, "o_ResidualSumOfSquares", tvm_glmToTMap, "i_ResidualSumOfSquares")
+analysisflow.connect(tvm_glm, "o_Betas", tvm_retroicorBackProject, "i_Betas")
+analysisflow.connect(tvm_retroicorBackProject, "o_BackProjection", tvm_movieFrom4D, "i_VolumeFile")
 
 #Run the workflow
 plugin = 'MultiProc' #adjust your desired plugin here

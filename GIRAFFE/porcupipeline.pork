@@ -31,6 +31,46 @@
     {
       "from": "ddbe3057-5677-4a1c-8d70-cb6339665a47",
       "to": "9fdeb70c-5873-4f61-94fd-6352e00eca66"
+    },
+    {
+      "from": "7ae14f16-d950-4918-996d-3420622ecc82",
+      "to": "59a66fbc-5792-436e-9bb2-a386efa071ed"
+    },
+    {
+      "from": "df25ae3d-85aa-4dc0-b768-265ce9eb4adb",
+      "to": "654b66b5-51a8-4abd-89e3-07dfe65eca79"
+    },
+    {
+      "from": "466e118e-e766-47eb-8c91-807337f4fc3a",
+      "to": "83359a4b-0f6a-4580-88d3-9ad37fb9c796"
+    },
+    {
+      "from": "60397838-62eb-4799-a645-277adda5522e",
+      "to": "d06c910f-789e-4931-913b-a484ce1e27f5"
+    },
+    {
+      "from": "7936c641-c2b4-4ed5-b398-8fd017ccae95",
+      "to": "4577fdc7-ac45-4b29-8df5-9cb3baa3b209"
+    },
+    {
+      "from": "7fc1bce2-7d1d-4de6-ba7e-4064e40c8842",
+      "to": "85249c4a-4a44-4297-88f3-4a88b2775a3c"
+    },
+    {
+      "from": "466e118e-e766-47eb-8c91-807337f4fc3a",
+      "to": "24bbace1-3cf1-46b9-a250-17187b1774b3"
+    },
+    {
+      "from": "7fc1bce2-7d1d-4de6-ba7e-4064e40c8842",
+      "to": "1f1d3c7c-2b07-41b7-9f85-ddd4a8cd4f5e"
+    },
+    {
+      "from": "466e118e-e766-47eb-8c91-807337f4fc3a",
+      "to": "d6042333-ff7d-454b-90d7-b062d2e0e7c7"
+    },
+    {
+      "from": "9fb07fe5-676b-4cca-abb5-6aa62b18b01b",
+      "to": "aab455e1-fdc0-4320-a18a-154810ce45e2"
     }
   ],
   "nodes": [
@@ -810,8 +850,8 @@
         }
       ],
       "position": [
-        -52.283197560845224,
-        308.6496389281503
+        116.61382087177196,
+        396.6168020140878
       ],
       "code": [
         {
@@ -899,8 +939,8 @@
         }
       ],
       "position": [
-        -508.95573231743845,
-        79.4977030329739
+        -273.2036418633369,
+        90.05376382398953
       ],
       "code": [
         {
@@ -912,6 +952,709 @@
         }
       ],
       "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Preprocessing"
+    },
+    {
+      "name": "tvm_smoothFunctionals",
+      "class": "tvm_smoothFunctionals",
+      "category": [
+        "TvM",
+        "Preprocessing"
+      ],
+      "ports": [
+        {
+          "base": "i_SubjectDirectory",
+          "editable": true,
+          "id": "6e093ecc-0aa6-4472-b404-0f11417b3525",
+          "input": true,
+          "inputPort": "6e5cb705-6b2c-4208-8d6a-08226acebe77",
+          "name": "i_SubjectDirectory",
+          "output": true,
+          "outputPort": "e1a7c974-3928-40f3-9225-3c48aad3c42c",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_SourceDirectory",
+          "editable": true,
+          "id": "fa416afa-fa21-486a-8d46-6cf736599f2e",
+          "input": true,
+          "inputPort": "59a66fbc-5792-436e-9bb2-a386efa071ed",
+          "name": "i_SourceDirectory",
+          "output": true,
+          "outputPort": "088ef9ca-6014-4196-ac57-a98f72d535ac",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_SmoothingKernel",
+          "editable": true,
+          "id": "4876c173-0ac4-49d7-931d-6b9c6ccd6454",
+          "input": true,
+          "inputPort": "edbe9d6c-cfc8-4d09-afe2-bb56bf5c0e07",
+          "name": "i_SmoothingKernel",
+          "output": true,
+          "outputPort": "f980ad4a-4326-40f7-be2a-c4d0b866eabd",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_Qsub",
+          "editable": true,
+          "id": "16183621-1524-46c0-8bf3-ade15ddded87",
+          "input": true,
+          "inputPort": "82ec8776-925f-4d09-8a4c-a18c4231468e",
+          "name": "i_Qsub",
+          "output": true,
+          "outputPort": "d26f34f5-cb86-44da-8821-9a2339691ff2",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "o_OutputDirectory",
+          "editable": true,
+          "id": "35e308be-1ec9-4786-867b-770d53e22de0",
+          "input": false,
+          "inputPort": false,
+          "name": "o_OutputDirectory",
+          "output": true,
+          "outputPort": "df25ae3d-85aa-4dc0-b768-265ce9eb4adb",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        }
+      ],
+      "position": [
+        442.8958545589707,
+        658.8680646259655
+      ],
+      "code": [
+        {
+          "language": "TvM",
+          "comment": "",
+          "argument": {
+            "name": "tvm_smoothFunctionals"
+          }
+        }
+      ],
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Preprocessing"
+    },
+    {
+      "name": "tvm_glm",
+      "class": "tvm_glm",
+      "category": [
+        "TvM",
+        "Activation"
+      ],
+      "ports": [
+        {
+          "base": "i_SubjectDirectory",
+          "editable": true,
+          "id": "9d73ef43-3939-4a77-9a3e-36e0d3cfa73b",
+          "input": true,
+          "inputPort": "218c679b-a629-4d4a-89a5-c0c3b3c0651f",
+          "name": "i_SubjectDirectory",
+          "output": true,
+          "outputPort": "502beefa-d5f1-4225-ab40-368266464972",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_DesignMatrix",
+          "editable": true,
+          "id": "4d1c75ae-87fa-4f2b-82a0-542477138fb1",
+          "input": true,
+          "inputPort": "106b0791-5e07-4025-b72d-cd05c03072f2",
+          "name": "i_DesignMatrix",
+          "output": true,
+          "outputPort": "7936c641-c2b4-4ed5-b398-8fd017ccae95",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_ReferenceVolume",
+          "editable": true,
+          "id": "3c0fa381-00cc-4cba-bc39-e8983a507230",
+          "input": true,
+          "inputPort": "b33bd2b5-c094-4d1b-9234-af2d605e15cf",
+          "name": "i_ReferenceVolume",
+          "output": true,
+          "outputPort": "2ec39fa4-d9de-4218-ad7c-856daafdce9e",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_SourceDirectory",
+          "editable": true,
+          "id": "9cc03829-6c08-4dc1-b736-124de85cefb5",
+          "input": true,
+          "inputPort": "18a131f4-7c7f-4a65-ba74-1962180cd706",
+          "name": "i_SourceDirectory",
+          "output": true,
+          "outputPort": "a1bef376-bdec-45ad-8f15-9dab03f0a33f",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_FunctionalFiles",
+          "editable": true,
+          "id": "5ab0cd48-3730-4c04-9998-a3d7bcdbc1b5",
+          "input": true,
+          "inputPort": "654b66b5-51a8-4abd-89e3-07dfe65eca79",
+          "name": "i_FunctionalFiles",
+          "output": true,
+          "outputPort": "6869a57e-7a78-4a67-a875-3d4eabbebc02",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_Mask",
+          "editable": true,
+          "id": "ce054d99-41f5-45b3-8cca-3bd2264c8e78",
+          "input": true,
+          "inputPort": "4521e59f-7208-4f6a-8ac0-8277a106b3fb",
+          "name": "i_Mask",
+          "output": true,
+          "outputPort": "3ebdc54e-81db-4451-86bd-640ad3afb815",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_FunctionalSelection",
+          "editable": true,
+          "id": "15b15f3e-79fe-426d-a4de-ac456affeab7",
+          "input": true,
+          "inputPort": "282c79b2-8777-443f-86b6-b92e28130391",
+          "name": "i_FunctionalSelection",
+          "output": true,
+          "outputPort": "8bd2f90d-c739-400c-83ea-731bdf849e73",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "o_Betas",
+          "editable": true,
+          "id": "d0fd4aea-60eb-480e-9df6-91335ab0a179",
+          "input": false,
+          "inputPort": false,
+          "name": "o_Betas",
+          "output": true,
+          "outputPort": "466e118e-e766-47eb-8c91-807337f4fc3a",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "o_ResidualSumOfSquares",
+          "editable": true,
+          "id": "77828ab1-afdb-4864-ad33-d7ebec4e0a36",
+          "input": false,
+          "inputPort": false,
+          "name": "o_ResidualSumOfSquares",
+          "output": true,
+          "outputPort": "7fc1bce2-7d1d-4de6-ba7e-4064e40c8842",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        }
+      ],
+      "position": [
+        761.6271964838053,
+        734.3450182885782
+      ],
+      "code": [
+        {
+          "language": "TvM",
+          "comment": "",
+          "argument": {
+            "name": "tvm_glm"
+          }
+        }
+      ],
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Activation"
+    },
+    {
+      "name": "tvm_glmToFMap",
+      "class": "tvm_glmToFMap",
+      "category": [
+        "TvM",
+        "Activation"
+      ],
+      "ports": [
+        {
+          "base": "i_SubjectDirectory",
+          "editable": true,
+          "id": "999fae41-c04d-4616-b714-7665cfcb3354",
+          "input": true,
+          "inputPort": "8df618d8-00f9-45c9-b442-30199078d90d",
+          "name": "i_SubjectDirectory",
+          "output": true,
+          "outputPort": "f1f84028-bda4-4133-a191-160fea279f33",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_DesignMatrix",
+          "editable": true,
+          "id": "b6b12a6f-2f4b-468f-9e4e-b8bb25c71557",
+          "input": true,
+          "inputPort": "4577fdc7-ac45-4b29-8df5-9cb3baa3b209",
+          "name": "i_DesignMatrix",
+          "output": true,
+          "outputPort": "292bf6ea-c2db-48e0-9bdd-8a66902ecd92",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_Betas",
+          "editable": true,
+          "id": "88e73917-78de-49f4-abd6-bdaa5b207597",
+          "input": true,
+          "inputPort": "24bbace1-3cf1-46b9-a250-17187b1774b3",
+          "name": "i_Betas",
+          "output": true,
+          "outputPort": "bda4dc75-63d8-420b-b471-ce1a37a5b387",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_ResidualSumOfSquares",
+          "editable": true,
+          "id": "f14d114f-3fdb-4d48-a11e-67d03ca78c44",
+          "input": true,
+          "inputPort": "85249c4a-4a44-4297-88f3-4a88b2775a3c",
+          "name": "i_ResidualSumOfSquares",
+          "output": true,
+          "outputPort": "264d818e-3082-43e9-88a8-be5becb19cc4",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_Contrast",
+          "editable": true,
+          "id": "b4b4be46-0377-478b-a078-a64ebebda3ed",
+          "input": true,
+          "inputPort": "a17404db-6df5-4164-999a-f151b51e94b6",
+          "name": "i_Contrast",
+          "output": true,
+          "outputPort": "33131134-77d0-4919-818e-dfeb3e949a27",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "o_FMap",
+          "editable": true,
+          "id": "0a14120b-24d7-4fe4-be84-e5ce42942973",
+          "input": false,
+          "inputPort": false,
+          "name": "o_FMap",
+          "output": true,
+          "outputPort": "ffc58715-331b-4b22-9faa-b4ae81e5dc2a",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        }
+      ],
+      "position": [
+        1262.957981184544,
+        897.1223349121884
+      ],
+      "code": [
+        {
+          "language": "TvM",
+          "comment": "",
+          "argument": {
+            "name": "tvm_glmToFMap"
+          }
+        }
+      ],
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Activation"
+    },
+    {
+      "name": "tvm_glmToTMap",
+      "class": "tvm_glmToTMap",
+      "category": [
+        "TvM",
+        "Activation"
+      ],
+      "ports": [
+        {
+          "base": "i_SubjectDirectory",
+          "editable": true,
+          "id": "dc9496a9-f582-4c3b-a321-64809023748d",
+          "input": true,
+          "inputPort": "e6db341e-3529-4f0e-a55f-303f29075aaf",
+          "name": "i_SubjectDirectory",
+          "output": true,
+          "outputPort": "b8cd516f-9e34-47de-977c-483fcd2754a8",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_DesignMatrix",
+          "editable": true,
+          "id": "898eebe9-b3a5-4fc8-9291-73e4c28f288a",
+          "input": true,
+          "inputPort": "de0e7ebe-44d5-44a2-9ab7-512b1964a9f4",
+          "name": "i_DesignMatrix",
+          "output": true,
+          "outputPort": "90227a51-136d-486c-8bfe-cf6b1a678a14",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_Betas",
+          "editable": true,
+          "id": "9fe1ee4d-dfb6-4051-9cc4-14080cc952fb",
+          "input": true,
+          "inputPort": "83359a4b-0f6a-4580-88d3-9ad37fb9c796",
+          "name": "i_Betas",
+          "output": true,
+          "outputPort": "6de15fb7-2aa4-49d5-8043-51f098a6c336",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_ResidualSumOfSquares",
+          "editable": true,
+          "id": "752da921-7c68-4436-9449-f3c92216ea18",
+          "input": true,
+          "inputPort": "1f1d3c7c-2b07-41b7-9f85-ddd4a8cd4f5e",
+          "name": "i_ResidualSumOfSquares",
+          "output": true,
+          "outputPort": "4fac35fc-8acf-4205-abbb-6905646a0fe9",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_Contrast",
+          "editable": true,
+          "id": "9ae072d7-c5a3-4849-8b46-2a9e441f69c3",
+          "input": true,
+          "inputPort": "e21e2c30-4fd2-4c07-850d-a655b2340f9b",
+          "name": "i_Contrast",
+          "output": true,
+          "outputPort": "ad651744-6916-4735-a3bb-73e8d6dbb9cf",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "o_TMap",
+          "editable": true,
+          "id": "1830180b-6e7e-4d7f-8f22-1a40b9292730",
+          "input": false,
+          "inputPort": false,
+          "name": "o_TMap",
+          "output": true,
+          "outputPort": "2df2ec2b-7cb2-4c1d-8ea2-70f11ec90775",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        }
+      ],
+      "position": [
+        1188.2362770571578,
+        670.7577532428202
+      ],
+      "code": [
+        {
+          "language": "TvM",
+          "comment": "",
+          "argument": {
+            "name": "tvm_glmToTMap"
+          }
+        }
+      ],
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Activation"
+    },
+    {
+      "name": "tvm_retroicorBackProject",
+      "class": "tvm_retroicorBackProject",
+      "category": [
+        "TvM",
+        "Utilities"
+      ],
+      "ports": [
+        {
+          "base": "i_SubjectDirectory",
+          "editable": true,
+          "id": "f7b96cda-2acb-49f3-835d-f5798581a643",
+          "input": true,
+          "inputPort": "b5a42114-2a15-4924-bc69-7af7763e3d77",
+          "name": "i_SubjectDirectory",
+          "output": true,
+          "outputPort": "7f8c21a7-f12b-4645-a813-a32aa87b5e3a",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_DesignMatrix",
+          "editable": true,
+          "id": "0df2e5f3-66ef-4098-a990-53623e237c2b",
+          "input": true,
+          "inputPort": "d06c910f-789e-4931-913b-a484ce1e27f5",
+          "name": "i_DesignMatrix",
+          "output": true,
+          "outputPort": "c7cdcd6d-5667-4238-9134-e411d7aca72b",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_Betas",
+          "editable": true,
+          "id": "1b6791ea-987b-4129-ba95-29b8331ab8de",
+          "input": true,
+          "inputPort": "d6042333-ff7d-454b-90d7-b062d2e0e7c7",
+          "name": "i_Betas",
+          "output": true,
+          "outputPort": "d4f65b03-0d51-478a-8cfd-6f24e0f83454",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_TemplateVolume",
+          "editable": true,
+          "id": "b2e71b53-c2ea-4d78-b8a3-f24fd7676bb8",
+          "input": true,
+          "inputPort": "8e77ec09-7d3b-480c-bf92-6992c307ae05",
+          "name": "i_TemplateVolume",
+          "output": true,
+          "outputPort": "edc9d9dc-b6bc-4b8f-b6f7-4bc8a6b0e5e2",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_Resolution",
+          "editable": true,
+          "id": "b2934182-926d-4ea4-a394-4e1a7a3f59b9",
+          "input": true,
+          "inputPort": "794b4ba9-f0aa-4f16-b8ca-5dfffee7c3d7",
+          "name": "i_Resolution",
+          "output": true,
+          "outputPort": "48f0cec9-7389-453d-9a3c-a4f9094b0b9d",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_Order",
+          "editable": true,
+          "id": "2aed8bbb-cf14-45da-8d41-ffa695f50354",
+          "input": true,
+          "inputPort": "33aa441c-469c-4204-a43e-992faa07a674",
+          "name": "i_Order",
+          "output": true,
+          "outputPort": "37abb656-d5d1-4ca3-a3ac-efd17c604507",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_PhysioType",
+          "editable": true,
+          "id": "98854c8c-c44c-4ccb-b46b-2537bb4c5c2a",
+          "input": true,
+          "inputPort": "ead4f706-8e4b-42bf-b6b5-8ade92995e6c",
+          "name": "i_PhysioType",
+          "output": true,
+          "outputPort": "07fcaf31-24b4-401f-a751-dadfbd4265ca",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "o_BackProjection",
+          "editable": true,
+          "id": "e147b6b8-8de5-41b0-9826-34b037cef64c",
+          "input": false,
+          "inputPort": false,
+          "name": "o_BackProjection",
+          "output": true,
+          "outputPort": "9fb07fe5-676b-4cca-abb5-6aa62b18b01b",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        }
+      ],
+      "position": [
+        1064.3243085611148,
+        1128.5481224323134
+      ],
+      "code": [
+        {
+          "language": "TvM",
+          "comment": "",
+          "argument": {
+            "name": "tvm_retroicorBackProject"
+          }
+        }
+      ],
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Utilities"
+    },
+    {
+      "name": "tvm_movieFrom4D",
+      "class": "tvm_movieFrom4D",
+      "category": [
+        "TvM",
+        "Utilities"
+      ],
+      "ports": [
+        {
+          "base": "i_SubjectDirectory",
+          "editable": true,
+          "id": "0c98b405-8268-440b-a9e6-82275ed4f50b",
+          "input": true,
+          "inputPort": "c89ead4e-bad8-4356-80d3-09e8ddbeb7f0",
+          "name": "i_SubjectDirectory",
+          "output": true,
+          "outputPort": "ce30a880-d5ae-4c09-9f5a-931c12cb96b2",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_VolumeFile",
+          "editable": true,
+          "id": "06c00ef4-6dda-45de-8f24-8833b40a8def",
+          "input": true,
+          "inputPort": "aab455e1-fdc0-4320-a18a-154810ce45e2",
+          "name": "i_VolumeFile",
+          "output": true,
+          "outputPort": "7a6f2b17-0280-410f-84b4-df7e40ed6c20",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_Axis",
+          "editable": true,
+          "id": "43418c6f-900a-4c3e-b438-9cdf9f864bda",
+          "input": true,
+          "inputPort": "2fd395fc-2b8d-4697-ace7-84a4ea0a29d2",
+          "name": "i_Axis",
+          "output": true,
+          "outputPort": "57f5628f-53fc-43aa-ab7a-39413df2828f",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_FramesPerSecond",
+          "editable": true,
+          "id": "2b4f6097-4290-4d67-9a46-1f41a65a8b4a",
+          "input": true,
+          "inputPort": "1ff30489-5d07-449f-91a9-ea8a1ca330e9",
+          "name": "i_FramesPerSecond",
+          "output": true,
+          "outputPort": "29d6a3d0-d21b-410b-9f50-822795ab91f6",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_MovieQuality",
+          "editable": true,
+          "id": "ecc3fd72-663b-4ba0-9d50-3dff40f9e344",
+          "input": true,
+          "inputPort": "1428a45a-49c5-4901-bb4d-acbfc207c60b",
+          "name": "i_MovieQuality",
+          "output": true,
+          "outputPort": "6fc52305-a105-431e-995c-8ada5227560f",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_ColorLimits",
+          "editable": true,
+          "id": "d1267998-e85d-4dea-937c-d7ae8d53a8af",
+          "input": true,
+          "inputPort": "43f8c1fd-fd72-44c7-9f83-da53f1d70424",
+          "name": "i_ColorLimits",
+          "output": true,
+          "outputPort": "3faa59b8-9688-43bd-a284-0294b7f18164",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_Slice",
+          "editable": true,
+          "id": "ef34311c-02d6-4a1b-bfa8-05c726030f7c",
+          "input": true,
+          "inputPort": "d73dc33f-f190-42b7-b40f-416413de2f00",
+          "name": "i_Slice",
+          "output": true,
+          "outputPort": "fd7cbf47-6ba7-4282-956b-1204b3f1cd5e",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "i_Contrast",
+          "editable": true,
+          "id": "a38379c1-3017-484d-acf0-5618e65e330e",
+          "input": true,
+          "inputPort": "202abb03-e62f-4a69-bf77-d4625f2de94b",
+          "name": "i_Contrast",
+          "output": true,
+          "outputPort": "fb073078-438a-4c4e-9379-95c14506b176",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "o_Movie",
+          "editable": true,
+          "id": "dbf56e09-736f-4ec1-9a82-2fce4cd12dcf",
+          "input": false,
+          "inputPort": false,
+          "name": "o_Movie",
+          "output": true,
+          "outputPort": "15f1729c-4437-4017-80c5-139fb1cfcc0e",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        }
+      ],
+      "position": [
+        1450.534561867021,
+        1226.9371067801703
+      ],
+      "code": [
+        {
+          "language": "TvM",
+          "comment": "",
+          "argument": {
+            "name": "tvm_movieFrom4D"
+          }
+        }
+      ],
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Utilities"
     }
   ],
   "version": "v1"
