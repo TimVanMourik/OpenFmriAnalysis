@@ -240,7 +240,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/DesignMatrix"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/DesignMatrix",
+      "colour": "#1C6DF6"
     },
     {
       "name": "tvm_design_constant",
@@ -303,7 +304,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/DesignMatrix"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/DesignMatrix",
+      "colour": "#1C6DF6"
     },
     {
       "name": "tvm_design_stimulus",
@@ -457,7 +459,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/DesignMatrix"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/DesignMatrix",
+      "colour": "#1C6DF6"
     },
     {
       "name": "tvm_design_highpassFilter",
@@ -546,7 +549,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/DesignMatrix"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/DesignMatrix",
+      "colour": "#1C6DF6"
     },
     {
       "name": "tvm_design_motionRegression",
@@ -622,7 +626,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/DesignMatrix"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/DesignMatrix",
+      "colour": "#1C6DF6"
     },
     {
       "name": "tvm_design_retroicor",
@@ -737,7 +742,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/DesignMatrix"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/DesignMatrix",
+      "colour": "#1C6DF6"
     },
     {
       "name": "tvm_design_retroicor_1",
@@ -852,7 +858,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/DesignMatrix"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/DesignMatrix",
+      "colour": "#1C6DF6"
     },
     {
       "name": "tvm_regressConfounds",
@@ -954,7 +961,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Activation"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Activation",
+      "colour": "#4838FE"
     },
     {
       "name": "tvm_realignFunctionals",
@@ -1043,7 +1051,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Preprocessing"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Preprocessing",
+      "colour": "#04D6A5"
     },
     {
       "name": "tvm_smoothFunctionals",
@@ -1132,7 +1141,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Preprocessing"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Preprocessing",
+      "colour": "#04D6A5"
     },
     {
       "name": "tvm_glm",
@@ -1273,7 +1283,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Activation"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Activation",
+      "colour": "#4838FE"
     },
     {
       "name": "tvm_glmToFMap",
@@ -1375,7 +1386,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Activation"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Activation",
+      "colour": "#4838FE"
     },
     {
       "name": "tvm_glmToTMap",
@@ -1477,7 +1489,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Activation"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Activation",
+      "colour": "#4838FE"
     },
     {
       "name": "tvm_retroicorBackProject",
@@ -1605,7 +1618,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Utilities"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Utilities",
+      "colour": "#7FED12"
     },
     {
       "name": "tvm_movieFrom4D",
@@ -1746,7 +1760,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Utilities"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Utilities",
+      "colour": "#7FED12"
     },
     {
       "name": "tvm_reconAll",
@@ -1861,7 +1876,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Preprocessing"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Preprocessing",
+      "colour": "#04D6A5"
     },
     {
       "name": "tvm_useBbregister",
@@ -2028,7 +2044,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Registration"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Registration",
+      "colour": "#48FE38"
     },
     {
       "name": "tvm_volumeWithBoundariesToMovie",
@@ -2208,7 +2225,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Utilities"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Utilities",
+      "colour": "#7FED12"
     },
     {
       "name": "tvm_volumeWithBoundariesToMovie_1",
@@ -2388,7 +2406,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Utilities"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Utilities",
+      "colour": "#7FED12"
     },
     {
       "name": "tvm_recursiveBoundaryRegistration",
@@ -2555,7 +2574,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Registration"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Registration",
+      "colour": "#48FE38"
     },
     {
       "name": "tvm_boundariesToObj",
@@ -2631,7 +2651,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Registration"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Registration",
+      "colour": "#48FE38"
     },
     {
       "name": "tvm_makeLevelSet",
@@ -2785,7 +2806,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/LaminarAnalysis"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/LaminarAnalysis",
+      "colour": "#04A5D6"
     },
     {
       "name": "tvm_laplacePotentials",
@@ -2887,7 +2909,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/LaminarAnalysis"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/LaminarAnalysis",
+      "colour": "#04A5D6"
     },
     {
       "name": "tvm_gradient",
@@ -2963,7 +2986,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/LaminarAnalysis"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/LaminarAnalysis",
+      "colour": "#04A5D6"
     },
     {
       "name": "tvm_computeDivergence",
@@ -3039,7 +3063,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/LaminarAnalysis"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/LaminarAnalysis",
+      "colour": "#04A5D6"
     },
     {
       "name": "tvm_levelSetToObj",
@@ -3102,7 +3127,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/LaminarAnalysis"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/LaminarAnalysis",
+      "colour": "#04A5D6"
     },
     {
       "name": "tvm_objToBoundary",
@@ -3165,7 +3191,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/LaminarAnalysis"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/LaminarAnalysis",
+      "colour": "#04A5D6"
     },
     {
       "name": "tvm_volumeWithBoundariesToMovie_2",
@@ -3345,7 +3372,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Utilities"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/Utilities",
+      "colour": "#7FED12"
     },
     {
       "name": "tvm_designMatrixToTimeCourse",
@@ -3447,7 +3475,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/LaminarAnalysis"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/LaminarAnalysis",
+      "colour": "#04A5D6"
     },
     {
       "name": "tvm_volumetricLayering",
@@ -3588,7 +3617,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/LaminarAnalysis"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/LaminarAnalysis",
+      "colour": "#04A5D6"
     },
     {
       "name": "tvm_roiToDesignMatrix",
@@ -3664,7 +3694,8 @@
           }
         }
       ],
-      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/LaminarAnalysis"
+      "web_url": "https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/LaminarAnalysis",
+      "colour": "#04A5D6"
     }
   ],
   "version": "v1"
