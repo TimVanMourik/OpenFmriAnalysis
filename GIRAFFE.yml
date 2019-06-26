@@ -5,3 +5,5 @@ tools:
       - GIRAFFE/porcupipeline.pork
     nodes:
       - GIRAFFE/tvm_nodes.json
+    grammars:
+      - GIRAFFE/tvm.js
