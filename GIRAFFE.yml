@@ -6,4 +6,6 @@ tools:
     nodes:
       - GIRAFFE/tvm_nodes.json
     grammars:
-      - GIRAFFE/tvm.js
+      - language: TvM
+        script: GIRAFFE/tvm.js
+        format: matlab
