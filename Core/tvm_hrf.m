@@ -19,6 +19,8 @@ stimulusDurations       = tvm_getOption(configuration, 'Durations', []);
 hrfParameters           = tvm_getOption(configuration, 'HrfParameters', [6, 16, 1, 1, 6, 0, 32]);
     % default HRF parameters, same as in SPM
 regularHrf              = tvm_getOption(configuration, 'Regular', true);
+    % this is a weird parameter name and I don't know why I called it this
+    % #TvM 2019
     % by default, no temporal derivative is included
 temporalDerivative      = tvm_getOption(configuration, 'TemporalDerivative', false);
     % by default, no temporal derivative is included

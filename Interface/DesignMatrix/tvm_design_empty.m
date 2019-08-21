@@ -37,6 +37,8 @@ functionalFiles         = tvm_getOption(configuration, 'i_FunctionalFiles', '');
     % default: empty
 functionalFolder        = tvm_getOption(configuration, 'i_FunctionalFolder', '');
     % default: empty
+timecourseFile          = tvm_getOption(configuration, 'i_Timecourse', '');
+    % default: empty
 designFileOut           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DesignMatrix'));
     %no default
   

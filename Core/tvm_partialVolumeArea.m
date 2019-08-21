@@ -55,7 +55,7 @@ switch method
         
         % The normalisation factor can't handle NaNs, Infs and zeros
         epsilon = 0.001;
-        noGradient = any(isnan(normals) | isinf(normals) | abs(normals) < epsilon, 2);
+        noGradient = any(isnan(sum(normals, 2)) | isinf(sum(normals, 2)) | sum(abs(normals), 2) < epsilon, 2);
         distanceNoGradient = tvm_partialVolumeArea(distance(noGradient, :), 'cubic');
         
         kernelSize = sum(normals, 2);
