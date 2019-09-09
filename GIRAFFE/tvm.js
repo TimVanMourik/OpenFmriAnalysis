@@ -13,7 +13,7 @@ module.exports = () => {
     if (!codeArgument) return ""
     const { argument } = codeArgument;
     if (!argument) return ""
-    return `${CFG}.${argument.name} = ${parameter.value}` + 
+    return `${CFG}.${argument.name} = ${parameter.value}` +
       (argument.comment ? `% ${argument.comment};` : ";") + newline;
   }
 
@@ -55,7 +55,7 @@ module.exports = () => {
     const tvmFile = 'GIRAFFE/code/MasterScript.m';
 
     return {
-      [tvmFile]: writeCode(nodes, links)
+      [tvmFile]: await writeCode(nodes, links)
     };
   }
 
