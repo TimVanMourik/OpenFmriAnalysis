@@ -13,7 +13,8 @@ module.exports = () => {
     if (!codeArgument) return ""
     const { argument } = codeArgument;
     if (!argument) return ""
-    return `${CFG}.${argument.name} = ${parameter.value} % ${argument.comment};` + newline;
+    return `${CFG}.${argument.name} = ${parameter.value}` + 
+      (argument.comment ? ";" : `% ${argument.comment};`) + newline;
   }
 
   function itemToCode(node){
