@@ -83,7 +83,7 @@ tvm.name = categoryName;
 tvm.categories = categories;
 
 %%
-f = fopen(fullfile(saveLocation, 'tvm.JSON'), 'w');
+f = fopen(fullfile(saveLocation, 'tvm_nodes.json'), 'w');
 options.ParseLogical = true;
 options.Compact = true;
 fwrite(f, savejson('toolboxes', {tvm}, options));
