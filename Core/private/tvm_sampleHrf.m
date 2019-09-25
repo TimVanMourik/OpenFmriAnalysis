@@ -49,7 +49,7 @@ if duration == 0
     hrfValues(indices) = tvm_gammaPdf(timePoints(indices), k1, theta1) - tvm_gammaPdf(timePoints(indices), k2, theta2) / peakRatio;
     
     %normalisation:
-    hrfValues = hrfValues / (1 - 1 / hrfParameters(5));
+    hrfValues = hrfValues / (1 - 1 / peakRatio);
 else
     t1 = t0 + duration;
 

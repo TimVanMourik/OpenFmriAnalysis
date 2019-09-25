@@ -36,7 +36,7 @@ subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd()
     % default: current working directory
 dicomDirectory      = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_SourceDirectory'));
     %no default
-niftiDirectory      = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_SourceDirectory'));
+% niftiDirectory      = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_SourceDirectory'));
     %no default
 characteristic      = tvm_getOption(configuration, 'i_Characteristic', []);
     %no default
@@ -48,6 +48,7 @@ if isempty(characteristic)
 else
     folders = dir(fullfile(dicomDirectory, [characteristic '*']));
 end
+
 folders = folders([folders.isdir]);
 for folder = {folders.name}
     if ~strcmp(folder{1}(1), '.')
