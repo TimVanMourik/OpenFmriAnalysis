@@ -8,7 +8,7 @@ function tvm_thresholdVolumes(configuration)
 %   i_Volumes
 %   i_Threshold
 % Output:
-%   o_ThresholdedVolume
+%   o_ThresholdedVolumes
 %
 
 %   Copyright (C) Tim van Mourik, 2014-2019, DCCN
