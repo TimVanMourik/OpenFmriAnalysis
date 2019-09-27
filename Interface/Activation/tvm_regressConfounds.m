@@ -7,10 +7,10 @@ function tvm_regressConfounds(configuration)
 %   i_SubjectDirectory
 %   i_DesignMatrix
 %   i_SourceDirectory
+%   i_FunctionalFiles
 %   i_Confounds
-%   o_OutputDirectory
 % Output:
-%   o_FilteredFolder
+%   o_OutputDirectory
 
 %   Copyright (C) Tim van Mourik, 2016, DCCN
 %
