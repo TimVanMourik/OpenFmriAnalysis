@@ -1,8 +1,10 @@
 function matrix = tvm_matrixFromRegisterDatFile(registerDotDat)
 
 f = fopen(registerDotDat);
-s=textscan(f,'%s');s=s{1};
+text = fread(f, 'uint8=>char')';
 fclose(f);
+
+s = strsplit(text, '\n');
 
 matrix = zeros(4);
 
@@ -10,9 +12,9 @@ matrix = zeros(4);
 %voxelSize1 = s(2);
 %voxelSize2 = s(3);
 %voxelSize? = s(4);
-matrix(1, :) = cellfun(@str2double,s(5:8))';
-matrix(2, :) = cellfun(@str2double,s(9:12))';
-matrix(3, :) = cellfun(@str2double,s(13:16))';
-matrix(4, :) = cellfun(@str2double,s(17:20))';
+matrix(1, :) = sscanf(s{5}, '%f')';
+matrix(2, :) = sscanf(s{6}, '%f')';
+matrix(3, :) = sscanf(s{7}, '%f')';
+matrix(4, :) = sscanf(s{8}, '%f')';
 
 end %end function
