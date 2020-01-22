@@ -54,7 +54,11 @@ contrast                = tvm_getOption(configuration, 'i_Contrast', 'T2');
 degreesOfFreedom    	= tvm_getOption(configuration, 'i_DegreesOfFreedom', 6);
     % default: 6 DoF, translation and rotation
 initialisationMatrix    = tvm_getOption(configuration, 'i_InititialMatrix', '');
+    % no default
+additionalBBrFlags      = tvm_getOption(configuration, 'i_additionalBBrFlags', '');
     % default: empty
+reslicedVolume          = tvm_getOption(configuration, 'o_ReslicedVolume', '');
+    %no default
 boundariesFile          = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Boundaries'));
     %no default
 registerDatFile       	= fullfile(subjectDirectory, tvm_getOption(configuration, 'o_RegisterDat'));
@@ -95,9 +99,19 @@ if isempty(initialisationMatrix)
 else
     matrixInitialisation = sprintf(' --init-reg %s', fullfile(subjectDirectory, initialisationMatrix));
 end
+if isempty(additionalBBrFlags)
+    BBrFlags = '';
+else
+    BBrFlags = [' ' additionalBBrFlags ' '];
+end
+if isempty(reslicedVolume)
+    resliceCommand = '';
+else
+    resliceCommand = [' --o ' , fullfile(subjectDirectory, reslicedVolume)];
+end
 [~, name, ~] = fileparts(freeSurferName);
 unixCommand = ['SUBJECTS_DIR=', fullfile(freeSurferFolder, '..') ';'];
-unixCommand = [unixCommand 'bbregister --s ' name ' --mov ' referenceFile ' --reg ' registerDatFile fsl spm contrastArgument dof matrixInitialisation ';'];
+unixCommand = [unixCommand 'bbregister --s ' name ' --mov ' referenceFile ' --reg ' registerDatFile resliceCommand fsl spm contrastArgument dof matrixInitialisation BBrFlags ';'];
 unix(unixCommand);
 
 if ~exist(fullfile(freeSurferFolder, 'mri/brain.nii'), 'file')
