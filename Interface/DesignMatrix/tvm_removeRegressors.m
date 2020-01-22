@@ -1,12 +1,12 @@
-function tvm_design_orthogonalise(configuration)
-% TVM_DESIGN_ORTHOGONALISE
-%   TVM_DESIGN_ORTHOGONALISE(configuration)
+function tvm_removeRegressors(configuration)
+% TVM_DESIGN_EMPTY
+%   TVM_DESIGN_EMPTY(configuration)
 %   @todo Add description
 %
 % Input:
 %   i_SubjectDirectory
-%   i_DesignMatrix
-%   i_Order
+%   i_FunctionalFiles
+%   i_FunctionalFolder
 % Output:
 %   o_DesignMatrix
 
@@ -35,34 +35,24 @@ subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd
     % default: current working directory
 designFileIn            = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
-regressorsLabels        = tvm_getOption(configuration, 'i_Order');
-    %no default
+labels            = tvm_getOption(configuration, 'i_Labels');
+    % default: empty
 designFileOut           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DesignMatrix'));
     %no default
-    
+  
 definitions = tvm_definitions();
 
 %%
 load(designFileIn, definitions.GlmDesign);
-
-for i = 1:length(regressorsLabels)
-    regressorsOfInterest = cellfun(@strfind, repmat({design.RegressorLabel}, [1, length(regressorsLabels{i})]), regressorsLabels{i}, 'UniformOutput', false);
-    regressorsOfInterest = mod(find(~cellfun(@isempty, [regressorsOfInterest{:}])), length(design.RegressorLabel));
-    regressorsOfInterest(regressorsOfInterest == 0) = size(design.DesignMatrix, 2);
-    design.DesignMatrix(:, regressorsOfInterest) = spm_orth(design.DesignMatrix(:, regressorsOfInterest));
+design = eval(definitions.GlmDesign);
+for i = 1:length(labels)
+    hits = regexp(design.RegressorLabel, labels{i});
+    hits = ~cellfun(@isempty, hits);
+    design.DesignMatrix = design.DesignMatrix(:, ~hits);
+    design.RegressorLabel = design.RegressorLabel(~hits);
 end
 save(designFileOut, definitions.GlmDesign);
 
-
 end %end function
-
-
-
-
-
-
-
-
-
 
 

@@ -1,8 +1,8 @@
 
 %% Node Files
-toolboxLocation = '/home/mrphys/timvmou/MATLAB/Toolboxes/OpenFmriAnalysis';
+toolboxLocation = '/home/mrphys/timvmou/matlab/Toolboxes/OpenFmriAnalysis';
 cd(fullfile(toolboxLocation, 'Interface'));
-saveLocation = fullfile(toolboxLocation, 'External/Porcupine');
+saveLocation = fullfile(toolboxLocation, 'GIRAFFE');
 
 %
 categoryName = 'TvM';
@@ -10,12 +10,12 @@ directories = dir();
 directories = directories([directories(:).isdir]);
 directories = directories(3:end);
 
-nF = 1;
-nodes = [];
+categories = cell(1, length(directories));
 for i = 1:length(directories)
     filenames = dir(fullfile(directories(i).name, 'tvm_*'));
+    nodes = cell(1, length(filenames));
     for j = 1:length(filenames)
-        
+        node = [];
         file = fullfile(directories(i).name, filenames(j).name);
         f = fopen(file);
         numberOfPorts = 0;
@@ -51,27 +51,42 @@ for i = 1:length(directories)
                 
         end
         fclose(f);
-        title = [];
-        title.web_url = ['https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/', directories(i).name];
-        title.name = filenames(j).name(1:end - 2);
-        title.code = [];
         code = [];
         code.language = categoryName;
         code.comment  = '';
         code.argument.name = filenames(j).name(1:end - 2);
-        title.code = {code};
-        nodes(nF).category = {categoryName, directories(i).name};
-        nodes(nF).title = title;
-        nodes(nF).ports = ports;
+
+        node.toolbox = categoryName;
+        node.category = {categoryName, directories(i).name};
+        node.name = filenames(j).name(1:end - 2);
+        node.code = {code};
+        node.web_url = ['https://github.com/TimVanMourik/OpenFmriAnalysis/tree/master/Interface/', directories(i).name];
+        node.ports = ports;
         
-        nF = nF + 1;
+        nodes{j} = node;
     end
+    category = [];
+    category.name = directories(i).name;
+    category.nodes = nodes;
+    
+    index = 1 + i / length(directories);
+    r = floor(sin(pi * index + 0         ) * 63 + 128);
+    g = floor(sin(pi * index + 2 * pi / 3) * 63 + 128);
+    b = floor(sin(pi * index + 4 * pi / 3) * 63 + 128);
+    category.colour = ['#', sprintf('%02X', [r, g, b])];
+    categories{i} = category;
 end
 
+toolbox = [];
+tvm = [];
+tvm.name = categoryName;
+tvm.categories = categories;
+
 %%
-f = fopen(fullfile(saveLocation, 'tvm.JSON'), 'w');
+f = fopen(fullfile(saveLocation, 'tvm_nodes.json'), 'w');
 options.ParseLogical = true;
-fwrite(f, savejson('nodes', nodes, options));
+options.Compact = true;
+fwrite(f, savejson('toolboxes', {tvm}, options));
 fclose(f);
 
 

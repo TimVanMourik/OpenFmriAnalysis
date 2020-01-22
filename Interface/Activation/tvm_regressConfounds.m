@@ -6,11 +6,11 @@ function tvm_regressConfounds(configuration)
 % Input:
 %   i_SubjectDirectory
 %   i_DesignMatrix
-%   i_FunctionalFolder
+%   i_SourceDirectory
 %   i_FunctionalFiles
 %   i_Confounds
 % Output:
-%   o_FilteredFolder
+%   o_OutputDirectory
 
 %   Copyright (C) Tim van Mourik, 2016, DCCN
 %
@@ -46,7 +46,7 @@ confounds           = tvm_getOption(configuration, 'i_Confounds');
 filteredFolder      = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_OutputDirectory'));
     %no default
 
-definitions = tvm_definitions();  
+definitions = tvm_definitions();
     
 %%
 load(designFile, definitions.GlmDesign);

@@ -13,6 +13,10 @@ function tvm_recursiveBoundaryRegistration(configuration, registrationConfigurat
 %   i_CuboidElements
 %   i_Tetrahedra
 %   i_NeighbourSmoothing
+%   i_Mode
+%   i_ReverseContrast
+%   i_OptimisationMethod
+%   i_ContrastMethod
 %
 % Output:
 %   o_Boundaries
@@ -63,6 +67,23 @@ boundariesFileOut       = fullfile(subjectDirectory, tvm_getOption(configuration
 displacementMap         = tvm_getOption(configuration, 'o_DisplacementMap', []);
     % default: empty
 
+%% if you wanna specify all options in one go instead of two different options:
+if nargin == 1
+    registrationConfiguration = [];
+    if isfield(configuration, 'i_ReverseContrast')
+        registrationConfiguration.ReverseContrast = configuration.i_ReverseContrast;
+    end
+    if isfield(configuration, 'i_OptimisationMethod')
+        registrationConfiguration.OptimisationMethod = configuration.i_OptimisationMethod;
+    end
+    if isfield(configuration, 'i_ContrastMethod')
+        registrationConfiguration.ContrastMethod = configuration.i_ContrastMethod;
+    end
+    if isfield(configuration, 'i_Mode')
+        registrationConfiguration.Mode = configuration.i_Mode;
+    end
+end
+    
 definitions = tvm_definitions();
 
 %% Just loading data

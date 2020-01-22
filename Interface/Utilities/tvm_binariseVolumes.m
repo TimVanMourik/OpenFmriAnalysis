@@ -1,17 +1,16 @@
-function tvm_thresholdVolume(configuration)
-% TVM_THRESHOLDVOLUME
-%   TVM_THRESHOLDVOLUME(configuration)
+function tvm_binariseVolumes(configuration)
+% TVM_BINARISEVOLUMES
+%   TVM_BINARISEVOLUMES(configuration)
 %   @todo Add description
 %
 % Input:
 %   i_SubjectDirectory
-%   i_Volume
-%   i_Threshold
+%   i_Volumes
 % Output:
-%   o_ThresholdedVolume
+%   o_Volumes
 %
 
-%   Copyright (C) Tim van Mourik, 2014-2015, DCCN
+%   Copyright (C) Tim van Mourik, 2014-2019, DCCN
 %
 % This file is part of the fmri analysis toolbox, see 
 % https://github.com/TimVanMourik/FmriAnalysis for the documentation and 
@@ -35,20 +34,22 @@ function tvm_thresholdVolume(configuration)
 %% Parse configuration
 subjectDirectory =      tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     % default: current working directory
-volumeFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Volume'));
+volumeFile =            fullfile(subjectDirectory, tvm_getOption(configuration, 'i_Volumes'));
     %no default
-threshold =             tvm_getOption(configuration, 'i_Threshold', 1.96);
-    % 1.96, two-tailed significance threshold
-thresholdFile =         fullfile(subjectDirectory, tvm_getOption(configuration, 'o_ThresholdedVolume'));
+outputFiles =         fullfile(subjectDirectory, tvm_getOption(configuration, 'o_Volumes'));
     %no default
     
 %%
-v = spm_vol(volumeFile);
-v.volume = spm_read_vols(v);
-v.volume(v.volume < threshold) = 0;
-v.fname = thresholdFile;
+if ~iscell(volumeFile)
+    volumeFile = {volumeFile};
+    outputFiles = {outputFiles};
+end
 
-spm_write_vol(v, v.volume);
+for i = 1:length(volumeFile)
+    v = spm_vol(volumeFile{i});
+    v.fname = outputFiles{i};
+    spm_write_vol(v, ~~spm_read_vols(v));
+end
 
 end %end function
 

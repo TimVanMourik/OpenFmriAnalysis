@@ -17,22 +17,14 @@ brainFile =             fullfile(subjectDirectory, tvm_getOption(configuration, 
     %no default
 maskFile =              fullfile(subjectDirectory, tvm_getOption(configuration, 'o_BrainMask'));
     %no default
-maskedImage =           tvm_getOption(configuration, 'o_MaskedImage');
+maskedImage =           fullfile(subjectDirectory, tvm_getOption(configuration, 'o_MaskedImage'));
     %no default
 
 %%
+% #TODO only set if undefined
 setenv('FSLOUTPUTTYPE', 'NIFTI');
-unix(sprintf('bet %s %s -m -Z -f %f', brainFile, maskFile, fractionalIntensity));
-[root, file] = fileparts(maskFile);
-unix(sprintf('rm %s', maskFile));
-unix(sprintf('mv %s %s', [root, filesep(), file, '_mask.nii'], maskFile));
-
-% could also use 
-if ~isempty(maskedImage)
-    maskedImage = fullfile(subjectDirectory, maskedImage);
-    referenceVolume = spm_vol(brainFile);
-    v = bsxfun(@times, spm_read_vols(referenceVolume), spm_read_vols(spm_vol(maskFile)));
-    tvm_write4D(referenceVolume, v, maskedImage);
-end
+unix(sprintf('bet2 %s %s -m -f %f', brainFile, maskFile, fractionalIntensity));
+movefile(maskFile, maskedImage);
+movefile([maskFile, '_mask.nii'], maskFile);
 
 end %end function

@@ -35,58 +35,71 @@ subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd
     % default: current working directory
 designFileIn            = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
     %no default
+stimulusFiles           = tvm_getOption(configuration, 'i_Stimulus');
+    %no default
+labels                  = tvm_getOption(configuration, 'i_Labels');
+    %no default
+numberOfSegments        = tvm_getOption(configuration, 'i_NumberOfSegments');
+    %no default
+segmentSpacing          = tvm_getOption(configuration, 'i_SegmentSpacing');
+    %no default
+prestimulus             = tvm_getOption(configuration, 'i_PreStimulus', 0);
+    %no default
+TR                      = tvm_getOption(configuration, 'i_TR');
+    %no default
 designFileOut           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DesignMatrix'));
     %no default
     
 definitions = tvm_definitions();
 
-tvm_workInProgress();
 
 %%
-load(designFileIn, definitions.GlmDesign);
-
 numberOfStimuli = size(stimulusFiles, 2);
 allStimuli = cell(numberOfStimuli, 1);
-allDurations = cell(numberOfStimuli, 1);
 for i = 1:numberOfStimuli
-    load(fullfile(subjectDirectory, stimulusFiles{i}), definitions.Stimulus, definitions.Duration);
-    stimulusOnset = eval(definitions.Stimulus);
-    stimulusDuration = eval(definitions.Duration);
+    if iscell(stimulusFiles{i})
+        onsets = [];
+        for j = 1:length(stimulusFiles{i})
+            if exist(stimulusFiles{i}{j}, 'file')
+                load(fullfile(subjectDirectory, stimulusFiles{i}{j}), definitions.Stimulus);
+                onsets = [onsets, stimulusOnset];
+            end
+        end
+        stimulusOnset = onsets;
+    else
+        load(fullfile(subjectDirectory, stimulusFiles{i}{1}), definitions.Stimulus);
+        stimulusOnset = eval(definitions.Stimulus);
+    end
     allStimuli{i} = stimulusOnset;
-    allDurations{i} = stimulusDuration;
 end
 
-if ischar(hrfParameters)
-    hrfFile = fullfile(subjectDirectory, hrfParameters);
-    load(hrfFile, definitions.HrfParameters);
-    %todo, check if the correct parameters are loaded in
-end
-
-designMatrix = zeros(sum(numberOfVolumes), numberOfSegments);
-startOfRun = [0, cumsum(numberOfVolumes)] + 1;
+load(designFileIn, definitions.GlmDesign);
+numberOfVolumes = cellfun(@(x)length(x), design.Partitions);
+startOfRun = [0; cumsum(numberOfVolumes)] + 1;
 
 for condition = 1:numberOfStimuli
-    counter = 1;
-    for run = functionalIndices
-        timePoints = startOfRun(counter):startOfRun(counter + 1) - 1;
-
-        samplingPoints = TR * ((1:numberOfVolumes(counter)) - 1/2);
+    designMatrix = zeros(sum(numberOfVolumes), numberOfSegments);
+    for run = 1:length(numberOfVolumes)
+        timePoints = startOfRun(run):startOfRun(run + 1) - 1;
+        samplingPoints = TR * ((1:numberOfVolumes(run)) - 1/2);
 
         cfg = [];
         cfg.SegmentSpacing = segmentSpacing;
         cfg.NumberOfSegments = numberOfSegments;
         cfg.TimePoints = samplingPoints;
-        cfg.Stimulus = allStimuli{condition}{run};
+        cfg.Stimulus = allStimuli{condition}{run} - prestimulus;
         designMatrix(timePoints, :) = designMatrix(timePoints, :) + tvm_constructFirModel(cfg);
-        counter = counter + 1;
     end
+    
+    design.DesignMatrix = [design.DesignMatrix, designMatrix];
+    
+    regressorLabels = cell(1, numberOfSegments);
+    for i = 1:numberOfSegments
+        regressorLabels{i} = sprintf('%s_FIR_%d', labels{condition}, i);
+    end
+    design.RegressorLabel = [design.RegressorLabel, regressorLabels];
 end
-regressorLabels = cell(1, numberOfSegments);
-for i = 1:numberOfSegments
-    regressorLabels{i} = 'FIR';
-end
-design.DesignMatrix = [design.DesignMatrix, designMatrix];
-design.RegressorLabel = [design.RegressorLabel, regressorLabels];
+
 save(designFileOut, definitions.GlmDesign);
 
 end %end function

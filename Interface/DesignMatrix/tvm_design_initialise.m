@@ -1,6 +1,6 @@
-function tvm_design_empty(configuration)
-% TVM_DESIGN_EMPTY
-%   TVM_DESIGN_EMPTY(configuration)
+function tvm_design_initialise(configuration)
+% TVM_DESIGN_INITIALISE
+%   TVM_DESIGN_INITIALISE(configuration)
 %   @todo Add description
 %
 % Input:

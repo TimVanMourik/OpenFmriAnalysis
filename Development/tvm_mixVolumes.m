@@ -1,16 +1,17 @@
-function tvm_design_orthogonalise(configuration)
-% TVM_DESIGN_ORTHOGONALISE
-%   TVM_DESIGN_ORTHOGONALISE(configuration)
+function tvm_mixVolumes(configuration)
+% TVM_MIXVOLUMES
+%   TVM_MIXVOLUMES(configuration)
 %   @todo Add description
 %
 % Input:
 %   i_SubjectDirectory
-%   i_DesignMatrix
-%   i_Order
+%   i_ReferenceVolume
+%   i_Mixture
 % Output:
-%   o_DesignMatrix
+%   o_MixtureVolume
+%
 
-%   Copyright (C) Tim van Mourik, 2015-2016, DCCN
+%   Copyright (C) Tim van Mourik, 2014, DCCN
 %
 % This file is part of the fmri analysis toolbox, see 
 % https://github.com/TimVanMourik/FmriAnalysis for the documentation and 
@@ -33,29 +34,28 @@ function tvm_design_orthogonalise(configuration)
 %% Parse configuration
 subjectDirectory        = tvm_getOption(configuration, 'i_SubjectDirectory', pwd());
     % default: current working directory
-designFileIn            = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_DesignMatrix'));
+referenceVolume         = fullfile(subjectDirectory, tvm_getOption(configuration, 'i_ReferenceVolume'));
     %no default
-regressorsLabels        = tvm_getOption(configuration, 'i_Order');
+mixture                 = tvm_getOption(configuration, 'i_Mixture');
     %no default
-designFileOut           = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_DesignMatrix'));
+mixtureFile             = fullfile(subjectDirectory, tvm_getOption(configuration, 'o_MixtureVolume'));
     %no default
-    
+
 definitions = tvm_definitions();
 
 %%
-load(designFileIn, definitions.GlmDesign);
+ref = spm_vol(referenceVolume);
+referenceVolume = spm_read_vols(ref);
 
-for i = 1:length(regressorsLabels)
-    regressorsOfInterest = cellfun(@strfind, repmat({design.RegressorLabel}, [1, length(regressorsLabels{i})]), regressorsLabels{i}, 'UniformOutput', false);
-    regressorsOfInterest = mod(find(~cellfun(@isempty, [regressorsOfInterest{:}])), length(design.RegressorLabel));
-    regressorsOfInterest(regressorsOfInterest == 0) = size(design.DesignMatrix, 2);
-    design.DesignMatrix(:, regressorsOfInterest) = spm_orth(design.DesignMatrix(:, regressorsOfInterest));
+mixtureVolume = zeros([ref(1).dim, size(mixture, 1)]);
+m = zeros([1, 1, size(mixture)]);
+m(1, 1, :, :) = mixture;
+for i = 1:size(mixture, 1);
+    mixtureVolume(:, :, :, i) = sum(bsxfun(@times, referenceVolume, m(:, :, i, :)), 4);
 end
-save(designFileOut, definitions.GlmDesign);
-
+tvm_write4D(ref, mixtureVolume, mixtureFile);
 
 end %end function
-
 
 
 

@@ -74,10 +74,10 @@ end
 spm_reslice(niftis, realignmentConfiguration);
 
 oldMeanNifti = dir(fullfile(niftiFolder, 'mean*.nii'));
-movefile(fullfile(niftiFolder, oldMeanNifti.name), meanName);
-movefile(fullfile(niftiFolder, 'r*.nii'), realignmentFolder);
-movefile(fullfile(niftiFolder, 'rp*.txt'), realignmentFolder);
-movefile(fullfile(niftiFolder, '*.mat'), realignmentFolder);
+movefile(fullfile(niftiFolder, oldMeanNifti.name), meanName, 'f');
+movefile(fullfile(niftiFolder, 'r*.nii'), realignmentFolder, 'f');
+movefile(fullfile(niftiFolder, 'rp*.txt'), realignmentFolder, 'f');
+movefile(fullfile(niftiFolder, '*.mat'), realignmentFolder, 'f');
 
 end %end function
 

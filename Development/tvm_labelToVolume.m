@@ -45,7 +45,7 @@ for i = 1:length(labelFiles)
 
     filterThreshold = 0.3;
     projectionParameters = 'frac 0 1 .1';
-    origFile = fullfile(freeSurferPath, freeSurferSubject, 'mri/orig.nii');
+    origFile = fullfile(freeSurferPath, freeSurferSubject, 'mri/brain.nii');
     if ~exist(origFile, 'file')
         unix(sprintf('mri_convert %s %s', [origFile(1:end-4), '.mgz'], origFile));
     end

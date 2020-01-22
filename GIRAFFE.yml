@@ -1,0 +1,11 @@
+# list of tools
+tools:
+  porcupine:
+    files:
+      - GIRAFFE/porcupipeline.pork
+    nodes:
+      - GIRAFFE/tvm_nodes.json
+    grammars:
+      - language: TvM
+        script: GIRAFFE/tvm.js
+        format: matlab

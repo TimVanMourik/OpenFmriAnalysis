@@ -82,12 +82,12 @@ switch rotation
 end
 
 if isempty(colorRange)
-    colorRange = [min(imageData(:)), max(imageData(:))];
+    colorRange = [min(imageData(:)) - eps(), max(imageData(:)) + eps()];
 end
 
 imagesc(imageData, colorRange);
 colormap('gray');
-% Make a truecolor all-green image.
+% Make a truecolor all-red image.
 red = cat(3, ones(size(imageData)), zeros(size(imageData)), zeros(size(imageData)));
 hold('on');
 h = imshow(red); 
