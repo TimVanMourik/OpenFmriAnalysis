@@ -18,4 +18,3 @@ matrix(3, :) = sscanf(s{7}, '%f')';
 matrix(4, :) = sscanf(s{8}, '%f')';
 
 end %end function
-
